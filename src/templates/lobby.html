@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>Item Details</title>
+</head>
+<body>
+    hello, nigger!
+<button type="button", onclick="create_lobby()">Create lobby</button>
+<button type="button", onclick="create_lobby()">Join lobby</button>
+
+<script>
+    async function create_lobby() {
+        const result = await fetch("http://127.0.0.1:8000/hostess/create_lobby", {
+            method: "POST"
+        });
+        const msg = await result.json();
+        console.log(msg);
+    }
+</script>
+</body>
+</html>

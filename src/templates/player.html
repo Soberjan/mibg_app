@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>Item Details</title>
+</head>
+<body>
+
+    <p>Player name</p>
+    <p>Player role</p>
+    <p>Player money</p>
+    <p>Player influence</p>
+
+    <button type="button", onclick="send_money()">Send money</button>
+
+    <script>
+        async function send_money() {
+            const result = await fetch("http://127.0.0.1:8000/hostess/create_lobby", {
+                method: "POST"
+            });
+            const msg = await result.json();
+            console.log(msg);
+        }
+    </script>
+</body>
+</html>
