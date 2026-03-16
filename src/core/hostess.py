@@ -1,24 +1,17 @@
 from uuid import uuid1
 from typing import Dict
 
+from database.database import Database
+
 from .lobby import Lobby
 
 class Hostess:
-    def __init__(self) -> None:
+    def __init__(self, database: Database) -> None:
         self.lobbies: Dict[str, Lobby] = {}
+        self.database = database
 
     def create_lobby(self):
-        lobby_id = uuid1().hex
-        lobby = Lobby(lobby_id)
-        self.lobbies[lobby_id] = lobby
-        return lobby_id
-
-    def read_lobby(self):
-        lobby_id = uuid1().hex
-        lobby = Lobby(lobby_id)
-        self.lobbies[lobby_id] = lobby
-        return lobby_id
-
-_hostess = Hostess()
-def get_hostess():
-    return _hostess
+        lobby = Lobby('active', self.database)
+        lobby.insert_to_db()
+        self.lobbies[lobby.id] = lobby
+        return lobby.id

@@ -1,2 +1,4 @@
 fastapi==0.135.1
 fastapi[standard]
+psycopg2==2.9.11
+dotenv==0.9.9
