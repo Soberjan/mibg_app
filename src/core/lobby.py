@@ -1,14 +1,11 @@
 import json
-from enum import Enum
+
+from fastapi import HTTPException
 
 from .balance import Balance
 from .player import Player
+from enums.enums import PlayerRole
 from database.database import Database
-
-class Balance_type(Enum):
-    player = "player"
-    gov = "go"
-    bank = "bank"
 
 class Lobby:
     def __init__(self, state: str, database: Database) -> None:
@@ -16,6 +13,7 @@ class Lobby:
         self.players = {}
         self.balances = {}
         self.database: Database = database
+        self.sockets = []
 
     def insert_to_db(self):
         query = """
@@ -23,7 +21,7 @@ class Lobby:
             VALUES (%s)
             RETURNING id;
         """
-        params = (self.state)
+        params = (self.state,)
 
         res = self.database.execute_query(query, params)
         self.id = res[0][0]
@@ -34,11 +32,16 @@ class Lobby:
             SET state = %s
             WHERE id = %s
         """
-        params = (self.state, self.id)
+        params = (self.state, self.id,)
         self.database.execute_query(query, params)
 
     def add_player(self, name: str, role: str):
-        player = Player(name, role, self.id, self.database)
+        try:
+            player_role = PlayerRole(role)
+        except ValueError:
+            raise ValueError
+
+        player = Player(name, player_role, self.id, self.database)
         player.insert_to_db()
         self.players[player.id] = player
 

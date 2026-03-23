@@ -1,0 +1,34 @@
+<html>
+<head>
+    <title>MIBG game</title>
+</head>
+<body>
+    <div id="content"></div>
+
+    <button type="button" onclick="create_lobby()">Create lobby</button>
+    <label>
+        Lobby id: 
+        <input type="text" id="lobby_id" autocomplete="off" value=""/>
+        <button type="button" onclick="join_lobby()">
+            Join lobby
+        </button>
+    </label>
+
+    <script>
+        async function create_lobby() {
+            const response = await fetch("http://127.0.0.1:8000/hostess/create_lobby",
+                {method:"POST"});
+            const result = await response.json();
+            if (result.status == "ok") {
+                let lobby_id = result.lobby_id;
+                window.location.href=`http://127.0.0.1:8000/hostess/join_lobby?lobby_id=${lobby_id}`;
+            }
+        }
+        async function join_lobby() {
+            let lobby_id = document.getElementById("lobby_id").value;
+
+            window.location.href=`http://127.0.0.1:8000/hostess/join_lobby?lobby_id=${lobby_id}`;
+        }
+    </script>
+</body>
+</html>

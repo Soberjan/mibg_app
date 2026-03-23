@@ -200,4 +200,4 @@ __marimo__/
 .postgres_data/
 .conda/
 
-.env/
+.env

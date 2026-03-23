@@ -1,0 +1,50 @@
+<html>
+<head>
+    <title> {{ lobby_id }} </title>
+    <link rel="stylesheet" href="/static/styles/pop_up.css">
+</head>
+<body>
+    <h1> {{ lobby_id }} </h1>
+
+    <div id = "lobby_menu">
+        <label> welcome to lobby {{ lobby_id }} </label>
+        <label> your name is <label id = "name"> </label> </label>
+        <label> your balance is <label id = "balance"> </label> </label>
+    </div>
+
+    <div class="popup" id = "choose_name_popup">
+        <div class = "popuptext show" id = "mypopit">
+            <label>Введите ваше имя: <input type="text" id="name_text" autocomplete="off"/></label>
+            <button type="button" onclick="add_player()">Подтвердить</button>
+        </div>
+    </div>
+    <script>
+        var player_name = "";
+        var ws;
+        async function add_player() {
+            const overlay = document.getElementById("mypopit");
+            overlay.classList.toggle("hidden");
+
+            var input = document.getElementById("name_text");
+            const name = input.value;
+            const response = await fetch(`http://127.0.0.1:8000/hostess/add_player?lobby_id=${lobby_id}&name=${name}`, {
+                method: "POST"
+            });
+
+            const result = await response.json();
+            if (result.status = "ok") {
+                <!-- добавить сохранение печенек -->
+                player_name = result.name;
+
+                ws = new WebSocket(`ws://127.0.0.1:8000/lobby?lobby_id=${lobby_id}&${player_id}`);
+                ws.onmessage = handle_socket;
+            }
+        }
+
+        function handle_socket(event) {
+            document.getElementById("stupid_text").textContent = event.data;
+            event.preventDefault()
+        }
+    </script>
+</body>
+</html>

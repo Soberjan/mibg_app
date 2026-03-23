@@ -2,25 +2,29 @@ import os
 import sys
 
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
+from fastapi.templating import Jinja2Templates
 
-from routers import host
 from config import Config
-
 load_dotenv()
 Config.init()
-# app = FastAPI()
-# app.include_router(host.router)
-# templates = Jinja2Templates(directory='src/templates/')
-
+from routers import host, home
+from core.hostess import Hostess
 from database.database import Database
-db = Database()
 
-# @app.get('/')
-# def lobby_page(request: Request):
-#     return templates.TemplateResponse(request=request, name='lobby.html')
-#
-# @app.get('/player')
-# def player_page(request: Request):
-#     return templates.TemplateResponse(request=request, name='player.html')
+app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
+
+db = Database()
+db.connect()
+app.state.database = db
+
+app.state.hostess = Hostess(app.state.database)
+
+app.state.templates = Jinja2Templates(directory='src/static/templates/')
+
+app.include_router(host.router)
+app.include_router(home.router)
