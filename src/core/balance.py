@@ -15,14 +15,15 @@ class Balance:
             VALUES (%s, %s, %s)
             RETURNING id;
         """
-        params = (self.lobby_id, self.type, self.money)
+        params = (self.lobby_id, self.type, self.money,)
 
         res = self.database.execute_query(query, params)
-        self.id = res[0][0]
+        if res != None:
+            self.id = res[0][0]
 
     def update_db_entry(self):
         query = """
-            UPDATE player
+            UPDATE balance
             SET lobby_id=%s, type=%s, money=%s
             WHERE id = %s
         """

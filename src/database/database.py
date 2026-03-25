@@ -72,7 +72,12 @@ class Database():
         else:
             cur.execute(query, params)
         conn.commit()
-        res = cur.fetchall()
+
+        if cur.description:
+            res = cur.fetchall()
+        else:
+            res = None
+
         self.pool.putconn(conn)
         return res
 

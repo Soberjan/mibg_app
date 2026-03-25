@@ -15,8 +15,18 @@ export function handle_socket(event) {
                 add_balance_to_selector(state.balances[balance_id]);
             break;
 
-        case "game_started":
-            console.log(`round ${res.round}`);
+        case "money_changed":
+            console.log("received_shit");
+            console.log(res.result);
+            const data = res.result;
+            const local_balance_span = document.getElementById(`balance_${data.sender_id}`);
+            const local_receiver_span = document.getElementById(`balance_${data.receiver_id}`);
+
+            local_balance_span.innerHTML = data.sender_money;
+            local_receiver_span.innerHTML = data.receiver_money;
+
+            state.balances[data.sender_id].money = data.sender_money;
+            state.balances[data.receiver_id].money = data.receiver_money;
             break;
 
         case "error":

@@ -12,7 +12,7 @@ class Lobby:
     def __init__(self, state: str, database: Database) -> None:
         self.state = state
         self.players: Dict[int, Player] = {}
-        self.balances = {}
+        self.balances: Dict[int, Balance] = {}
         self.database: Database = database
         self.sockets = {}
 
@@ -25,8 +25,9 @@ class Lobby:
         params = (self.state,)
 
         res = self.database.execute_query(query, params)
+        if res != None:
+            self.id = res[0][0]
 
-        self.id = res[0][0]
 
     def update_db_entry(self):
         query = """
@@ -67,6 +68,24 @@ class Lobby:
         b.insert_to_db()
         self.balances[b.id] = b
         return b
+
+    def send_money(
+        self,
+        sender_id: int,
+        receiver_id: int,
+        amount: int
+    ):
+        sender_balance = self.balances[sender_id]
+        receiver_balance = self.balances[receiver_id]
+
+        if amount > sender_balance.money:
+            raise Exception
+
+        sender_balance.money -= amount
+        sender_balance.update_db_entry()
+        
+        receiver_balance.money += amount
+        receiver_balance.update_db_entry()
 
     def save_state(self):
         self.update_db_entry()

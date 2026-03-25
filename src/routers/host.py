@@ -104,3 +104,30 @@ async def get_players(
 
     response = {"status": "ok", "players": players_dict}
     return response
+
+@router.put('/hostess/send_money')
+async def send_money(
+        lobby_id: int,
+        sender_id: int,
+        receiver_id: int,
+        amount: int,
+        hostess: Hostess = Depends(get_hostess),
+        ):
+    if lobby_id not in hostess.lobbies.keys():
+        raise HTTPException(status_code=500, detail=f"Lobby with id {lobby_id} does not exist")
+    lobby = hostess.get_lobby(lobby_id)
+
+    lobby.send_money(sender_id, receiver_id, amount)
+    response = {
+        'sender_id': sender_id,
+        'receiver_id': receiver_id,
+        'sender_money': lobby.balances[sender_id].money,
+        'receiver_money': lobby.balances[receiver_id].money
+    }
+
+    for ws in lobby.sockets.values():
+        print('sending shit')
+        print(response)
+        await ws.send_json({'type': 'money_changed', 'result': response})
+
+    return {'status': 'ok', 'result': response}

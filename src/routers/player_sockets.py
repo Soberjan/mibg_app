@@ -12,7 +12,6 @@ async def player_socket(
         player_id: int,
         hostess: Hostess = Depends(get_hostess_ws),
         ):
-    print("entered websocket endpoint", lobby_id, player_id)
     await websocket.accept()
     lobby = hostess.get_lobby(lobby_id)
     lobby.sockets[player_id] = websocket
@@ -36,7 +35,6 @@ async def player_socket(
                 "role": player.role.value,
                 "balances": balances,
             }
-            print(player_dict)
 
             response = {
                 "type": "other_player_joined",
