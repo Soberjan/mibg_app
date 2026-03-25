@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request, Query, Depends, WebSocket
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
 from starlette.templating import _TemplateResponse
 
 from dependencies import get_hostess, get_templates
@@ -37,11 +36,9 @@ async def join_lobby(
 
 @router.post('/hostess/add_player')
 async def add_player(
-        request: Request,
         lobby_id: int,
         name: str,
         hostess: Hostess = Depends(get_hostess),
-        templates: Jinja2Templates = Depends(get_templates)
         ):
 
     if lobby_id not in hostess.lobbies.keys():
@@ -51,23 +48,31 @@ async def add_player(
     player_id = lobby.add_player(name, "jobless")
     player = lobby.players[player_id]
 
-    response = {"status": "ok", "player_id": player_id}
+    balances = {}
+    for balance in player.balances.values():
+        balances[balance.id] = {
+            'id': balance.id,
+            'type': balance.type,
+            'money': balance.money
+        }
+
+    player_dict = {
+        "id": player.id,
+        "name": player.name,
+        "role": player.role.value,
+        "balances": balances
+    }
+
     response = {
         "status": "ok",
-        "player_id": player.id,
-        "player_name": player.name,
-        "player_role": player.role.value,
-        "player_balance_id": lobby.get_balance(player.id).id,
-        "money": lobby.get_balance(player.id).money
+        "player": player_dict
     }
     return response
 
 @router.get('/hostess/get_players')
 async def get_players(
-        request: Request,
         lobby_id: int,
         hostess: Hostess = Depends(get_hostess),
-        templates: Jinja2Templates = Depends(get_templates)
         ):
 
     if lobby_id not in hostess.lobbies.keys():
@@ -76,13 +81,23 @@ async def get_players(
     lobby: Lobby = hostess.lobbies[lobby_id]
     players_dict = {}
     for player in lobby.players.values():
-        players_dict[player.id] = {
-            "player_id": player.id,
-            "player_name": player.name,
-            "player_role": player.role.value,
-            "player_balance_id": lobby.get_balance(player.id).id,
-            "money": lobby.get_balance(player.id).money
+        balances = {}
+        for balance in player.balances.values():
+            balances[balance.id] = {
+                'id': balance.id,
+                'type': balance.type,
+                'money': balance.money
+            }
+        response = {
+            "status": "ok",
+            "id": player.id,
+            "name": player.name,
+            "role": player.role.value,
+            "balances": balances
         }
+
+        players_dict[player.id] = response
+
     if len(players_dict) == 0:
         response = {"status": "no players yet"}
         return response

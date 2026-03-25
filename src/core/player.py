@@ -2,14 +2,23 @@ from database.database import Database
 from .balance import Balance
 from enums.enums import PlayerRole
 
-from typing import List
+from typing import Dict, List
 
 class Player:
     def __init__(self, name: str, role: PlayerRole, lobby_id: int, database: Database) -> None:
         self.name: str = name
         self.role: PlayerRole = role
         self.lobby_id: int = lobby_id
+        self.balances: Dict[int, Balance] = {}
         self.database: Database = database
+
+    def get_personal_balance(
+            self
+            ) -> Balance:
+        for b in self.balances.values():
+            if b.type == 'personal':
+                return b
+        raise Exception
 
     def insert_to_db(self):
         query = """

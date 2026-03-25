@@ -1,27 +1,18 @@
 import { add_player_row } from "./add_player_row.js";
+import { add_balance_to_selector } from "./add_balance_to_selector.js";
+import { save_player_state } from "./save_player_state.js";
 
 export function handle_socket(event) {
     const res = JSON.parse(event.data);
 
     switch (res.type) {
         case "other_player_joined":
-            // player = {
-            //     player_id: res.player_id,
-            //     player_name: res.player_name,
-            //     player_role: res.player_role,
-            //     balance_id: res.assigned_balance_id,
-            //     money: res.money
-            // };
+            const player = res.player;
+            save_player_state(player);
 
-            state.players[res.player_id] = {
-                player_id: res.player_id,
-                player_name: res.player_name,
-                player_role: res.player_role,
-                balance_id: res.assigned_balance_id,
-                money: res.money
-            };
-            console.log(`joined: ${res.player_name}`);
-            add_player_row(state.players[res.player_id]);
+            add_player_row(state.players[player.id]);
+            for (const balance_id of state.players[player.id].balance_ids)
+                add_balance_to_selector(state.balances[balance_id]);
             break;
 
         case "game_started":

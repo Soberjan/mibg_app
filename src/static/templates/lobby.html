@@ -13,7 +13,16 @@
     </div>
 
     <div id = "other_players">
+    </div>
 
+    <div id = "money_sender">
+        <label>
+            Сколько денег отправить 
+            <input type="text" id="money_amount" autocomplete="off"/>
+        </label>
+        <select name="счета" id="balances">
+        </select>
+        <button type="button" onclick="send_money()">Отправить деньги</button>
     </div>
 
     <div class="popup" id = "choose_name_popup">

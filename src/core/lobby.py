@@ -46,17 +46,19 @@ class Lobby:
         player = Player(name, player_role, self.id, self.database)
         player.insert_to_db()
         self.players[player.id] = player
-        balance = self.add_balance('personal', player.id, 0)
-        self.balances[player.id] = balance
+        balance = self.add_balance('personal', player.id, 500)
+        player.balances[balance.id] = balance
+        self.balances[balance.id] = balance
+
+        query = """
+            INSERT INTO player_balance (player_id, balance_id)
+            VALUES (%s, %s)
+            RETURNING id
+        """
+        params = (player.id, balance.id,)
+        self.database.execute_query(query, params)
 
         return player.id
-
-    def get_balance(self, owner_id: int):
-        for balance_owner_id, balance in self.balances.items():
-            if balance_owner_id == owner_id:
-                return balance
-        raise Exception
-        # return None
 
     def add_balance(
         self, balance_type: str, owner_id: int, money: int = 0

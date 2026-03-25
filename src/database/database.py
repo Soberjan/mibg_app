@@ -73,5 +73,6 @@ class Database():
             cur.execute(query, params)
         conn.commit()
         res = cur.fetchall()
+        self.pool.putconn(conn)
         return res
 

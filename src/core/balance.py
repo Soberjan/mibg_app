@@ -11,11 +11,11 @@ class Balance:
     
     def insert_to_db(self):
         query = """
-            INSERT INTO balance (lobby_id, owner_id, type, money) 
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO balance (lobby_id, type, money) 
+            VALUES (%s, %s, %s)
             RETURNING id;
         """
-        params = (self.lobby_id, self.owner_id, self.type, self.money)
+        params = (self.lobby_id, self.type, self.money)
 
         res = self.database.execute_query(query, params)
         self.id = res[0][0]
@@ -23,10 +23,10 @@ class Balance:
     def update_db_entry(self):
         query = """
             UPDATE player
-            SET lobby_id=%s, owner_id=%s, type=%s, money=%s
+            SET lobby_id=%s, type=%s, money=%s
             WHERE id = %s
         """
-        params = (self.lobby_id, self.owner_id, self.type, self.money, self.id)
+        params = (self.lobby_id, self.type, self.money, self.id)
 
         self.database.execute_query(query, params)
 

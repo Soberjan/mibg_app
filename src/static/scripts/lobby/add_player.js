@@ -1,4 +1,7 @@
 import { handle_socket } from "./handle_socket.js";
+import { add_player_row } from "./add_player_row.js";
+import { add_balance_to_selector } from "./add_balance_to_selector.js";
+import { save_player_state } from "./save_player_state.js";
 import { state } from "./state.js";
 
 export async function add_player() {
@@ -21,15 +24,14 @@ export async function add_player() {
 
     if (res.status == "ok") {
         for (const player of Object.values(res.players)) {
-            state.players[player.player_id] = {
-                player_id: player.player_id,
-                player_name: player.player_name,
-                player_role: player.player_role,
-                balance_id: player.player_balance_id,
-                money: player.money
-            };
+            save_player_state(player);
+            console.log(state);
 
-            add_player_row(state.players[player.player_id]);
+            add_player_row(state.players[player.id]);
+            for (const balance_id of state.players[player.id].balance_ids)
+            {
+                add_balance_to_selector(state.balances[balance_id]);
+            }
         }
     }
 
@@ -43,19 +45,18 @@ export async function add_player() {
     res = await response.json();
 
     if (res.status === "ok") {
-        const name_span = document.getElementById("name");
-        name_span.innerHTML = res.player_name;
-        const balance_span = document.getElementById("balance");
-        balance_span.innerHTML = res.money;
-        state.local_player_id = res.player_id;
+        state.local_player_id = res.player.id;
+        save_player_state(res.player);
 
-        state.players[res.player_id] = {
-            player_id: res.player_id,
-            player_name: res.player_name,
-            player_role: res.player_role,
-            balance_id: res.assigned_balance_id,
-            money: res.money
-        };
+        state.personal_balance_id = Object.values(res.player.balances)[0].id;
+
+        const name_span = document.getElementById("name");
+        name_span.innerHTML = res.player.name;
+
+        const personal_balance = state.balances[state.personal_balance_id];
+        const balance_span = document.getElementById("balance");
+        balance_span.id = `balance_${personal_balance.id}`;
+        balance_span.innerHTML = personal_balance.money;
 
         state.ws = new WebSocket(
             `ws://127.0.0.1:8000/lobby?lobby_id=${lobby_id}&player_id=${state.local_player_id}`
@@ -68,7 +69,6 @@ export async function add_player() {
                 type: "player_joined",
                 player_id: state.local_player_id
             });
-
 
             state.ws.send(msg);
         }
