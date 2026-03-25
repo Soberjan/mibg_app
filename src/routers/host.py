@@ -49,8 +49,17 @@ async def add_player(
 
     lobby: Lobby = hostess.lobbies[lobby_id]
     player_id = lobby.add_player(name, "jobless")
+    player = lobby.players[player_id]
 
     response = {"status": "ok", "player_id": player_id}
+    response = {
+        "status": "ok",
+        "player_id": player.id,
+        "player_name": player.name,
+        "player_role": player.role.value,
+        "player_balance_id": lobby.get_balance(player.id).id,
+        "money": lobby.get_balance(player.id).money
+    }
     return response
 
 @router.get('/hostess/get_players')

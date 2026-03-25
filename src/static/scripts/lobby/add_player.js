@@ -43,6 +43,10 @@ export async function add_player() {
     res = await response.json();
 
     if (res.status === "ok") {
+        const name_span = document.getElementById("name");
+        name_span.innerHTML = res.player_name;
+        const balance_span = document.getElementById("balance");
+        balance_span.innerHTML = res.money;
         state.local_player_id = res.player_id;
 
         state.players[res.player_id] = {
@@ -65,7 +69,6 @@ export async function add_player() {
                 player_id: state.local_player_id
             });
 
-            console.log(state.ws);
 
             state.ws.send(msg);
         }
