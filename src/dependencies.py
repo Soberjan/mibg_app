@@ -1,7 +1,10 @@
-from fastapi import Request
+from fastapi import Request, WebSocket
 
 def get_hostess(request: Request):
     return request.app.state.hostess
+
+def get_hostess_ws(websocket: WebSocket):
+    return websocket.app.state.hostess
 
 def get_database(request: Request):
     return request.app.state.database

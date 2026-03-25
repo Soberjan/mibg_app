@@ -17,6 +17,6 @@ class Hostess:
         return lobby.id
 
     def get_lobby(self, lobby_id):
-        if lobby_id not in self.lobbies.keys():
-            return 'no such lobby'
+        # if lobby_id not in self.lobbies.keys():
+        #     return 'no such lobby'
         return self.lobbies[lobby_id]

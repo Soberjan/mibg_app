@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 from fastapi import HTTPException
 
@@ -10,10 +11,10 @@ from database.database import Database
 class Lobby:
     def __init__(self, state: str, database: Database) -> None:
         self.state = state
-        self.players = {}
+        self.players: Dict[int, Player] = {}
         self.balances = {}
         self.database: Database = database
-        self.sockets = []
+        self.sockets = {}
 
     def insert_to_db(self):
         query = """
@@ -24,6 +25,7 @@ class Lobby:
         params = (self.state,)
 
         res = self.database.execute_query(query, params)
+
         self.id = res[0][0]
 
     def update_db_entry(self):
@@ -44,6 +46,17 @@ class Lobby:
         player = Player(name, player_role, self.id, self.database)
         player.insert_to_db()
         self.players[player.id] = player
+        balance = self.add_balance('personal', player.id, 0)
+        self.balances[player.id] = balance
+
+        return player.id
+
+    def get_balance(self, owner_id: int):
+        for balance_owner_id, balance in self.balances.items():
+            if balance_owner_id == owner_id:
+                return balance
+        raise Exception
+        # return None
 
     def add_balance(
         self, balance_type: str, owner_id: int, money: int = 0
@@ -55,8 +68,8 @@ class Lobby:
 
     def save_state(self):
         self.update_db_entry()
-        for player in self.players:
+        for _, player in self.players.items():
             player.update_db_entry()
-        for balance in self.balances:
+        for _, balance in self.balances.items():
             balance.update_db_entry()
 

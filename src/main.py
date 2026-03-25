@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from config import Config
 load_dotenv()
 Config.init()
-from routers import host, home
+from routers import host, home, player_sockets
 from core.hostess import Hostess
 from database.database import Database
 
@@ -28,3 +28,4 @@ app.state.templates = Jinja2Templates(directory='src/static/templates/')
 
 app.include_router(host.router)
 app.include_router(home.router)
+app.include_router(player_sockets.router)

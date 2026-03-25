@@ -57,9 +57,7 @@ class Database():
         conn = self.pool.getconn()
         try:
             cur = conn.cursor()
-            # cur.execute('SET search_path to testing;')
             cur.execute(query, values)
-            # data = cur.fetchall()
             conn.commit()
         except Exception as e:
             print(f"{e}")
@@ -73,6 +71,7 @@ class Database():
             cur.execute(query)
         else:
             cur.execute(query, params)
+        conn.commit()
         res = cur.fetchall()
         return res
 

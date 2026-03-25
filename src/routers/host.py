@@ -15,6 +15,7 @@ async def create_lobby(hostess: Hostess = Depends(get_hostess)):
         lobby_id = hostess.create_lobby()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't create lobby because {e}")
+    print('created lobby')
     return {'status': 'ok', 'lobby_id': lobby_id}
 
 @router.get('/hostess/join_lobby')
@@ -34,7 +35,7 @@ async def join_lobby(
             context={"lobby_id": lobby_id}
             )
 
-@router.get('/hostess/add_player')
+@router.post('/hostess/add_player')
 async def add_player(
         request: Request,
         lobby_id: int,
@@ -52,3 +53,30 @@ async def add_player(
     response = {"status": "ok", "player_id": player_id}
     return response
 
+@router.get('/hostess/get_players')
+async def get_players(
+        request: Request,
+        lobby_id: int,
+        hostess: Hostess = Depends(get_hostess),
+        templates: Jinja2Templates = Depends(get_templates)
+        ):
+
+    if lobby_id not in hostess.lobbies.keys():
+        raise HTTPException(status_code=500, detail=f"Lobby with id {lobby_id} does not exist")
+
+    lobby: Lobby = hostess.lobbies[lobby_id]
+    players_dict = {}
+    for player in lobby.players.values():
+        players_dict[player.id] = {
+            "player_id": player.id,
+            "player_name": player.name,
+            "player_role": player.role.value,
+            "player_balance_id": lobby.get_balance(player.id).id,
+            "money": lobby.get_balance(player.id).money
+        }
+    if len(players_dict) == 0:
+        response = {"status": "no players yet"}
+        return response
+
+    response = {"status": "ok", "players": players_dict}
+    return response
