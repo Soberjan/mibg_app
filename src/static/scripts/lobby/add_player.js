@@ -1,13 +1,12 @@
-import { handle_socket } from "./handle_socket.js";
+import { handle_socket } from "../handle_socket.js";
+import { add_voting_option } from "../voting/add_voting_option.js";
 import { add_player_row } from "./add_player_row.js";
-import { add_balance_to_selector } from "./add_balance_to_selector.js";
+import { add_balance_to_selector } from "../transactions/add_balance_to_selector.js";
+import { add_start_vote_ui } from "../voting/add_start_vote_ui.js";
 import { save_player_state } from "./save_player_state.js";
-import { state } from "./state.js";
+import { state } from "../state.js";
 
 export async function add_player() {
-    const overlay = document.getElementById("mypopit");
-    overlay.classList.toggle("hidden");
-
     const input = document.getElementById("name_text");
     const name = input.value;
 
@@ -25,9 +24,9 @@ export async function add_player() {
     if (res.status == "ok") {
         for (const player of Object.values(res.players)) {
             save_player_state(player);
-            console.log(state);
 
             add_player_row(state.players[player.id]);
+            add_voting_option(state.players[player.id]);
             for (const balance_id of state.players[player.id].balance_ids)
             {
                 add_balance_to_selector(state.balances[balance_id]);
@@ -46,7 +45,15 @@ export async function add_player() {
 
     if (res.status === "ok") {
         state.local_player_id = res.player.id;
+        state.lobby_owner = res.player.lobby_owner;
         save_player_state(res.player);
+        if (state.lobby_owner) {
+            add_start_vote_ui();
+        }
+        else {
+            const add_player_text = document.getElementById("add_player_text");
+            add_player_text.innerHTML = "Вы зарегистрировались в системе, дождитесь начала голосования";
+        }
 
         state.personal_balance_id = Object.values(res.player.balances)[0].id;
 
@@ -73,7 +80,8 @@ export async function add_player() {
             state.ws.send(msg);
         }
 
-
+        const add_player_button = document.getElementById("add_player_button");
+        add_player_button.disabled = true;
     } else {
         console.error(result.message);
     }

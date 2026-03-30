@@ -1,4 +1,4 @@
-import { state } from "./state.js";
+import { state } from "../state.js";
 
 export async function send_money() {
     const balance_selector = document.getElementById("balances");

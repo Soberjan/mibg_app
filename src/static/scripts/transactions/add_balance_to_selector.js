@@ -1,4 +1,4 @@
-import { state } from "./state.js";
+import { state } from "../state.js";
 
 export function add_balance_to_selector(balance) {
     const container = document.getElementById("balances");

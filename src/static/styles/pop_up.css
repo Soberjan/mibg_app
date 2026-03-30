@@ -1,27 +1,29 @@
 .popup {
-  display: inline-block;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    position: fixed;
+    inset: 0;
+    display: block;
+    pointer-events: none;
 }
 
 .popup .popuptext {
-  display: block;
-  width: 720px;
-  height: 720px;
-  background-color: #111;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: fixed;
-  z-index: 1;
-  top: 0%;
-  left: 0%;
+    pointer-events: auto;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    width: min(90vw, 420px);
+    max-height: 90vh;
+    overflow-y: auto;
+
+    background: #0f172a;
+    color: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    z-index: 1000;
 }
 
 .popup .popuptext.hidden {
-    display: None;
+    display: none;
 }

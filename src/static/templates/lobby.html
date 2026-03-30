@@ -1,40 +1,68 @@
 <html>
 <head>
-    <title> {{ lobby_id }} </title>
+    <title>{{ lobby_id }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles/base.css">
     <link rel="stylesheet" href="/static/styles/pop_up.css">
 </head>
 <body>
-    <h1> {{ lobby_id }} </h1>
+    <div class="page">
+        <h1>Lobby {{ lobby_id }}</h1>
 
-    <div id = "lobby_menu">
-        <label> welcome to lobby {{ lobby_id }} </label>
-        <label> your name is <label id = "name"> </label> </label>
-        <label> your balance is <label id = "balance"> </label> </label>
-    </div>
+        <div id="lobby_menu" class="section">
+            <div class="row">
+                <label>welcome to lobby {{ lobby_id }}</label>
+                <label>your name is <span id="name"></span></label>
+                <label>your balance is <span id="balance"></span></label>
+            </div>
+        </div>
 
-    <div id = "other_players">
-    </div>
+        <div id="other_players" class="section">
+        </div>
 
-    <div id = "money_sender">
-        <label>
-            Сколько денег отправить 
+        <div id="money_sender" class="section">
+            <label for="money_amount">Сколько денег отправить</label>
             <input type="text" id="money_amount" autocomplete="off"/>
-        </label>
-        <select name="счета" id="balances">
-        </select>
-        <button type="button" onclick="send_money()">Отправить деньги</button>
-    </div>
 
-    <div class="popup" id = "choose_name_popup">
-        <div class = "popuptext show" id = "mypopit">
-            <label>Введите ваше имя: <input type="text" id="name_text" autocomplete="off"/></label>
-            <button type="button" onclick="add_player()">Подтвердить</button>
+            <label for="balances">Счета</label>
+            <select name="счета" id="balances">
+            </select>
+
+            <button type="button" onclick="send_money()">Отправить деньги</button>
+        </div>
+
+        <div class="popup" id="popups">
+            <div class="popuptext" id="registration_overlay">
+                <label>
+                    Введите ваше имя:
+                    <input type="text" id="name_text" autocomplete="off"/>
+                </label>
+                <button id="add_player_button" type="button" onclick="add_player()">Подтвердить</button>
+                <label id="add_player_text"></label>
+            </div>
+
+            <div class="popuptext hidden" id="voting_overlay">
+                <span id="round_text">
+                    Раунд голосования:
+                    <span id="round_number_text"></span>
+                </span>
+                <label>Выберете, кто будет политиком:</label>
+                <div>
+                    Время голосования: <span id="voting_timer">00:00</span>
+                </div>
+                <select name="new_politician" id="voting_options"></select>
+                <button id="vote_button" type="button" onclick="vote()">Проголосовать</button>
+            </div>
+
+            <div class="popuptext hidden" id="choose_banker_overlay">
+            </div>
         </div>
     </div>
+
     <script>
         window.lobby_id = "{{ lobby_id }}"
     </script>
 
-    <script type="module" src="/static/scripts/lobby/main.js"></script>
+    <script type="module" src="/static/scripts/main.js"></script>
 </body>
 </html>

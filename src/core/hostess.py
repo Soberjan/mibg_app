@@ -11,8 +11,7 @@ class Hostess:
         self.database = database
 
     def create_lobby(self):
-        lobby = Lobby('active', self.database)
-        lobby.insert_to_db()
+        lobby = Lobby('reg', self.database)
         self.lobbies[lobby.id] = lobby
         return lobby.id
 

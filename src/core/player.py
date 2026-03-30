@@ -29,7 +29,8 @@ class Player:
         params = (self.role.value, self.name, self.lobby_id,)
 
         res = self.database.execute_query(query, params)
-        self.id = res[0][0]
+        if res != None:
+            self.id = res[0][0]
 
     def update_db_entry(self):
         query = """
