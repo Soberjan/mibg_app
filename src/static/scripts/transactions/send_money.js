@@ -1,4 +1,5 @@
 import { state } from "../state.js";
+import { account_dict } from "../dicts.js";
 
 export async function send_money() {
     const balance_selector = document.getElementById("balances");
@@ -24,19 +25,8 @@ export async function send_money() {
     var res = await response.json();
 
     if (res.status === "ok") {
-        console.log(res);
-        res = res.result;
-        console.log(`balance_${res.sender_id}`);
-        const local_balance_span = document.getElementById(`balance_${res.sender_id}`);
-        const local_receiver_span = document.getElementById(`balance_${res.receiver_id}`);
-
-        local_balance_span.innerHTML = res.sender_money;
-        local_receiver_span.innerHTML = res.receiver_money;
-
-        state.balances[res.sender_id].money = res.sender_money;
-        state.balances[res.receiver_id].money = res.receiver_money;
+        console.log("money sent");
     }
 
 
-    console.log("faggot!");
 }

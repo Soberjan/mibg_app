@@ -1,27 +1,18 @@
 .popup {
     position: fixed;
     inset: 0;
-    display: block;
+    z-index: 1000;
     pointer-events: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .popup .popuptext {
     pointer-events: auto;
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-
-    width: min(90vw, 420px);
-    max-height: 90vh;
+    margin: 0;
     overflow-y: auto;
-
-    background: #0f172a;
-    color: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-    z-index: 1000;
 }
 
 .popup .popuptext.hidden {

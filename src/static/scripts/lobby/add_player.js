@@ -5,6 +5,7 @@ import { add_balance_to_selector } from "../transactions/add_balance_to_selector
 import { add_start_vote_ui } from "../voting/add_start_vote_ui.js";
 import { save_player_state } from "./save_player_state.js";
 import { state } from "../state.js";
+import { role_dict } from "../dicts.js";
 
 export async function add_player() {
     const input = document.getElementById("name_text");
@@ -59,6 +60,10 @@ export async function add_player() {
 
         const name_span = document.getElementById("name");
         name_span.innerHTML = res.player.name;
+
+        const role_span = document.getElementById("role");
+        role_span.id = `player_${res.player.id}_role`;
+        role_span.innerHTML = role_dict[res.player.role];
 
         const personal_balance = state.balances[state.personal_balance_id];
         const balance_span = document.getElementById("balance");

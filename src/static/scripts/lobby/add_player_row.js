@@ -1,27 +1,24 @@
+import { role_dict, account_dict } from "../dicts.js";
+
 export function add_player_row(player) {
     const container = document.getElementById("other_players");
 
     const row = document.createElement("div");
+    row.classList.add("player");
     row.id = `player_${player.id}_row`;
 
     const nameSpan = document.createElement("span");
     nameSpan.id = `player_${player.id}_name`;
+    nameSpan.classList.add("player_field");
     nameSpan.textContent = player.name;
-
-    const separator1 = document.createElement("span");
-    separator1.textContent = " | ";
 
     const roleSpan = document.createElement("span");
     roleSpan.id = `player_${player.id}_role`;
-    roleSpan.textContent = player.role;
-
-    const separator2 = document.createElement("span");
-    separator2.textContent = " | ";
+    roleSpan.classList.add("player_field");
+    roleSpan.textContent = role_dict[player.role];
 
     row.appendChild(nameSpan);
-    row.appendChild(separator1);
     row.appendChild(roleSpan);
-    row.appendChild(separator2);
 
     const balances = []
     for (const balance_id of player.balance_ids)
@@ -30,12 +27,10 @@ export function add_player_row(player) {
     for (const balance of balances) {
         const balance_span = document.createElement("span");
         balance_span.id = `balance_${balance.id}`;
-        balance_span.textContent = balance.money;
+        balance_span.classList.add("player_field");
+        balance_span.textContent = account_dict[balance.type] + " " + balance.money;
 
-        const balance_separator = document.createElement("span");
-        separator2.textContent = " | ";
         row.appendChild(balance_span);
-        row.appendChild(balance_separator);
     }
 
     container.appendChild(row);

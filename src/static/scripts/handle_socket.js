@@ -6,6 +6,7 @@ import { save_player_state } from "./lobby/save_player_state.js";
 import { add_voting_option } from "./voting/add_voting_option.js";
 import { start_countdown } from "./timer/count_down_timer.js";
 import { state } from "./state.js";
+import { account_dict } from "./dicts.js";
 
 export function handle_socket(event) {
     const res = JSON.parse(event.data);
@@ -30,11 +31,18 @@ export function handle_socket(event) {
 
         case "money_changed":
             const data = res.result;
-            const local_balance_span = document.getElementById(`balance_${data.sender_id}`);
+            const local_sender_span = document.getElementById(`balance_${data.sender_id}`);
             const local_receiver_span = document.getElementById(`balance_${data.receiver_id}`);
 
-            local_balance_span.innerHTML = data.sender_money;
-            local_receiver_span.innerHTML = data.receiver_money;
+            if (state.local_player_id === state.balances[data.sender_id].owner_id)
+                local_sender_span.innerHTML = data.sender_money;
+            else
+                local_sender_span.innerHTML = account_dict[state.balances[data.sender_id].type] + " " + data.sender_money;
+
+            if (state.local_player_id === state.balances[data.receiver_id].owner_id)
+                local_receiver_span.innerHTML = data.receiver_money;
+            else
+                local_receiver_span.innerHTML = account_dict[state.balances[data.receiver_id].type] + " " + data.receiver_money;
 
             state.balances[data.sender_id].money = data.sender_money;
             state.balances[data.receiver_id].money = data.receiver_money;
@@ -71,13 +79,15 @@ export function handle_socket(event) {
             state.players[res.winner_id].role = "politician";
             player_role_text = document.getElementById(`player_${res.winner_id}_role`);
             if (player_role_text)
+            {
+                console.log("niger");
                 player_role_text.innerHTML = "политик";
+            }
             choose_banker_ui();
 
             break;
 
         case "banker_chosen":
-            console.log("выбрали банкира");
             state.players[res.banker_id].role = "banker";
             player_role_text = document.getElementById(`player_${res.banker_id}_role`);
             if (player_role_text)

@@ -1,0 +1,107 @@
+#name {
+    position: absolute;
+    top: 2%;
+    left: 20%;
+    font-size: 72px;
+}
+
+.upper_right {
+    position: flex;
+    top: 5%;
+    left: 95%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    font-size: 32px;
+}
+
+.menu {
+    position: flex;
+    top: 15%;
+    left: 0;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    height: 64px;
+
+    font-size: 32px;
+}
+.menu button {
+    margin: 1;
+}
+
+.submenu {
+    display: block;
+    border: 1px solid black;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+#other_players {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.player {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    /* background: rgba(255, 255, 255, 0.05); */
+}
+
+.player_field {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    font-size: 20px;
+    white-space: nowrap;
+}
+
+.player_name {
+    font-weight: 700;
+}
+
+.button_row {
+    /* top: 15%; */
+    left: 0;
+
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    align-items: flex-end;
+    gap: 12px;
+}
+
+#money_sender {
+    /* top: 15%; */
+    left: 0;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+#money_amount {
+    max-width: 100px;
+}
+
+#balances {
+    min-width: 100px;
+    max-width: 200px;
+}
+
