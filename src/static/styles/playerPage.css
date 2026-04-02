@@ -5,7 +5,7 @@
     font-size: 72px;
 }
 
-.upper_right {
+.upperRight {
     position: flex;
     top: 5%;
     left: 95%;
@@ -45,7 +45,7 @@
     display: none;
 }
 
-#other_players {
+#otherPlayers {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -62,7 +62,7 @@
     /* background: rgba(255, 255, 255, 0.05); */
 }
 
-.player_field {
+.playerField {
     padding: 4px 10px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.12);
@@ -71,11 +71,11 @@
     white-space: nowrap;
 }
 
-.player_name {
+.playerName {
     font-weight: 700;
 }
 
-.button_row {
+.buttonRow {
     /* top: 15%; */
     left: 0;
 
@@ -86,7 +86,7 @@
     gap: 12px;
 }
 
-#money_sender {
+#moneySender {
     /* top: 15%; */
     left: 0;
 
@@ -96,7 +96,7 @@
     gap: 12px;
 }
 
-#money_amount {
+#moneyAmount {
     max-width: 100px;
 }
 

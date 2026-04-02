@@ -1,6 +1,6 @@
-import { formatSeconds } from "./format_seconds.js";
+import { formatSeconds } from "./formatSeconds.js";
 
-export function start_countdown(timer_id, countdownDurationSec) {
+export function startCountdown(timerId, countdownDurationSec) {
     const countdownStartTime = Date.now();
 
     const intervalId = setInterval(() => {
@@ -12,7 +12,7 @@ export function start_countdown(timer_id, countdownDurationSec) {
             remainingSeconds = 0;
         }
 
-        document.getElementById(timer_id).textContent = formatSeconds(remainingSeconds);
+        document.getElementById(timerId).textContent = formatSeconds(remainingSeconds);
 
         if (remainingSeconds <= 0) {
             clearInterval(intervalId);

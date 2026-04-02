@@ -1,10 +1,10 @@
 <html>
 <head>
-    <title>Лобби {{ lobby_id }}</title>
+    <title>Лобби {{ lobbiId }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/styles/base.css">
-    <link rel="stylesheet" href="/static/styles/pop_up.css">
-    <link rel="stylesheet" href="/static/styles/player_page.css">
+    <link rel="stylesheet" href="/static/styles/popUp.css">
+    <link rel="stylesheet" href="/static/styles/playerPage.css">
 </head>
 <body>
     <div class="page">
@@ -16,26 +16,26 @@
         </div>
 
         <div class="menu">
-            <button type="button" id="assets_button">Активы</button>
-            <button type="button"id="obligations_button"class="hidden">Обязательства</button>
-            <button type="button hidden"id="finances_button"class="hidden">Финансы</button>
-            <button type="button hidden"id="managment_button"class="hidden">Управление</button>
-            <button type="button"id="messages_button"class="">Сообщения</button>
+            <button type="button" id="assetsButton">Активы</button>
+            <button type="button"id="obligationsButton"class="hidden">Обязательства</button>
+            <button type="button hidden"id="financesButton"class="hidden">Финансы</button>
+            <button type="button hidden"id="managmentButton"class="hidden">Управление</button>
+            <button type="button"id="messagesButton"class="">Сообщения</button>
         </div>
         <div id="assets" class="submenu">
-            <div id="other_players" class="section">
+            <div id="otherPlayers" class="section">
             </div>
 
-            <div id="money_sender" class="section">
+            <div id="moneySender" class="section">
                 <label for="balances">Счет отправки
                     <select name="счета" id="balances">
                     </select>
                 </label>
 
-                <label for="money_amount">Сумма
-                    <input type="number" id="money_amount" autocomplete="off"/></label>
+                <label for="moneyAmount">Сумма
+                    <input type="number" id="moneyAmount" autocomplete="off"/></label>
 
-                <button type="button" onclick="send_money()">Отправить деньги</button>
+                <button type="button" onclick="sendMoney()">Отправить деньги</button>
             </div>
 
         </div>
@@ -54,31 +54,31 @@
         </div>
         <div id="finances" class="submenu">
             <h2>Выдать кредит</h2>
-            <div id="loan_giver" class="button_row section">
+            <div id="loanGiver" class="buttonRow section">
                 <label>Счет отправки
                     <select name="счета" id="credit_player_balances">
                     </select>
                 </label>
-                <label for="loan_amount">Сумма
-                    <input type="number" id="loan_amount" autocomplete="off"/></label>
-                <label for="loan_interest">Ставка
-                    <input type="number" id="loan_interest" autocomplete="off"/></label>
-                <label for="loan_time">Дедлайн
-                    <input type="text" id="loan_time" autocomplete="off"/></label>
+                <label for="loanAmount">Сумма
+                    <input type="number" id="loanAmount" autocomplete="off"/></label>
+                <label for="loanInterest">Ставка
+                    <input type="number" id="loanInterest" autocomplete="off"/></label>
+                <label for="loanTime">Дедлайн
+                    <input type="text" id="loanTime" autocomplete="off"/></label>
             </div>
             <button type="button">Выдать долг</button>
             <h2>Зарегистрировать депозит</h2>
-            <div id="deposit_giver" class="section button_row">
+            <div id="deposit_giver" class="section buttonRow">
                 <label>Счет отправки
-                    <select name="счета" id="deposit_player_balances">
+                    <select name="счета" id="depositPlayerBalances">
                     </select>
                 </label>
-                <label for="deposit_amount">Сумма
-                    <input type="number" id="deposit_amount" autocomplete="off"/></label>
-                <label for="deposit_interest">Ставка
-                    <input type="number" id="deposit_interest" autocomplete="off"/></label>
-                <label for="deposit_time">Дедлайн
-                    <input type="number" id="deposit_time" autocomplete="off"/></label>
+                <label for="depositAmount">Сумма
+                    <input type="number" id="depositAmount" autocomplete="off"/></label>
+                <label for="depositInterest">Ставка
+                    <input type="number" id="depositInterest" autocomplete="off"/></label>
+                <label for="depositTime">Дедлайн
+                    <input type="number" id="depositTime" autocomplete="off"/></label>
             </div>
             <button type="button">Регистрация депозита</button>
             <h2>
@@ -104,24 +104,24 @@
         </div>
         <div id="managment" class="submenu">
             <button type="button">Ввести новый налог</button>
-            <div id="company_register" class="section button_row">
+            <div id="company_register" class="section buttonRow">
                 <label>Игрок
-                    <select id="player_companies_selector">
+                    <select id="playerCompaniesSelector">
                     </select>
                 </label>
                 <label>Компания
-                    <select id="companies_selector">
+                    <select id="companiesSelector">
                     </select>
                 </label>
             </div>
             <button type="button">Зарегистрировать компанию</button>
-            <div id="land_register" class="section button_row">
+            <div id="land_register" class="section buttonRow">
                 <label>Игрок
-                    <select id="player_land_selector">
+                    <select id="playerLandSelector">
                     </select>
                 </label>
                 <label>Участок
-                    <select id="land_selector">
+                    <select id="landSelector">
                     </select>
                 </label>
             </div>
@@ -129,38 +129,38 @@
             <button type="button">Начать новое голосование</button>
         </div>
         <div class="popup" id="popups">
-            <div class="popuptext page" id="registration_overlay">
+            <div class="popuptext page" id="registrationOverlay">
                 <label>
                     Введите ваше имя:
-                    <input type="text" id="name_text" autocomplete="off"/>
+                    <input type="text" id="nameText" autocomplete="off"/>
                 </label>
-                <button id="add_player_button" type="button" onclick="add_player()">Подтвердить</button>
-                <label id="add_player_text"></label>
+                <button id="addPlayerButton" type="button" onclick="addPlayer()">Подтвердить</button>
+                <label id="addPlayerText"></label>
             </div>
 
-            <div class="popuptext page hidden" id="voting_overlay">
-                <span id="round_text">
+            <div class="popuptext page hidden" id="votingOverlay">
+                <span id="roundText">
                     Раунд голосования:
-                    <span id="round_number_text"></span>
+                    <span id="roundNumberText"></span>
                 </span>
                 <label>Выберете, кто будет политиком:</label>
                 <div>
-                    Время голосования: <span id="voting_timer">00:00</span>
+                    Время голосования: <span id="votingTimer">00:00</span>
                 </div>
-                <select name="new_politician" id="voting_options"></select>
-                <button id="vote_button" type="button" onclick="vote()">Проголосовать</button>
+                <select name="new_politician" id="votingOptions"></select>
+                <button id="voteButton" type="button" onclick="vote()">Проголосовать</button>
             </div>
 
-            <div class="popuptext page hidden" id="choose_banker_overlay">
+            <div class="popuptext page hidden" id="chooseBankerOverlay">
             </div>
         </div>
     </div>
 
     <script>
-        window.lobby_id = "{{ lobby_id }}"
+        window.lobbiId = "{{ lobbiId }}"
     </script>
 
     <script type="module" src="/static/scripts/main.js"></script>
-    <script type="module" src="/static/scripts/lobby/load_game_page.js"></script>
+    <script type="module" src="/static/scripts/lobby/loadGamePage.js"></script>
 </body>
 </html>

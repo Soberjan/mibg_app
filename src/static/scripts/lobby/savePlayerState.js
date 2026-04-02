@@ -1,9 +1,9 @@
-export function save_player_state(player) {
+export function savePlayerState(player) {
     state.players[player.id] = {
         id: player.id,
         name: player.name,
         role: player.role,
-        balance_ids: []
+        balanceIds: []
     };
 
     for (const balance of Object.values(player.balances)) {
@@ -14,6 +14,6 @@ export function save_player_state(player) {
             owner_id: player.id
         };
 
-        state.players[player.id].balance_ids.push(balance.id);
+        state.players[player.id].balanceIds.push(balance.id);
     }
 }

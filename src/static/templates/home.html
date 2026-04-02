@@ -9,32 +9,31 @@
         <h1>Бизнес-игра </h1><h1>"Деньги и влияние"</h1>
 
         <div class="section">
-            <button type="button" onclick="create_lobby()">Создать лобби</button>
+            <button type="button" onclick="createLobby()">Создать лобби</button>
         </div>
 
         <div class="section">
-            <label for="lobby_id">Id лобби::</label>
-            <input type="text" id="lobby_id" autocomplete="off" value=""/>
-            <button type="button" onclick="join_lobby()">
+            <label for="lobbyId">Id лобби::</label>
+            <input type="text" id="lobbyId" autocomplete="off" value=""/>
+            <button type="button" onclick="joinLobby()">
                 Присоединиться к лобби
             </button>
         </div>
     </div>
 
     <script>
-        async function create_lobby() {
+        async function createLobby() {
             const response = await fetch("/hostess/create_lobby",
                 {method:"POST"});
             const result = await response.json();
             if (result.status == "ok") {
-                let lobby_id = result.lobby_id;
-                window.location.href=`/hostess/join_lobby?lobby_id=${lobby_id}`;
+                window.location.href=`/hostess/join_lobby?lobby_id=${result.lobby_id}`;
             }
         }
 
-        async function join_lobby() {
-            let lobby_id = document.getElementById("lobby_id").value;
-            window.location.href=`/hostess/join_lobby?lobby_id=${lobby_id}`;
+        async function joinLobby() {
+            let lobbyId = document.getElementById("lobbyId").value;
+            window.location.href=`/hostess/join_lobby?lobby_id=${lobbyId}`;
         }
     </script>
 </body>

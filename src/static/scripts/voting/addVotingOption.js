@@ -1,5 +1,5 @@
-export function add_voting_option(player) {
-    const container = document.getElementById("voting_options");
+export function addVotingOption(player) {
+    const container = document.getElementById("votingOptions");
 
     const option = document.createElement("option");
     option.value = player.id;

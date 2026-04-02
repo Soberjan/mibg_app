@@ -1,11 +1,11 @@
-export const role_dict = {
+export const roleDict = {
     jobless: "безработный",
     worker: "наемный сотрудник",
     politician: "политик",
     banker: "банкир"
 };
 
-export const account_dict = {
+export const accountDict = {
     personal: "личный",
     gov: "государственный",
     bank: "банковский"

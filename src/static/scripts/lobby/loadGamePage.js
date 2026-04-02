@@ -1,11 +1,11 @@
 import { state } from "../state.js";
 
-export function load_game_page() {
-    const assetsButton = document.getElementById("assets_button");
-    const messagesButton = document.getElementById("messages_button");
-    const obligationsButton = document.getElementById("obligations_button");
-    const finances_button = document.getElementById("finances_button");
-    const managment_button = document.getElementById("managment_button");
+export function loadGamePage() {
+    const assetsButton = document.getElementById("assetsButton");
+    const messagesButton = document.getElementById("messagesButton");
+    const obligationsButton = document.getElementById("obligationsButton");
+    const financesButton = document.getElementById("financesButton");
+    const managmentButton = document.getElementById("managmentButton");
 
     const assetsMenu = document.getElementById("assets");
     const obligationsMenu = document.getElementById("obligations");
@@ -17,12 +17,12 @@ export function load_game_page() {
     financesMenu.classList.add("hidden");
     managmentMenu.classList.add("hidden");
 
-    if (state.players[state.local_player_id].role === "politician")
-        managment_button.classList.remove("hidden");
-    if (state.players[state.local_player_id].role === "banker")
-        finances_button.classList.remove("hidden");
-    if (state.players[state.local_player_id].role === "worker" || state.players[state.local_player_id].role === "jobless")
-        obligations_button.classList.remove("hidden");
+    if (state.players[state.localPlayerId].role === "politician")
+        managmentButton.classList.remove("hidden");
+    if (state.players[state.localPlayerId].role === "banker")
+        financesButton.classList.remove("hidden");
+    if (state.players[state.localPlayerId].role === "worker" || state.players[state.localPlayerId].role === "jobless")
+        obligationsButton.classList.remove("hidden");
 
     function open_menu(menuToShow) {
         assetsMenu.classList.add("hidden");
@@ -45,10 +45,10 @@ export function load_game_page() {
     messagesButton.onclick = function () {
         open_menu(messagesMenu);
     };
-    finances_button.onclick = function () {
+    financesButton.onclick = function () {
         open_menu(financesMenu);
     };
-    managment_button.onclick = function () {
+    managmentButton.onclick = function () {
         open_menu(managmentMenu);
     };
 }
