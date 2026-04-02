@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Request, Query, Depends, WebSocket
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 
-from dependencies import get_hostess, get_templates
-from core.lobby import Lobby
-from core.hostess import Hostess
+from ..dependencies import get_hostess, get_templates
+from ..core.lobby import Lobby
+from ..core.hostess import Hostess
 
 router = APIRouter(tags=["Analytics"])
 

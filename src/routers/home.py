@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request, Query, Depends
 
-from dependencies import get_templates
+from ..dependencies import get_templates
 
 router = APIRouter(tags=["Home page"])
 

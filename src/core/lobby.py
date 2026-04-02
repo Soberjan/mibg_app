@@ -1,12 +1,12 @@
 from typing import Dict
 import asyncio
 
-from core.voter import Voter
+from .voter import Voter
 
 from .balance import Balance
 from .player import Player
-from enums.enums import PlayerRole
-from database.database import Database
+from ..enums.enums import PlayerRole
+from ..database.database import Database
 
 class Lobby:
     def __init__(self, state: str, database: Database) -> None:

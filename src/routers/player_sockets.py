@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request, Query, Depends, WebSocket
 
-from dependencies import get_hostess_ws
-from core.hostess import Hostess
+from ..dependencies import get_hostess_ws
+from ..core.hostess import Hostess
 
 router = APIRouter(tags=["Analytics"])
 

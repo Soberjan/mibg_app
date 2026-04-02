@@ -1,8 +1,8 @@
-from database.database import Database
-from .balance import Balance
-from enums.enums import PlayerRole
-
 from typing import Dict, List
+
+from ..database.database import Database
+from .balance import Balance
+from ..enums.enums import PlayerRole
 
 class Player:
     def __init__(self, name: str, role: PlayerRole, lobby_id: int, database: Database) -> None:

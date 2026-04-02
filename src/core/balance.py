@@ -1,5 +1,4 @@
-from database.database import Database
-
+from ..database.database import Database
 
 class Balance:
     def __init__(self, lobby_id: int, owner_id: int, balance_type: str, database: Database, money: int = 0) -> None:

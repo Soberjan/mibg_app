@@ -1,6 +1,6 @@
 import asyncio
 
-from enums.enums import PlayerRole
+from ..enums.enums import PlayerRole
 
 class Voter:
     def __init__(self, lobby):

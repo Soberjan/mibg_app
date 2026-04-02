@@ -23,18 +23,18 @@
 
     <script>
         async function create_lobby() {
-            const response = await fetch("http://127.0.0.1:8000/hostess/create_lobby",
+            const response = await fetch("/hostess/create_lobby",
                 {method:"POST"});
             const result = await response.json();
             if (result.status == "ok") {
                 let lobby_id = result.lobby_id;
-                window.location.href=`http://127.0.0.1:8000/hostess/join_lobby?lobby_id=${lobby_id}`;
+                window.location.href=`/hostess/join_lobby?lobby_id=${lobby_id}`;
             }
         }
 
         async function join_lobby() {
             let lobby_id = document.getElementById("lobby_id").value;
-            window.location.href=`http://127.0.0.1:8000/hostess/join_lobby?lobby_id=${lobby_id}`;
+            window.location.href=`/hostess/join_lobby?lobby_id=${lobby_id}`;
         }
     </script>
 </body>

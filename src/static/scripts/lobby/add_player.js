@@ -1,8 +1,8 @@
 import { handle_socket } from "../handle_socket.js";
-import { add_voting_option } from "../voting/add_voting_option.js";
+import { add_voting_option } from "../votin/add_voting_option.js";
 import { add_player_row } from "./add_player_row.js";
 import { add_balance_to_selector } from "../transactions/add_balance_to_selector.js";
-import { add_start_vote_ui } from "../voting/add_start_vote_ui.js";
+import { add_start_vote_ui } from "../votin/add_start_vote_ui.js";
 import { save_player_state } from "./save_player_state.js";
 import { state } from "../state.js";
 import { role_dict } from "../dicts.js";
@@ -14,7 +14,7 @@ export async function add_player() {
     const lobby_id = state.lobby_id;
 
     var response = await fetch(
-        `http://127.0.0.1:8000/hostess/get_players?lobby_id=${lobby_id}`,
+        `/hostess/get_players?lobby_id=${lobby_id}`,
         {
             method: "GET"
         }
@@ -36,7 +36,7 @@ export async function add_player() {
     }
 
     response = await fetch(
-        `http://127.0.0.1:8000/hostess/add_player?lobby_id=${lobby_id}&name=${name}`,
+        `/hostess/add_player?lobby_id=${lobby_id}&name=${name}`,
         {
             method: "POST"
         }
@@ -71,7 +71,7 @@ export async function add_player() {
         balance_span.innerHTML = personal_balance.money;
 
         state.ws = new WebSocket(
-            `ws://127.0.0.1:8000/lobby?lobby_id=${lobby_id}&player_id=${state.local_player_id}`
+            `ws://${window.location.host}/lobby?lobby_id=${lobby_id}&player_id=${state.local_player_id}`
         );
 
         state.ws.onmessage = handle_socket;

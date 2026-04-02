@@ -1,9 +1,9 @@
 from typing import List
 
-from psycopg2 import connect, sql
+from psycopg2 import sql
 from psycopg2.pool import SimpleConnectionPool
 
-from config import Config
+from ..config import Config
 
 class Database():
     """

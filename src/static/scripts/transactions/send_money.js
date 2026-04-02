@@ -16,7 +16,7 @@ export async function send_money() {
 
 
     var response = await fetch(
-        `http://127.0.0.1:8000/hostess/send_money?lobby_id=${lobby_id}&sender_id=${sender_id}&receiver_id=${receiver_id}&amount=${amount}`,
+        `/hostess/send_money?lobby_id=${lobby_id}&sender_id=${sender_id}&receiver_id=${receiver_id}&amount=${amount}`,
         {
             method: "PUT"
         }

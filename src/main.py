@@ -4,12 +4,12 @@ from fastapi.templating import Jinja2Templates
 from dotenv import load_dotenv
 from fastapi.templating import Jinja2Templates
 
-from config import Config
+from .config import Config
 load_dotenv()
 Config.init()
-from routers import host, home, player_sockets
-from core.hostess import Hostess
-from database.database import Database
+from .routers import host, home, player_sockets
+from .core.hostess import Hostess
+from .database.database import Database
 
 app = FastAPI()
 

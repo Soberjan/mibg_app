@@ -1,7 +1,7 @@
 from uuid import uuid1
 from typing import Dict
 
-from database.database import Database
+from ..database.database import Database
 
 from .lobby import Lobby
 
