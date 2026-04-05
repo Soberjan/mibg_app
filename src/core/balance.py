@@ -32,4 +32,5 @@ class Balance:
 
     def to_dict(self):
         balance_dict = self.__dict__.copy()
+        balance_dict.pop('database')
         return balance_dict

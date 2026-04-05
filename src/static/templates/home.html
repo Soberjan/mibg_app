@@ -21,20 +21,6 @@
         </div>
     </div>
 
-    <script>
-        async function createLobby() {
-            const response = await fetch("/hostess/create_lobby",
-                {method:"POST"});
-            const result = await response.json();
-            if (result.status == "ok") {
-                window.location.href=`/hostess/join_lobby?lobby_id=${result.lobby_id}`;
-            }
-        }
-
-        async function joinLobby() {
-            let lobbyId = document.getElementById("lobbyId").value;
-            window.location.href=`/hostess/join_lobby?lobby_id=${lobbyId}`;
-        }
-    </script>
+    <script type="module" src="/static/scripts/homeMain.js"></script>
 </body>
 </html>

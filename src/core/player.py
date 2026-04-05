@@ -8,6 +8,7 @@ class Player:
     def __init__(self, name: str, role: PlayerRole, lobby_id: int, database: Database) -> None:
         self.name: str = name
         self.role: PlayerRole = role
+        self.is_registered = False
         self.lobby_id: int = lobby_id
         self.balances: Dict[int, Balance] = {}
         self.database: Database = database
@@ -41,3 +42,11 @@ class Player:
         params = (self.role.value, self.name, self.lobby_id, self.id,)
         self.database.execute_query(query, params)
 
+    def to_dict(self):
+        d = self.__dict__.copy()
+        d.pop('balances')
+        d.pop('database')
+
+        d['balance_ids'] = list(self.balances.keys())
+
+        return d

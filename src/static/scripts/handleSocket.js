@@ -23,10 +23,24 @@ export function handleSocket(event) {
                 addBalanceToSelector(state.balances[balanceId]);
             const numberOfPlayersSpan = document.getElementById("voteNumberOfPlayers");
             if (numberOfPlayersSpan) {
+                let votedPlayers = 0;
                 const numberOfPlayers = Object.keys(state.players).length;
                 numberOfPlayersSpan.innerHTML = `${numberOfPlayers}/6`;
             }
             addVotingOption(state.players[player.id]);
+            break;
+
+        case "other_player_registered":
+            state.players[player_id].isRegistered = true;
+            if (!state.lobbyOwner)
+                break;
+
+            let registeredPlayers = 0;
+            for (const p of state.players)
+                if (p.isRegistered)
+                    registeredPlayers += 1;
+            const registeredText = document.getElementById(`registeredPlayers`);
+            registeredText.innerHTML = registeredPlayers;
             break;
 
         case "money_changed":

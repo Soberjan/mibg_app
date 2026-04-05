@@ -1,5 +1,6 @@
 export const state = {
     lobbyId: "",
+    lobbyStatus: "",
     lobbyOwner: false,
     localPlayerId: null,
     personalBalanceId: -1,

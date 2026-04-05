@@ -9,6 +9,7 @@ class Hostess:
     def __init__(self, database: Database) -> None:
         self.lobbies: Dict[int, Lobby] = {}
         self.database = database
+        self.clients = {}
 
     def create_lobby(self):
         lobby = Lobby('reg', self.database)
@@ -16,6 +17,8 @@ class Hostess:
         return lobby.id
 
     def get_lobby(self, lobby_id):
-        # if lobby_id not in self.lobbies.keys():
-        #     return 'no such lobby'
+        if lobby_id not in self.lobbies.keys():
+            e = Exception()
+            e.add_note('no such lobby')
+            raise e
         return self.lobbies[lobby_id]

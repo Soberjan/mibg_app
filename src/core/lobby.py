@@ -9,10 +9,10 @@ from ..enums.enums import PlayerRole
 from ..database.database import Database
 
 class Lobby:
-    def __init__(self, state: str, database: Database) -> None:
+    def __init__(self, status: str, database: Database) -> None:
         self.database: Database = database
         self.owner_id = None
-        self.state = state
+        self.status = status
         self.id = self.insert_to_db()
         self.players: Dict[int, Player] = {}
         self.balances: Dict[int, Balance] = {}
@@ -25,11 +25,11 @@ class Lobby:
 
     def insert_to_db(self):
         query = """
-            INSERT INTO lobby (state) 
+            INSERT INTO lobby (status) 
             VALUES (%s)
             RETURNING id;
         """
-        params = (self.state,)
+        params = (self.status,)
 
         res = self.database.execute_query(query, params)
         if res != None:
@@ -44,7 +44,7 @@ class Lobby:
             SET state = %s
             WHERE id = %s
         """
-        params = (self.state, self.id,)
+        params = (self.status, self.id,)
         self.database.execute_query(query, params)
 
     def add_player(self, name: str, role: str):
@@ -118,3 +118,6 @@ class Lobby:
     def start_game(self):
         msg = {'type': 'start_game'}
         self.notify_sockets(msg)
+
+    def current_state(self):
+        return {'state': self.status}

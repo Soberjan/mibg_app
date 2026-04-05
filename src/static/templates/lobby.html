@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Лобби {{ lobbiId }}</title>
+    <title>Лобби {{ lobbyId }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/styles/base.css">
     <link rel="stylesheet" href="/static/styles/popUp.css">
@@ -129,12 +129,12 @@
             <button type="button">Начать новое голосование</button>
         </div>
         <div class="popup" id="popups">
-            <div class="popuptext page" id="registrationOverlay">
+            <div class="popuptext page hidden" id="registrationOverlay">
                 <label>
                     Введите ваше имя:
                     <input type="text" id="nameText" autocomplete="off"/>
                 </label>
-                <button id="addPlayerButton" type="button" onclick="addPlayer()">Подтвердить</button>
+                <button id="addPlayerButton" type="button" onclick="registerPlayer()">Подтвердить</button>
                 <label id="addPlayerText"></label>
             </div>
 
@@ -157,10 +157,9 @@
     </div>
 
     <script>
-        window.lobbiId = "{{ lobbiId }}"
+        window.lobbyId = "{{ lobbyId }}"
     </script>
 
-    <script type="module" src="/static/scripts/main.js"></script>
-    <script type="module" src="/static/scripts/lobby/loadGamePage.js"></script>
+    <script type="module" src="/static/scripts/lobbyMain.js"></script>
 </body>
 </html>
