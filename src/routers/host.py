@@ -1,4 +1,5 @@
 from typing import Annotated
+import random
 import secrets
 
 from fastapi import APIRouter, HTTPException, Depends, Cookie, Response
@@ -53,7 +54,14 @@ async def join_lobby(
         )
 
     if player_id is None:
-        player_id = lobby.add_player('dood', 'jobless')
+        coin = random.randint(1, 2)
+        if coin == 1:
+            role = 'jobless'
+            initial_balance = 1700
+        else:
+            role = 'marketer'
+            initial_balance = 2200
+        player_id = lobby.add_player('dood', role, initial_balance)
         hostess.clients[client_key][lobby_id] = player_id
 
     if lobby.owner_id == None:

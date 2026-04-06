@@ -1,8 +1,8 @@
 from typing import Dict
+import random
 import asyncio
 
 from .voter import Voter
-
 from .balance import Balance
 from .player import Player
 from ..enums.enums import PlayerRole
@@ -47,7 +47,7 @@ class Lobby:
         params = (self.status, self.id,)
         self.database.execute_query(query, params)
 
-    def add_player(self, name: str, role: str):
+    def add_player(self, name: str, role: str, initial_balance: int):
         try:
             player_role = PlayerRole(role)
         except ValueError:
@@ -56,7 +56,7 @@ class Lobby:
         player = Player(name, player_role, self.id, self.database, "joined")
         player.insert_to_db()
         self.players[player.id] = player
-        balance = self.add_balance('personal', player.id, 500)
+        balance = self.add_balance('personal', player.id, initial_balance)
         player.balances[balance.id] = balance
         self.balances[balance.id] = balance
 
