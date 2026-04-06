@@ -4,6 +4,8 @@ import { addPlayerRow } from "./addPlayerRow.js";
 import { addVotingOption } from "../voting/addVotingOption.js";
 import { startVoting } from "../voting/startVoting.js";
 import { loadGamePage } from "./loadGamePage.js";
+import { startVoteText } from "../voting/startVoteText.js";
+import { roleDict } from "../dicts.js";
 
 function initLocalPlayerUI() {
     const player = state.players[state.localPlayerId];
@@ -13,10 +15,12 @@ function initLocalPlayerUI() {
     const balanceSpan = document.getElementById("localBalance");
     const influenceSpan = document.getElementById("localInfluence");
 
-
     nameSpan.textContent = player.name;
     nameSpan.id = `player${player.id}Name`;
-    roleSpan.textContent = player.role;
+    roleSpan.textContent = roleDict[player.role];
+    // КАКОГО ЪУЯ, ДЖАВА СКРИПТ? ПОЧЕМУ БЛЯТЬ?
+    if (player.role === "marketer")
+        roleSpan.textContent = "предприниматель";
     roleSpan.id = `player${player.id}Role`;
     balanceSpan.textContent = state.balances[state.personalBalanceId].money;
     balanceSpan.id = `balance${state.personalBalanceId}`;
@@ -74,6 +78,8 @@ function initRegistrationUI() {
         voteDiv.appendChild(totalPlayersSpan);
 
         container.appendChild(voteDiv);
+
+        startVoteText(registratedPlayers, totalPlayers);
     }
 
 }

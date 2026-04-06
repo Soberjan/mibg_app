@@ -4,6 +4,7 @@ import { sendMoney } from "./transactions/sendMoney.js";
 import { vote } from "./voting/vote.js";
 import { initLobbyUI } from "./lobby/initLobbyUI.js";
 import { registerPlayer } from "./lobby/registerPlayer.js";
+import { roleDict } from "./dicts.js";
 
 state.lobbyId = window.lobbyId;
 

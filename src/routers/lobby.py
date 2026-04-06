@@ -246,11 +246,6 @@ async def start_game(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
 
-    try:
-        lobby.start_game()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't start game because {e}")
-
     for socket in lobby.sockets.values():
         msg = {'type': 'start_game'}
         await socket.send_json(msg)

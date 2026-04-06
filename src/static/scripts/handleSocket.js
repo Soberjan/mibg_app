@@ -7,6 +7,7 @@ import { addVotingOption } from "./voting/addVotingOption.js";
 import { startCountdown } from "./timer/countDownTimer.js";
 import { state } from "./state.js";
 import { accountDict } from "./dicts.js";
+import { startVoteText } from "./voting/startVoteText.js";
 
 export function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -156,21 +157,3 @@ export function handleSocket(event) {
     }
 }
 
-function startVoteText(registeredPlayers, totalPlayers) {
-    const startVoteButton = document.getElementById("startVoteButton");
-    const registerPlayerText = document.getElementById("registerPlayerText");
-
-    if (totalPlayers < 3) {
-        registerPlayerText.textContent = "Дождитесь, пока подключится хотя бы 3 игрока, чтобы начать голосование";
-        startVoteButton.disabled = true;
-        return;
-    }
-    if (totalPlayers != registeredPlayers) {
-        registerPlayerText.textContent = "Дождитесь, пока все игроки зарегистрируются, чтобы начать голосование";
-        startVoteButton.disabled = true;
-    }
-    if (totalPlayers >= 3 && totalPlayers === registeredPlayers) {
-        registerPlayerText.textContent = "Можете начать голосование";
-        startVoteButton.disabled = false;
-    }
-}

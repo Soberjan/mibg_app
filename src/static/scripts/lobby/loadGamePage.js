@@ -13,16 +13,19 @@ export function loadGamePage() {
     const financesMenu = document.getElementById("finances");
     const managmentMenu = document.getElementById("managment");
     obligationsMenu.classList.add("hidden");
-    console.log("obligations should be hidden");
     messagesMenu.classList.add("hidden");
     financesMenu.classList.add("hidden");
     managmentMenu.classList.add("hidden");
+
+    obligationsButton.classList.add("hidden");
+    financesButton.classList.add("hidden");
+    managmentButton.classList.add("hidden");
 
     if (state.players[state.localPlayerId].role === "politician")
         managmentButton.classList.remove("hidden");
     if (state.players[state.localPlayerId].role === "banker")
         financesButton.classList.remove("hidden");
-    if (state.players[state.localPlayerId].role === "worker" || state.players[state.localPlayerId].role === "jobless")
+    if (state.players[state.localPlayerId].role === "marketer" || state.players[state.localPlayerId].role === "jobless")
         obligationsButton.classList.remove("hidden");
 
     function open_menu(menuToShow) {
