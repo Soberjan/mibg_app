@@ -29,22 +29,14 @@ async def player_socket(
 
             balances = {}
             for balance in player.balances.values():
-                balances[balance.id] = {
-                        'id': balance.id,
-                        'type': balance.type,
-                        'money': balance.money
-                    }
+                balances[balance.id] = balance.to_dict()
 
-            player_dict = {
-                "id": player.id,
-                "name": player.name,
-                "role": player.role.value,
-                "balances": balances,
-            }
+            player_dict = player.to_dict()
 
             response = {
                 "type": "other_player_joined",
-                "player": player_dict
+                "player": player_dict,
+                "balances": balances
             }
 
             for p_id, socket in lobby.sockets.items():
@@ -54,5 +46,3 @@ async def player_socket(
                     await socket.send_json(response)
                 except Exception as e:
                     print(f'couldn\'t send message because {e} happened')
-
-

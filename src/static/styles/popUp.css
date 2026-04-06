@@ -7,14 +7,25 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    padding: 0;
 }
 
 .popup .popuptext {
     pointer-events: auto;
     margin: 0;
     overflow-y: auto;
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
 }
 
 .popup .popuptext.hidden {
     display: none;
+}
+
+@media (max-width: 600px) {
+    .popup .popuptext {
+        max-width: 100%;
+        min-height: 100vh;
+    }
 }

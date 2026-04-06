@@ -26,7 +26,7 @@ export function addPlayerRow(player) {
 
     for (const balance of balances) {
         const balanceSpan = document.createElement("span");
-        balanceSpan.id = `balance_${balance.id}`;
+        balanceSpan.id = `balance${balance.id}`;
         balanceSpan.classList.add("playerField");
         balanceSpan.textContent = accountDict[balance.type] + " " + balance.money;
 

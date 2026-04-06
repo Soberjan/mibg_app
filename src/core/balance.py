@@ -33,4 +33,9 @@ class Balance:
     def to_dict(self):
         balance_dict = self.__dict__.copy()
         balance_dict.pop('database')
+        balance_dict.pop('lobby_id')
+        balance_dict.pop('owner_id')
+        balance_dict['ownerId'] = self.owner_id
+        balance_dict['lobbyId'] = self.lobby_id
+
         return balance_dict

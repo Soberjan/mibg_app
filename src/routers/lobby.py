@@ -17,14 +17,37 @@ async def lobby_page(
         templates: Jinja2Templates = Depends(get_templates)
     ) -> _TemplateResponse:
 
+    print('niger')
+
     return templates.TemplateResponse(
             request=request,
             name='lobby.html',
             context={"lobbyId": lobby_id}
             )
 
-@router.post('/lobby/{lobby_id}/get_state')
-async def create_lobby(
+@router.post('/lobby/{lobby_id}/get_status')
+async def get_status(
+        lobby_id: int,
+        client_key: Annotated[str | None, Cookie()] = None,
+        hostess: Hostess = Depends(get_hostess)
+    ):
+    try:
+        lobby: Lobby = hostess.get_lobby(lobby_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+
+    player_status = ""
+    if client_key not in hostess.clients or lobby_id not in hostess.clients[client_key].keys():
+        player_status = "new"
+    else:
+        player_id = hostess.clients[client_key][lobby_id]
+        player = lobby.players[player_id]
+        player_status = player.status
+
+    return {'status': 'ok', 'lobby_status': lobby.status, 'player_status': player_status}
+
+@router.get('/lobby/{lobby_id}/get_state')
+async def get_state(
         lobby_id: int,
         client_key: Annotated[str | None, Cookie()] = None,
         hostess: Hostess = Depends(get_hostess)
@@ -80,6 +103,7 @@ async def register_player(
 
     player = lobby.players[player_id]
     player.name = name
+    player.status = "registered"
     player.update_db_entry()
 
     for ws in lobby.sockets.values():

@@ -8,9 +8,10 @@ export function addStartVoteUI() {
     voteDiv.id = `startVoteUI`;
 
     const startVoteButton = document.createElement("button");
-    startVoteButton.id = `start_vote_button`;
+    startVoteButton.id = `startVoteButton`;
     startVoteButton.textContent = "Начать голосование";
     startVoteButton.onclick = startVoting;
+    startVoteButton.disabled = true;
 
     const separator1 = document.createElement("span");
     separator1.textContent = " | ";

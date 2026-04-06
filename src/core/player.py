@@ -5,8 +5,9 @@ from .balance import Balance
 from ..enums.enums import PlayerRole
 
 class Player:
-    def __init__(self, name: str, role: PlayerRole, lobby_id: int, database: Database) -> None:
+    def __init__(self, name: str, role: PlayerRole, lobby_id: int, database: Database, status: str = "") -> None:
         self.name: str = name
+        self.status: str = status
         self.role: PlayerRole = role
         self.is_registered = False
         self.lobby_id: int = lobby_id
@@ -44,9 +45,14 @@ class Player:
 
     def to_dict(self):
         d = self.__dict__.copy()
+        d['role'] = self.role.value
         d.pop('balances')
         d.pop('database')
+        d.pop('lobby_id')
+        d['lobbyId'] = self.lobby_id
+        d.pop('is_registered')
+        d['isRegistered'] = self.is_registered
 
-        d['balance_ids'] = list(self.balances.keys())
+        d['balanceIds'] = list(self.balances.keys())
 
         return d

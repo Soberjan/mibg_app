@@ -8,18 +8,18 @@
 </head>
 <body>
     <div class="page">
-        <span id="name"></span>
-        <div class="upper_right">
-            <label>Роль: <span id="role"></span></label>
-            <label>Ваш баланс: <span id="balance"></span></label>
-            <label>Очки влияния: <span id="influence">0</span></label>
+        <span id="localName"></span>
+        <div class="upperRight">
+            <label>Роль: <span id="localRole"></span></label>
+            <label>Ваш баланс: <span id="localBalance"></span></label>
+            <label>Очки влияния: <span id="localInfluence">0</span></label>
         </div>
 
-        <div class="menu">
+        <div class="menu" id="buttonsMenu">
             <button type="button" id="assetsButton">Активы</button>
             <button type="button"id="obligationsButton"class="hidden">Обязательства</button>
-            <button type="button hidden"id="financesButton"class="hidden">Финансы</button>
-            <button type="button hidden"id="managmentButton"class="hidden">Управление</button>
+            <button type="button"id="financesButton"class="hidden">Финансы</button>
+            <button type="button"id="managmentButton"class="hidden">Управление</button>
             <button type="button"id="messagesButton"class="">Сообщения</button>
         </div>
         <div id="assets" class="submenu">
@@ -84,7 +84,7 @@
             <h2>
                 Кредиты:
             </h2>
-            <section id="loans">
+            <section id="loans1">
                 Счет: Вася Дедлайн: 20:00 Ставка: 10% Сумма: 1999
 
                 <button type="button">Закрыть долг</button>
@@ -96,7 +96,7 @@
             <h2>
                 Депозиты:
             </h2>
-            <section id="loans">
+            <section id="loans2">
                 Счет: Петя Дедлайн: 20:00 Ставка: 10% Сумма: 1999
 
                 <button type="button">Вернуть депозит</button>
@@ -134,8 +134,8 @@
                     Введите ваше имя:
                     <input type="text" id="nameText" autocomplete="off"/>
                 </label>
-                <button id="addPlayerButton" type="button" onclick="registerPlayer()">Подтвердить</button>
-                <label id="addPlayerText"></label>
+                <button id="registerPlayerButton" type="button" onclick="registerPlayer()">Подтвердить</button>
+                <label id="registerPlayerText"></label>
             </div>
 
             <div class="popuptext page hidden" id="votingOverlay">
@@ -147,11 +147,16 @@
                 <div>
                     Время голосования: <span id="votingTimer">00:00</span>
                 </div>
-                <select name="new_politician" id="votingOptions"></select>
+                <select name="newPolitician" id="votingOptions"></select>
                 <button id="voteButton" type="button" onclick="vote()">Проголосовать</button>
             </div>
 
             <div class="popuptext page hidden" id="chooseBankerOverlay">
+            </div>
+            <div class="popuptext page hidden" id="errorOverlay">
+                <h1>
+                    Не удалось загрузить лобби
+                </h1>
             </div>
         </div>
     </div>

@@ -4,7 +4,7 @@ import { chooseBankerUI } from "./voting/chooseBankerUI.js";
 import { addBalanceToSelector } from "./transactions/addBalanceToSelector.js";
 import { savePlayerState } from "./lobby/savePlayerState.js";
 import { addVotingOption } from "./voting/addVotingOption.js";
-import { startCountdown } from "./timer/count_down_timer.js";
+import { startCountdown } from "./timer/countDownTimer.js";
 import { state } from "./state.js";
 import { accountDict } from "./dicts.js";
 
@@ -12,41 +12,78 @@ export function handleSocket(event) {
     const res = JSON.parse(event.data);
     let playerRoleText;
     let votingOverlay;
+    let registeredPlayers;
 
     switch (res.type) {
         case "other_player_joined":
-            const player = res.player;
-            savePlayerState(player);
-
-            addPlayerRow(state.players[player.id]);
-            for (const balanceId of state.players[player.id].balanceIds)
-                addBalanceToSelector(state.balances[balanceId]);
-            const numberOfPlayersSpan = document.getElementById("voteNumberOfPlayers");
-            if (numberOfPlayersSpan) {
-                let votedPlayers = 0;
-                const numberOfPlayers = Object.keys(state.players).length;
-                numberOfPlayersSpan.innerHTML = `${numberOfPlayers}/6`;
+            state.players[res.player.id] = res.player;
+            for (const balance of Object.values(res.balances)) {
+                state.balances[balance.id] = balance;
+                addBalanceToSelector(balance);
             }
-            addVotingOption(state.players[player.id]);
+            addPlayerRow(res.player);
+
+            const totalPlayersSpan = document.getElementById("totalPlayers");
+            if (totalPlayersSpan) {
+                const numberOfPlayers = Object.keys(state.players).length;
+                totalPlayersSpan.innerHTML = `${numberOfPlayers}`;
+            }
+            addVotingOption(state.players[res.player.id]);
+
+            if (state.lobbyOwner) {
+                registeredPlayers = 0;
+                for (const p of Object.values(state.players))
+                    if (p.status === "registered")
+                        registeredPlayers += 1;
+                startVoteText(registeredPlayers, Object.keys(state.players).length);
+            }
+
+            console.log('added all the shit because other player joined');
             break;
 
-        case "other_player_registered":
-            state.players[player_id].isRegistered = true;
+        case "player_registered":
+            console.log(res);
+            console.log(state);
+            state.players[res.player_id].status = "registered";
+            state.players[res.player_id].name = res.name;
+
+            const nameSpan = document.getElementById(`player${res.player_id}Name`);
+            nameSpan.textContent = res.name;
+
+            let pb;
+            for (const pbb of Object.values(state.balances))
+                if (pbb.ownerId === res.player_id && pbb.type === "personal")
+                    pb = pbb;
+            if (pb) {
+                const balanceOption = document.getElementById(`balance${pb.id}Option`);
+                if (balanceOption)
+                    balanceOption.textContent = res.name;
+            }
+            else
+                console.log("niger");
+
+            const votingOption = document.getElementById(`player${res.player_id}VotingOption`);
+            if (votingOption)
+                votingOption.textContent = res.name;
             if (!state.lobbyOwner)
                 break;
 
-            let registeredPlayers = 0;
-            for (const p of state.players)
-                if (p.isRegistered)
+            registeredPlayers = 0;
+            for (const p of Object.values(state.players))
+                if (p.status === "registered")
                     registeredPlayers += 1;
-            const registeredText = document.getElementById(`registeredPlayers`);
+            const registeredText = document.getElementById(`registratedPlayers`);
             registeredText.innerHTML = registeredPlayers;
+
+            startVoteText(registeredPlayers, Object.keys(state.players).length);
+
             break;
 
         case "money_changed":
             const data = res.result;
-            const localSenderSpan = document.getElementById(`balance_${data.sender_id}`);
-            const localReceiverSpan = document.getElementById(`balance_${data.receiver_id}`);
+            console.log(data);
+            const localSenderSpan = document.getElementById(`balance${data.sender_id}`);
+            const localReceiverSpan = document.getElementById(`balance${data.receiver_id}`);
 
             if (state.localPlayerId === state.balances[data.sender_id].owner_id)
                 localSenderSpan.innerHTML = data.sender_money;
@@ -73,7 +110,7 @@ export function handleSocket(event) {
                 votingOverlay.classList.remove("hidden");
             }
 
-            const round_number_text = document.getElementById("round_number_text");
+            const round_number_text = document.getElementById("roundNumberText");
             round_number_text.innerHTML = res.voting_round;
 
             startCountdown("votingTimer", 30);
@@ -116,5 +153,24 @@ export function handleSocket(event) {
         case "error":
             console.error(res.message);
             break;
+    }
+}
+
+function startVoteText(registeredPlayers, totalPlayers) {
+    const startVoteButton = document.getElementById("startVoteButton");
+    const registerPlayerText = document.getElementById("registerPlayerText");
+
+    if (totalPlayers < 3) {
+        registerPlayerText.textContent = "Дождитесь, пока подключится хотя бы 3 игрока, чтобы начать голосование";
+        startVoteButton.disabled = true;
+        return;
+    }
+    if (totalPlayers != registeredPlayers) {
+        registerPlayerText.textContent = "Дождитесь, пока все игроки зарегистрируются, чтобы начать голосование";
+        startVoteButton.disabled = true;
+    }
+    if (totalPlayers >= 3 && totalPlayers === registeredPlayers) {
+        registerPlayerText.textContent = "Можете начать голосование";
+        startVoteButton.disabled = false;
     }
 }

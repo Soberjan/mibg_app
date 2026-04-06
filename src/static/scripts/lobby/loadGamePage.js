@@ -13,6 +13,7 @@ export function loadGamePage() {
     const financesMenu = document.getElementById("finances");
     const managmentMenu = document.getElementById("managment");
     obligationsMenu.classList.add("hidden");
+    console.log("obligations should be hidden");
     messagesMenu.classList.add("hidden");
     financesMenu.classList.add("hidden");
     managmentMenu.classList.add("hidden");

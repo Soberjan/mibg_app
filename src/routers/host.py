@@ -17,7 +17,7 @@ async def create_lobby(hostess: Hostess = Depends(get_hostess)):
         raise HTTPException(status_code=500, detail=f"Couldn't create lobby because {e}")
     return {'status': 'ok', 'lobby_id': lobby_id}
 
-@router.get('/hostess/join_lobby')
+@router.post('/hostess/join_lobby')
 async def join_lobby(
     lobby_id: int,
     response: Response,
@@ -31,6 +31,7 @@ async def join_lobby(
 
     if client_key is None:
         client_key = secrets.token_hex()
+        print(client_key)
         response.set_cookie(
             key="client_key",
             value=client_key,
@@ -39,11 +40,13 @@ async def join_lobby(
         )
 
     if client_key not in hostess.clients:
+        print('added client key to clients')
         hostess.clients[client_key] = {}
 
     player_id = hostess.clients[client_key].get(lobby_id)
 
     if player_id is None and lobby.status != 'registration':
+        print('game started so you can\'t join')
         raise HTTPException(
             status_code=403,
             detail="You can't join the lobby since game started."
@@ -54,6 +57,7 @@ async def join_lobby(
         hostess.clients[client_key][lobby_id] = player_id
 
     if lobby.owner_id == None:
+        print('you became an owner')
         lobby.owner_id = player_id
 
     return {

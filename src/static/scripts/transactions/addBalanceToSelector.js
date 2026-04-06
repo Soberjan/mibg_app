@@ -4,6 +4,7 @@ export function addBalanceToSelector(balance) {
     const container = document.getElementById("balances");
 
     const option = document.createElement("option");
+    option.id = `balance${balance.id}Option`;
     option.value = balance.id;
     option.textContent = state.players[balance.ownerId].name;
 

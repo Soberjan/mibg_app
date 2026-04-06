@@ -1,44 +1,38 @@
-#name {
-    position: absolute;
-    top: 2%;
-    left: 20%;
-    font-size: 72px;
+#localName {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 32px;
+    font-weight: 700;
+    word-break: break-word;
 }
 
 .upperRight {
-    position: flex;
-    top: 5%;
-    left: 95%;
-
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-
-    font-size: 32px;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 16px;
 }
 
 .menu {
-    position: flex;
-    top: 15%;
-    left: 0;
-
     display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-
-    height: 64px;
-
-    font-size: 32px;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
 }
+
 .menu button {
-    margin: 1;
+    flex: 1 1 calc(50% - 8px);
+    margin: 0;
+    min-width: 140px;
 }
 
 .submenu {
     display: block;
     border: 1px solid black;
-    padding: 10px;
+    padding: 12px;
     margin-top: 10px;
+    border-radius: 12px;
 }
 
 .hidden {
@@ -55,11 +49,9 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-
     padding: 10px;
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 12px;
-    /* background: rgba(255, 255, 255, 0.05); */
 }
 
 .playerField {
@@ -67,7 +59,7 @@
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.12);
     border: 1px solid rgba(255, 255, 255, 0.10);
-    font-size: 20px;
+    font-size: 16px;
     white-space: nowrap;
 }
 
@@ -76,32 +68,77 @@
 }
 
 .buttonRow {
-    /* top: 15%; */
-    left: 0;
-
     display: flex;
-    flex-direction: row;
-    /* flex-wrap: wrap; */
+    flex-wrap: wrap;
     align-items: flex-end;
     gap: 12px;
+}
+
+.buttonRow > * {
+    flex: 1 1 180px;
+    min-width: 0;
 }
 
 #moneySender {
-    /* top: 15%; */
-    left: 0;
-
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
     align-items: flex-end;
     gap: 12px;
 }
 
-#moneyAmount {
-    max-width: 100px;
+#moneySender > * {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+#moneyAmount,
+#balances {
+    max-width: 100%;
+    min-width: 0;
 }
 
 #balances {
-    min-width: 100px;
-    max-width: 200px;
+    width: 100%;
 }
 
+@media (max-width: 600px) {
+    #localName {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .upperRight {
+        gap: 4px;
+    }
+
+    .menu {
+        gap: 8px;
+    }
+
+    .menu button {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .submenu {
+        padding: 10px;
+    }
+
+    .buttonRow,
+    #moneySender {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .buttonRow > *,
+    #moneySender > * {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .playerField {
+        font-size: 14px;
+        white-space: normal;
+        word-break: break-word;
+    }
+}

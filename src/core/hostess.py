@@ -12,7 +12,7 @@ class Hostess:
         self.clients = {}
 
     def create_lobby(self):
-        lobby = Lobby('reg', self.database)
+        lobby = Lobby('registration', self.database)
         self.lobbies[lobby.id] = lobby
         return lobby.id
 

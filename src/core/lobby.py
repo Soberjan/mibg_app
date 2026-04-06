@@ -53,7 +53,7 @@ class Lobby:
         except ValueError:
             raise ValueError
 
-        player = Player(name, player_role, self.id, self.database)
+        player = Player(name, player_role, self.id, self.database, "joined")
         player.insert_to_db()
         self.players[player.id] = player
         balance = self.add_balance('personal', player.id, 500)

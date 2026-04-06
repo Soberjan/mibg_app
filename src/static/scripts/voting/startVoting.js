@@ -7,7 +7,7 @@ export async function startVoting() {
     }
 
     const response = await fetch(
-        `/hostess/start_voting?lobby_id=${state.lobbyId}&player_id=${state.localPlayerId}`,
+        `/lobby/${state.lobbyId}/start_voting?player_id=${state.localPlayerId}`,
         {
             method: "POST"
         }
