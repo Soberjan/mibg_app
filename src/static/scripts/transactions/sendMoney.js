@@ -3,11 +3,12 @@ import { accountDict } from "../dicts.js";
 
 export async function sendMoney() {
     const balanceSelector = document.getElementById("balances");
+    const senderSelector = document.getElementById("senderBalances");
     const moneyAmount_field = document.getElementById("moneyAmount");
 
     const receiverId = balanceSelector.value;
     const amount = moneyAmount_field.value;
-    const senderId = state.personalBalanceId;
+    const senderId = senderSelector.value;
 
     if (amount > state.money) {
         console.log("Нельзя отправить больше денег, чем у вас есть!")

@@ -1,10 +1,11 @@
 import { state } from "../state.js";
 
-export function addBalanceToSelector(balance) {
-    const container = document.getElementById("balances");
+export function addBalanceToSender(balance) {
+    const container = document.getElementById("senderBalances");
 
     const option = document.createElement("option");
-    option.id = `balance${balance.id}Option`;
+    option.id = `senderBalance${balance.id}Option`;
+
     option.value = balance.id;
     if (balance.type === "personal")
         option.textContent = state.players[balance.ownerId].name;

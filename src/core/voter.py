@@ -7,7 +7,7 @@ class Voter:
         self.lobby = lobby
         self.status = 'idle'
         self.vote_time = 30
-        self.voting_round = 1
+        self.voting_round = 0
         self.voted_players_ids = []
         self.vote_count = {}
         self.timeout_task: asyncio.Task | None = None
@@ -60,5 +60,13 @@ class Voter:
             'winner_id': result[0][0],
         }
         self.lobby.players[result[0][0]].role = PlayerRole('politician')
+        balance = None
+        for b in self.lobby.balances.values():
+            if b.type == "gov":
+                balance = b
+        if balance is not None:
+            self.lobby.players[result[0][0]].balances[balance.id] = balance
+            self.lobby.balances[balance.id].owner_id = result[0][0]
+            self.lobby.balances[balance.id].update_db_entry()
         self.lobby.players[result[0][0]].update_db_entry()
         self.lobby.notify_sockets(msg)

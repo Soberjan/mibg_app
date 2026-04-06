@@ -1,5 +1,6 @@
 import { state } from "../state.js";
 import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
+import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
 import { addPlayerRow } from "./addPlayerRow.js";
 import { addVotingOption } from "../voting/addVotingOption.js";
 import { startVoting } from "../voting/startVoting.js";
@@ -24,6 +25,9 @@ function initLocalPlayerUI() {
     roleSpan.id = `player${player.id}Role`;
     balanceSpan.textContent = state.balances[state.personalBalanceId].money;
     balanceSpan.id = `balance${state.personalBalanceId}`;
+
+    for (const balanceId of state.players[player.id].balanceIds)
+        addBalanceToSender(state.balances[balanceId]);
 }
 
 function initOtherPlayersUI() {

@@ -2,6 +2,7 @@ import { addPlayerRow } from "./lobby/addPlayerRow.js";
 import { startGame } from "./lobby/startGame.js";
 import { chooseBankerUI } from "./voting/chooseBankerUI.js";
 import { addBalanceToSelector } from "./transactions/addBalanceToSelector.js";
+import { addBalanceToSender } from "./transactions/addBalanceToSender.js";
 import { savePlayerState } from "./lobby/savePlayerState.js";
 import { addVotingOption } from "./voting/addVotingOption.js";
 import { startCountdown } from "./timer/countDownTimer.js";
@@ -14,6 +15,13 @@ export function handleSocket(event) {
     let playerRoleText;
     let votingOverlay;
     let registeredPlayers;
+    let playerRow;
+    let upperRight;
+    let govBalanceOption;
+    let bankBalanceOption;
+    let balanceSpan;
+    let govSenderBalanceOption;
+    let bankSenderBalanceOption;
 
     switch (res.type) {
         case "other_player_joined":
@@ -57,8 +65,11 @@ export function handleSocket(event) {
                     pb = pbb;
             if (pb) {
                 const balanceOption = document.getElementById(`balance${pb.id}Option`);
+                const senderOption = document.getElementById(`senderBalance${pb.id}Option`);
                 if (balanceOption)
                     balanceOption.textContent = res.name;
+                if (senderOption)
+                    senderOption.textContent = res.name;
             }
             else
                 console.log("niger");
@@ -129,10 +140,80 @@ export function handleSocket(event) {
             state.lobbyOwner = state.localPlayerId === res.winner_id;
 
             state.players[res.winner_id].role = "politician";
+            let govBalance;
+            for (const bbbb of Object.values(state.balances))
+                if (bbbb.type === "gov")
+                    govBalance = bbbb;
+
+            playerRow = document.getElementById(`player${res.winner_id}Row`);
+            upperRight = document.getElementById(`upperRight`);
+            govBalanceOption = document.getElementById(`balance${govBalance.id}Option`);
+            govSenderBalanceOption = document.getElementById(`senderBalance${govBalance.id}Option`);
+            if (govBalance.ownerId === -1 && state.localPlayerId != res.winner_id) {
+                govBalance.ownerId = res.winner_id;
+
+                if (govSenderBalanceOption)
+                    govSenderBalanceOption.remove()
+
+                if (!govBalanceOption)
+                    addBalanceToSelector(govBalance);
+
+                balanceSpan = document.createElement("span");
+                balanceSpan.id = `balance${govBalance.id}`;
+                balanceSpan.classList.add("playerField");
+                balanceSpan.textContent = accountDict[govBalance.type] + " " + govBalance.money;
+
+                playerRow.appendChild(balanceSpan);
+            }
+            else if (govBalance.ownerId === -1 && state.localPlayerId === res.winner_id) {
+                govBalance.ownerId = res.winner_id;
+
+                if (!govSenderBalanceOption)
+                    addBalanceToSender(govBalance);
+
+                if (govBalanceOption)
+                    govBalance.remove();
+
+                balanceSpan = document.createElement("span");
+                balanceSpan.id = `balance${govBalance.id}`;
+                balanceSpan.textContent = accountDict[govBalance.type] + " " + govBalance.money;
+
+                upperRight.appendChild(balanceSpan);
+            }
+            else if (govBalance.ownerId != -1 && state.localPlayerId != res.winner_id) {
+                govBalance.ownerId = res.winner_id;
+
+                if (govSenderBalanceOption)
+                    govSenderBalanceOption.remove()
+
+                if (!govBalanceOption)
+                    addBalanceToSelector(govBalance);
+
+                balanceSpan = document.getElementById(`balance${govBalance.id}`);
+                balanceSpan.classList.add("playerField");
+                balanceSpan.textContent = accountDict[govBalance.type] + " " + govBalance.money;
+
+                playerRow.appendChild(balanceSpan);
+            }
+            else if (govBalance.ownerId != -1 && state.localPlayerId === res.winner_id) {
+                govBalance.ownerId = res.winner_id;
+
+                if (!govSenderBalanceOption)
+                    addBalanceToSender(govBalance);
+
+                if (govBalanceOption)
+                    govBalance.remove();
+
+                balanceSpan = document.getElementById(`balance${govBalance.id}`);
+                balanceSpan.classList.remove("playerField");
+                balanceSpan.textContent = accountDict[govBalance.type] + " " + govBalance.money;
+
+                upperRight.appendChild(balanceSpan);
+            }
+
             playerRoleText = document.getElementById(`player${res.winner_id}Role`);
             if (playerRoleText)
             {
-                console.log("niger");
                 playerRoleText.innerHTML = "политик";
             }
             chooseBankerUI();
@@ -141,6 +222,78 @@ export function handleSocket(event) {
 
         case "banker_chosen":
             state.players[res.banker_id].role = "banker";
+
+            let bankBalance;
+            for (const bbbbb of Object.values(state.balances))
+                if (bbbbb.type === "bank")
+                    bankBalance = bbbbb;
+
+            playerRow = document.getElementById(`player${res.banker_id}Row`);
+            upperRight = document.getElementById(`upperRight`);
+            bankBalanceOption = document.getElementById(`balance${bankBalance.id}Option`);
+            bankSenderBalanceOption = document.getElementById(`senderBalance${bankBalance.id}Option`);
+            if (bankBalance.ownerId === -1 && state.localPlayerId != res.banker_id) {
+                bankBalance.ownerId = res.banker_id;
+
+                if (bankSenderBalanceOption)
+                    bankSenderBalanceOption.remove()
+
+                if (!bankBalanceOption)
+                    addBalanceToSelector(bankBalance);
+
+                balanceSpan = document.createElement("span");
+                balanceSpan.id = `balance${bankBalance.id}`;
+                balanceSpan.classList.add("playerField");
+                balanceSpan.textContent = accountDict[bankBalance.type] + " " + bankBalance.money;
+
+                playerRow.appendChild(balanceSpan);
+            }
+            else if (bankBalance.ownerId === -1 && state.localPlayerId === res.banker_id) {
+                bankBalance.ownerId = res.banker_id;
+
+                if (!bankSenderBalanceOption)
+                    addBalanceToSender(bankBalance);
+
+                if (bankBalanceOption)
+                    bankBalance.remove();
+
+                balanceSpan = document.createElement("span");
+                balanceSpan.id = `balance${bankBalance.id}`;
+                balanceSpan.textContent = accountDict[bankBalance.type] + " " + bankBalance.money;
+
+                upperRight.appendChild(balanceSpan);
+            }
+            else if (bankBalance.ownerId != -1 && state.localPlayerId != res.banker_id) {
+                bankBalance.ownerId = res.banker_id;
+
+                if (bankSenderBalanceOption)
+                    bankSenderBalanceOption.remove()
+
+                if (!bankBalanceOption)
+                    addBalanceToSelector(bankBalance);
+
+                balanceSpan = document.getElementById(`balance${bankBalance.id}`);
+                balanceSpan.classList.add("playerField");
+                balanceSpan.textContent = accountDict[bankBalance.type] + " " + bankBalance.money;
+
+                playerRow.appendChild(balanceSpan);
+            }
+            else if (bankBalance.ownerId != -1 && state.localPlayerId === res.banker_id) {
+                bankBalance.ownerId = res.banker_id;
+
+                if (!bankSenderBalanceOption)
+                    addBalanceToSender(bankBalance);
+
+                if (bankBalanceOption)
+                    bankBalance.remove();
+
+                balanceSpan = document.getElementById(`balance${bankBalance.id}`);
+                balanceSpan.classList.remove("playerField");
+                balanceSpan.textContent = accountDict[bankBalance.type] + " " + bankBalance.money;
+
+                upperRight.appendChild(balanceSpan);
+            }
+
             playerRoleText = document.getElementById(`player${res.banker_id}Role`);
             if (playerRoleText)
                 playerRoleText.innerHTML = "банкир";

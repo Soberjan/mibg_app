@@ -14,6 +14,8 @@ class Hostess:
     def create_lobby(self):
         lobby = Lobby('registration', self.database)
         self.lobbies[lobby.id] = lobby
+        lobby.add_balance('gov', -1, 20000)
+        lobby.add_balance('bank', -1, 15000)
         return lobby.id
 
     def get_lobby(self, lobby_id):

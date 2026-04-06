@@ -9,7 +9,7 @@
 <body>
     <div class="page">
         <span id="localName"></span>
-        <div class="upperRight">
+        <div class="upperRight" id="upperRight">
             <label>Роль: <span id="localRole"></span></label>
             <label>Ваш баланс: <span id="localBalance"></span></label>
             <label>Очки влияния: <span id="localInfluence">0</span></label>
@@ -27,7 +27,11 @@
             </div>
 
             <div id="moneySender" class="section">
-                <label for="balances">Счет отправки
+                <label for="balances">Откуда отправляем
+                    <select name="счета" id="senderBalances">
+                    </select>
+                </label>
+                <label for="balances">Куда отправляем
                     <select name="счета" id="balances">
                     </select>
                 </label>
