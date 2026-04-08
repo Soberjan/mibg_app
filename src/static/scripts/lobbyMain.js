@@ -2,6 +2,7 @@ import { state } from "./state.js";
 import { handleSocket } from "./handleSocket.js";
 import { sendMoney } from "./transactions/sendMoney.js";
 import { vote } from "./voting/vote.js";
+import { chooseBankerAndStartGame } from "./voting/chooseBankerAndStartGame.js";
 import { initLobbyUI } from "./lobby/initLobbyUI.js";
 import { registerPlayer } from "./lobby/registerPlayer.js";
 import { roleDict } from "./dicts.js";
@@ -12,6 +13,7 @@ window.registerPlayer = registerPlayer;
 window.state = state;
 window.sendMoney = sendMoney;
 window.vote = vote;
+window.chooseBankerAndStartGame = chooseBankerAndStartGame;
 
 async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
@@ -23,7 +25,8 @@ async function initPage() {
         errorOverlay.classList.remove("hidden");
         return;
     }
-    if (result.player_status === "new" && result.lobby_status != "registration")
+    const playerStatus = result.player_status;
+    if (playerStatus === "new" && result.lobby_status != "registration")
     {
         console.log(result);
         console.log("you've made a grave mistake");
@@ -33,7 +36,7 @@ async function initPage() {
         return; // заменить на попап с ошибкой
     }
 
-    if (result.player_status === "new") {
+    if (playerStatus === "new") {
         response = await fetch(`/hostess/join_lobby?lobby_id=${state.lobbyId}`, {method:"post"});
         result = await response.json();
 
@@ -62,24 +65,26 @@ async function initPage() {
     console.log("initialized game state");
     console.log(state);
 
-    initLobbyUI();
+    await initLobbyUI();
     console.log("inititalized lobby UI");
 
     state.ws = new WebSocket(
-        `ws://${window.location.host}/lobby?lobby_id=${lobbyId}&player_id=${state.localPlayerId}`
+        `ws://${window.location.host}/lobby?lobby_id=${state.lobbyId}&player_id=${state.localPlayerId}`
     );
 
     state.ws.onmessage = handleSocket;
 
-    state.ws.onopen = () => {
-        var msg = JSON.stringify({
-            type: "player_joined",
-            player_id: state.localPlayerId
-        });
+    if (playerStatus === "new") {
+        state.ws.onopen = () => {
+            var msg = JSON.stringify({
+                type: "player_joined",
+                player_id: state.localPlayerId
+            });
 
-        state.ws.send(msg);
+            state.ws.send(msg);
+        }
     }
     console.log("opened socket");
 }
 
-initPage();
+await initPage();

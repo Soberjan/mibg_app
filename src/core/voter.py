@@ -55,10 +55,6 @@ class Voter:
         self.vote_count = {}
         self.status = 'idle'
 
-        msg = {
-            'type': 'end_voting',
-            'winner_id': result[0][0],
-        }
         self.lobby.players[result[0][0]].role = PlayerRole('politician')
         balance = None
         for b in self.lobby.balances.values():
@@ -69,4 +65,11 @@ class Voter:
             self.lobby.balances[balance.id].owner_id = result[0][0]
             self.lobby.balances[balance.id].update_db_entry()
         self.lobby.players[result[0][0]].update_db_entry()
+
+        self.lobby.status = 'choosing_banker'
+
+        msg = {
+            'type': 'end_voting',
+            'winner_id': result[0][0],
+        }
         self.lobby.notify_sockets(msg)

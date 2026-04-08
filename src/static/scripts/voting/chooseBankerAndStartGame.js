@@ -1,5 +1,5 @@
 export async function chooseBankerAndStartGame() {
-    const electedId = document.getElementById("banker_options").value;
+    const electedId = document.getElementById("bankerOptions").value;
     let response = await fetch(
         `/lobby/${state.lobbyId}/choose_banker?voter_id=${state.localPlayerId}&elected_id=${electedId}`,
         {

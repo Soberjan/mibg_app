@@ -109,6 +109,15 @@ class Lobby:
             e.add_note('you can only chooes banker if you are politician')
             raise e
 
+        for b in self.balances.values():
+            if b.type == 'bank':
+                if b.owner_id != -1:
+                    self.players[b.owner_id].balances.pop(b.id)
+                    self.players[b.owner_id].update_db_entry()
+                b.owner_id = elected_id
+                self.players[elected_id].balances[b.id] = b
+                b.update_db_entry()
+
         self.players[elected_id].role = PlayerRole('banker') # сделать работу с инамами красивее
         self.players[elected_id].update_db_entry()
         print('yeah, updated shit')

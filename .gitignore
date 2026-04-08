@@ -201,3 +201,4 @@ __marimo__/
 .conda/
 
 .env
+*~

@@ -1,25 +1,30 @@
-import { chooseBankerAndStartGame } from "./chooseBankerAndStartGame.js";
 import { state } from "../state.js";
 
 export async function chooseBankerUI() {
+    console.log("entered choosing banker UI");
+    console.log(state);
     const chooseBankerOverlay = document.getElementById("chooseBankerOverlay");
-    if (chooseBankerOverlay.classList.contains("hidden")) {
-        chooseBankerOverlay.classList.remove("hidden");
-    }
+    const bankerTextSpan = document.getElementById("bankerChoosingText");
+    const bankerOptionsSelect = document.getElementById("bankerOptions");
+    const chooseBankerButton = document.getElementById("chooseBankerButton");
 
-    const bankerTextSpan = document.createElement("span");
-    bankerTextSpan.id = `bankerChoosingText`;
+    if (chooseBankerOverlay.classList.contains("hidden"))
+        chooseBankerOverlay.classList.remove("hidden");
     
-    console.log(state.players[state.localPlayerId].role);
     if (state.players[state.localPlayerId].role != 'politician') {
+	console.log("not a politician");
         bankerTextSpan.textContent = "Дождитесь, пока политик выберет банкира";
-        chooseBankerOverlay.appendChild(bankerTextSpan);
+	bankerOptionsSelect.classList.add("hidden");
+	chooseBankerButton.classList.add("hidden");
         return;
     }
     bankerTextSpan.innerHTML = "Выберите банкира";
+    bankerOptionsSelect.classList.remove("hidden");
+    chooseBankerButton.classList.remove("hidden");
 
-    const bankerOptionsSelect = document.createElement("select");
-    bankerOptionsSelect.id = "banker_options";
+    const L = bankerOptionsSelect.options.length - 1;
+    for (let i = L; i >= 0; i++)
+	bankerOptionsSelect.remove(i);
     for (const player of Object.values(state.players)) {
         if (player.id === state.localPlayerId)
             continue;
@@ -30,13 +35,5 @@ export async function chooseBankerUI() {
         bankerOptionsSelect.appendChild(option);
     }
 
-
-    const chooseBankerButton = document.createElement("button");
-    chooseBankerButton.id = `choose_banker_button`;
     chooseBankerButton.textContent = "Выбрать банкира";
-    chooseBankerButton.onclick = chooseBankerAndStartGame;
-
-    chooseBankerOverlay.appendChild(bankerTextSpan);
-    chooseBankerOverlay.appendChild(bankerOptionsSelect);
-    chooseBankerOverlay.appendChild(chooseBankerButton);
 }

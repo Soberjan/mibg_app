@@ -251,3 +251,18 @@ async def start_game(
         await socket.send_json(msg)
 
     return {'status': 'ok'}
+
+@router.get('/lobby/{lobby_id}/has_voted')
+async def has_voted(
+        lobby_id: int,
+        player_id: int,
+        hostess: Hostess = Depends(get_hostess),
+        ):
+    try:
+        lobby = hostess.get_lobby(lobby_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+
+    has_voted = player_id in lobby.voter.voted_players_ids
+
+    return {'status': 'ok', 'has_voted': has_voted}

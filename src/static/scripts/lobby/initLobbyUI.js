@@ -7,6 +7,7 @@ import { startVoting } from "../voting/startVoting.js";
 import { loadGamePage } from "./loadGamePage.js";
 import { startVoteText } from "../voting/startVoteText.js";
 import { roleDict } from "../dicts.js";
+import { chooseBankerUI } from "../voting/chooseBankerUI.js";
 
 function initLocalPlayerUI() {
     const player = state.players[state.localPlayerId];
@@ -88,21 +89,28 @@ function initRegistrationUI() {
 
 }
 
-function initVotingUI() {
+async function initVotingUI() {
     for (const player of Object.values(state.players)) {
         if (player.id === state.localPlayerId)
             continue;
         addVotingOption(state.players[player.id]);
     }
 
-    // добавить проверку на то, голосовали ли мы ДО загрузки UI
+    const voteButton = document.getElementById("voteButton");
+    const result = await fetch(`/lobby/${state.lobbyId}/has_voted?player_id=${state.localPlayerId}`);
+    const res = await result.json();
+    if (res.status != "ok")
+	return;
+    if (res.has_voted)
+	voteButton.disabled = true;
 }
 
 function initChoosingBankerUI() {
-
+    // работает и ладно, чтобы было красиво, нужно по другому скрипты раскидать
+    chooseBankerUI()
 }
 
-export function initLobbyUI() {
+export async function initLobbyUI() {
     initLocalPlayerUI();
     initOtherPlayersUI();
 
@@ -124,9 +132,14 @@ export function initLobbyUI() {
         votingOverlay.classList.remove("hidden");
         chooseBankerOverlay.classList.add("hidden");
     }
+    if (state.lobbyStatus === "choosing_banker") {
+        registrationOverlay.classList.add("hidden");
+        votingOverlay.classList.add("hidden");
+        chooseBankerOverlay.classList.remove("hidden");
+    }
     if (state.lobbyStatus === "game") {
         registrationOverlay.classList.add("hidden");
-        votingOverlay.classList.remove("hidden");
+        votingOverlay.classList.add("hidden");
         chooseBankerOverlay.classList.add("hidden");
     }
 
