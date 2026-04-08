@@ -42,12 +42,12 @@ function initOtherPlayersUI() {
 
 function initRegistrationUI() {
     const player = state.players[state.localPlayerId];
-    const addPlayerButton = document.getElementById("addPlayerButton");
-    const addPlayerText = document.getElementById("registerPlayerText");
-    if (player.status === "registrated")
+    const registerPlayerButton = document.getElementById("registerPlayerButton");
+    const registerPlayerText = document.getElementById("registerPlayerText");
+    if (player.status === "registered")
     {
-        addPlayerButton.disabled = true;
-        addPlayerText.textContent = "Дождитесь начала голосования";
+        registerPlayerButton.disabled = true;
+        registerPlayerText.textContent = "Дождитесь начала голосования";
     }
     if (state.lobbyOwner) {
         const container = document.getElementById("registrationOverlay");
@@ -64,26 +64,26 @@ function initRegistrationUI() {
         separator1.textContent = " из ";
 
         const totalPlayers = Object.keys(state.players).length;
-        const registratedPlayers = 0;
+        let registeredPlayers = 0;
         for (const p of Object.values(state.players))
-            if (p.status === "registrated")
-                registratedPlayers += 1;
+            if (p.status === "registered")
+                registeredPlayers += 1;
 
         const totalPlayersSpan = document.createElement("span");
         totalPlayersSpan.id = `totalPlayers`;
         totalPlayersSpan.textContent = `${totalPlayers}`;
-        const registratedSpan = document.createElement("span");
-        registratedSpan.id = `registratedPlayers`;
-        registratedSpan.textContent = `${registratedPlayers}`;
+        const registeredSpan = document.createElement("span");
+        registeredSpan.id = `registeredPlayers`;
+        registeredSpan.textContent = `${registeredPlayers}`;
 
         voteDiv.appendChild(startVoteButton);
-        voteDiv.appendChild(registratedSpan);
+        voteDiv.appendChild(registeredSpan);
         voteDiv.appendChild(separator1);
         voteDiv.appendChild(totalPlayersSpan);
 
         container.appendChild(voteDiv);
 
-        startVoteText(registratedPlayers, totalPlayers);
+        startVoteText(registeredPlayers, totalPlayers);
     }
 
 }

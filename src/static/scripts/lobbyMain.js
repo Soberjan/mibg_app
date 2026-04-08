@@ -18,8 +18,11 @@ async function initPage() {
     let result = await response.json();
 
     // улучшить обработку ошибок
-    if (result.status != "ok")
+    if (result.status != "ok") {
+        const errorOverlay = document.getElementById("errorOverlay");
+        errorOverlay.classList.remove("hidden");
         return;
+    }
     if (result.player_status === "new" && result.lobby_status != "registration")
     {
         console.log(result);
@@ -40,6 +43,8 @@ async function initPage() {
         }
         console.log("lobby joined, started registration");
     }
+    else
+        console.log("already registered in lobby");
 
     response = await fetch(`/lobby/${state.lobbyId}/get_state`, {method:"get"});
     result = await response.json();

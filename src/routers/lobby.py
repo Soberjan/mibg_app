@@ -17,8 +17,6 @@ async def lobby_page(
         templates: Jinja2Templates = Depends(get_templates)
     ) -> _TemplateResponse:
 
-    print('niger')
-
     return templates.TemplateResponse(
             request=request,
             name='lobby.html',
@@ -245,6 +243,8 @@ async def start_game(
         lobby = hostess.get_lobby(lobby_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+
+    lobby.status = 'game'
 
     for socket in lobby.sockets.values():
         msg = {'type': 'start_game'}

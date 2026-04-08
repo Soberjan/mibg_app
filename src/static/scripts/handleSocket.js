@@ -84,7 +84,7 @@ export function handleSocket(event) {
             for (const p of Object.values(state.players))
                 if (p.status === "registered")
                     registeredPlayers += 1;
-            const registeredText = document.getElementById(`registratedPlayers`);
+            const registeredText = document.getElementById(`registeredPlayers`);
             registeredText.innerHTML = registeredPlayers;
 
             startVoteText(registeredPlayers, Object.keys(state.players).length);
