@@ -147,7 +147,7 @@
                     Раунд голосования:
                     <span id="roundNumberText"></span>
                 </span>
-                <label>Выберете, кто будет политиком:</label>
+                <label>Выберите, кто будет политиком:</label>
                 <div>
                     Время голосования: <span id="votingTimer">00:00</span>
                 </div>
@@ -164,6 +164,11 @@
                 <h1>
                     Не удалось загрузить лобби
                 </h1>
+            </div>
+            <div class="popuptext page hidden" id="testServerOverlay">
+                <button id="chooseJoblessButton" type="button" onclick="chooseJobless()">Безработный</button>
+                <button id="choosePoliticianButton" type="button" onclick="choosePolitician()">Политик</button>
+                <button id="chooseBankerButton" type="button" onclick="chooseBanker()">Банкир</button>
             </div>
         </div>
     </div>

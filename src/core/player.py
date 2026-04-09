@@ -6,6 +6,7 @@ from ..enums.enums import PlayerRole
 
 class Player:
     def __init__(self, name: str, role: PlayerRole, lobby_id: int, database: Database, status: str = "") -> None:
+        self.id = 0
         self.name: str = name
         self.status: str = status
         self.role: PlayerRole = role

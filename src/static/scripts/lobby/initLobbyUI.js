@@ -6,7 +6,7 @@ import { addVotingOption } from "../voting/addVotingOption.js";
 import { startVoting } from "../voting/startVoting.js";
 import { loadGamePage } from "./loadGamePage.js";
 import { startVoteText } from "../voting/startVoteText.js";
-import { roleDict } from "../dicts.js";
+import { roleDict, accountDict } from "../dicts.js";
 import { chooseBankerUI } from "../voting/chooseBankerUI.js";
 
 function initLocalPlayerUI() {
@@ -29,6 +29,25 @@ function initLocalPlayerUI() {
 
     for (const balanceId of state.players[player.id].balanceIds)
         addBalanceToSender(state.balances[balanceId]);
+
+    const upperRight = document.getElementById("upperRight");
+    if (player.role === "politician") {
+        const govBalance = state.balances[state.govBalanceId];
+        const govBalanceSpan = document.createElement("span");
+        govBalanceSpan.id = `balance${govBalance.id}`;
+        govBalanceSpan.textContent = accountDict[govBalance.type] + " " + govBalance.money;
+
+        upperRight.appendChild(govBalanceSpan);
+    }
+    if (player.role === "banker") {
+        const bankBalance = state.balances[state.bankBalanceId];
+        const bankBalanceSpan = document.createElement("span");
+        bankBalanceSpan.id = `balance${bankBalance.id}`;
+        bankBalanceSpan.textContent = accountDict[bankBalance.type] + " " + bankBalance.money;
+
+        upperRight.appendChild(bankBalanceSpan);
+    }
+
 }
 
 function initOtherPlayersUI() {

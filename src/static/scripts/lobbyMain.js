@@ -6,6 +6,7 @@ import { chooseBankerAndStartGame } from "./voting/chooseBankerAndStartGame.js";
 import { initLobbyUI } from "./lobby/initLobbyUI.js";
 import { registerPlayer } from "./lobby/registerPlayer.js";
 import { roleDict } from "./dicts.js";
+import { chooseJobless, choosePolitician, chooseBanker } from "./testLobby/chooseRole.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -14,14 +15,16 @@ window.state = state;
 window.sendMoney = sendMoney;
 window.vote = vote;
 window.chooseBankerAndStartGame = chooseBankerAndStartGame;
+window.chooseJobless = chooseJobless;
+window.choosePolitician = choosePolitician;
+window.chooseBanker = chooseBanker;
 
-async function initPage() {
+export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
     let result = await response.json();
-
+    const errorOverlay = document.getElementById("errorOverlay");;
     // улучшить обработку ошибок
     if (result.status != "ok") {
-        const errorOverlay = document.getElementById("errorOverlay");
         errorOverlay.classList.remove("hidden");
         return;
     }
@@ -31,7 +34,6 @@ async function initPage() {
         console.log(result);
         console.log("you've made a grave mistake");
 
-        const errorOverlay = document.getElementById("errorOverlay");
         errorOverlay.classList.remove("hidden");
         return; // заменить на попап с ошибкой
     }
@@ -53,6 +55,7 @@ async function initPage() {
     result = await response.json();
 
     if (result.status != "ok") {
+        errorOverlay.classList.remove("hidden");
         console.log("failed to get lobby state");
         return;
     }
@@ -60,6 +63,8 @@ async function initPage() {
     state.lobbyOwner = result.state.lobbyOwner;
     state.localPlayerId = result.state.localPlayerId;
     state.personalBalanceId = result.state.personalBalanceId;
+    state.govBalanceId = result.state.govBalanceId;
+    state.bankBalanceId = result.state.bankBalanceId;
     state.players = result.state.players;
     state.balances = result.state.balances;
     console.log("initialized game state");
@@ -87,4 +92,11 @@ async function initPage() {
     console.log("opened socket");
 }
 
-await initPage();
+console.log(state.lobbyId);
+
+if (state.lobbyId === "-1") {
+    const testServerOverlay = document.getElementById("testServerOverlay");
+    testServerOverlay.classList.remove("hidden");
+}
+else
+    await initPage();

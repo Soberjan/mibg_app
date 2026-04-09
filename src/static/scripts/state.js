@@ -4,7 +4,7 @@ export const state = {
     lobbyOwner: false,
     localPlayerId: null,
     personalBalanceId: -1,
-    governmentBalanceId: -1,
+    govBalanceId: -1,
     bankBalanceId: -1,
     ws: null,
     players: {},

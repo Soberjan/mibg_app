@@ -1,0 +1,14 @@
+INSERT INTO lobby (id, status) VALUES (-1, 'game');
+INSERT INTO player (id, role, "name", lobby_id) VALUES (-1, 'politician', 'sasha', -1);
+INSERT INTO player (id, role, "name", lobby_id) VALUES (-2, 'banker', 'petya', -1);
+INSERT INTO player (id, role, "name", lobby_id) VALUES (-3, 'jobless', 'vasya', -1);
+INSERT INTO balance (id, lobby_id, money, "type") VALUES (-1, -1, 1700, 'personal');
+INSERT INTO balance (id, lobby_id, money, "type") VALUES (-2, -1, 1700, 'personal');
+INSERT INTO balance (id, lobby_id, money, "type") VALUES (-3, -1, 1700, 'personal');
+INSERT INTO balance (id, lobby_id, money, "type") VALUES (-4, -1, 20000, 'gov');
+INSERT INTO balance (id, lobby_id, money, "type") VALUES (-5, -1, 10000, 'bank');
+INSERT INTO player_balance (id, player_id, balance_id) VALUES (-1, -1, -1);
+INSERT INTO player_balance (id, player_id, balance_id) VALUES (-2, -1, -4);
+INSERT INTO player_balance (id, player_id, balance_id) VALUES (-3, -2, -2);
+INSERT INTO player_balance (id, player_id, balance_id) VALUES (-4, -2, -5);
+INSERT INTO player_balance (id, player_id, balance_id) VALUES (-5, -3, -3);

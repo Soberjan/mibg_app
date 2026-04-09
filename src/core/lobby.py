@@ -9,11 +9,12 @@ from ..enums.enums import PlayerRole
 from ..database.database import Database
 
 class Lobby:
-    def __init__(self, status: str, database: Database) -> None:
+    def __init__(self, status: str, database: Database, insert=True) -> None:
         self.database: Database = database
         self.owner_id = None
         self.status = status
-        self.id = self.insert_to_db()
+        if insert:
+            self.id = self.insert_to_db()
         self.players: Dict[int, Player] = {}
         self.balances: Dict[int, Balance] = {}
         self.sockets = {}
