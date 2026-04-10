@@ -2,7 +2,7 @@ from typing import List
 
 from psycopg2 import sql
 from psycopg2.pool import SimpleConnectionPool
-
+from psycopg2.extras import RealDictCursor
 from ..config import Config
 
 class Database():
@@ -31,6 +31,7 @@ class Database():
             password=password,
             host=host,
             dbname=db_name,
+            cursor_factory=RealDictCursor,
             options=f"-c search_path={search_path}"
         )
     
@@ -45,8 +46,9 @@ class Database():
         """
 
         query = sql.SQL("""
-            insert into {table} ({columns})
-            values ({values})
+            INSERT INTO {table} ({columns})
+            VALUES ({values})
+            RETURNING id;
             """
             ).format(
                     table=sql.Identifier(table),
@@ -55,14 +57,17 @@ class Database():
                     )
 
         conn = self.pool.getconn()
+        inserted_id = None
         try:
             cur = conn.cursor()
             cur.execute(query, values)
+            inserted_id = cur.fetchone()['id']
             conn.commit()
         except Exception as e:
             print(f"{e}")
         finally:
             self.pool.putconn(conn)
+        return inserted_id
 
     def execute_query(self, query: str, params = None):
         conn = self.pool.getconn()

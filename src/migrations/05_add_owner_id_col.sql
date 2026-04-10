@@ -1,0 +1,1 @@
+ALTER TABLE lobby ADD COLUMN IF NOT EXISTS owner_id INT REFERENCES player(id);

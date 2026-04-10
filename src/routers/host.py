@@ -26,13 +26,14 @@ async def join_lobby(
     hostess: Hostess = Depends(get_hostess),
 ):
     try:
-        lobby: Lobby = hostess.get_lobby(lobby_id)
+        lobby = hostess.get_lobby(lobby_id)
+        if lobby == None:
+            return
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
 
     if client_key is None:
         client_key = secrets.token_hex()
-        print(client_key)
         response.set_cookie(
             key="client_key",
             value=client_key,
@@ -40,34 +41,53 @@ async def join_lobby(
             samesite="lax",
         )
 
-    if client_key not in hostess.clients:
-        print('added client key to clients')
-        hostess.clients[client_key] = {}
+    query = """
+        SELECT player_id FROM client WHERE key = %s AND lobby_id = %s
+    """
+    res = hostess.database.execute_query(query, (client_key, str(lobby_id),))
+    player_id = res['player_id'] if res else None
 
-    player_id = hostess.clients[client_key].get(lobby_id)
-
-    if player_id is None and lobby.status != 'registration':
-        print('game started so you can\'t join')
+    if player_id is None and lobby['status'] != 'registration':
         raise HTTPException(
             status_code=403,
             detail="You can't join the lobby since game started."
         )
-
+    
     if player_id is None:
         coin = random.randint(1, 2)
         if coin == 1:
             role = 'jobless'
-            initial_balance = 1700
+            initial_balance = '1700'
         else:
             role = 'marketer'
-            initial_balance = 2200
-        player_id = lobby.add_player('dood', role, initial_balance)
+            initial_balance = '2200'
+
+        player_id = hostess.database.insert_entry(
+            'player',
+            ['lobby_id', 'name', 'role'],
+            [str(lobby_id), 'dood', role]
+        )
+        balance_id = hostess.database.insert_entry(
+            'balance',
+            ['lobby_id', 'money', 'type'],
+            [str(lobby_id), initial_balance, 'personal']
+        )
+        hostess.database.insert_entry(
+            'player_balance',
+            ['player_id', 'balance_id'],
+            [str(player_id), str(balance_id)]
+        )
+        hostess.database.insert_entry(
+            'client',
+            ['key', 'lobby_id', 'player_id'],
+            [client_key, str(lobby_id), str(player_id)]
+        )
+
         hostess.clients[client_key][lobby_id] = player_id
 
-    if lobby.owner_id == None:
-        print('you became an owner')
-        lobby.owner_id = player_id
+    if lobby['owner_id'] == None:
+        hostess.database.execute_query('UPDATE lobby SET owner_id=%s WHERE lobby_id=%s', (player_id, lobby_id,))
 
     return {
-        'status': 'ok',
+        'status': 'ok'
     }
