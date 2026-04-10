@@ -41,52 +41,57 @@ async def join_lobby(
             samesite="lax",
         )
 
-    query = """
-        SELECT player_id FROM client WHERE key = %s AND lobby_id = %s
-    """
-    res = hostess.database.execute_query(query, (client_key, str(lobby_id),))
-    player_id = res['player_id'] if res else None
-
-    if player_id is None and lobby['status'] != 'registration':
-        raise HTTPException(
-            status_code=403,
-            detail="You can't join the lobby since game started."
+    with hostess.database.pool.connection() as conn:
+        cur = conn.cursor()
+        get_player_id_query = """
+            SELECT player_id FROM client WHERE key = %s AND lobby_id = %s
+        """
+        cur.execute(
+            get_player_id_query,
+            params=(client_key, lobby_id,)
         )
+        res = hostess.database.execute_query(query, (client_key, str(lobby_id),))
+        player_id = cur.fetchone()
+
+        if player_id is None and lobby['status'] != 'registration':
+            raise HTTPException(
+                status_code=403,
+                detail="You can't join the lobby since game started."
+            )
     
-    if player_id is None:
-        coin = random.randint(1, 2)
-        if coin == 1:
-            role = 'jobless'
-            initial_balance = '1700'
-        else:
-            role = 'marketer'
-            initial_balance = '2200'
+        if player_id is None:
+            coin = random.randint(1, 2)
+            if coin == 1:
+                role = 'jobless'
+                initial_balance = '1700'
+            else:
+                role = 'marketer'
+                initial_balance = '2200'
 
-        player_id = hostess.database.insert_entry(
-            'player',
-            ['lobby_id', 'name', 'role'],
-            [str(lobby_id), 'dood', role]
-        )
-        balance_id = hostess.database.insert_entry(
-            'balance',
-            ['lobby_id', 'money', 'type'],
-            [str(lobby_id), initial_balance, 'personal']
-        )
-        hostess.database.insert_entry(
-            'player_balance',
-            ['player_id', 'balance_id'],
-            [str(player_id), str(balance_id)]
-        )
-        hostess.database.insert_entry(
-            'client',
-            ['key', 'lobby_id', 'player_id'],
-            [client_key, str(lobby_id), str(player_id)]
-        )
+            player_insert = """
+                INSERT INTO player (lobby_id, name, role)
+                VALUES (%s, %s, %s)
+                RETURNING id
+            """
+            player_id = conn.execute(player_insert, (str(lobby_id), 'dood', role)).fetchone()['id']
 
-        hostess.clients[client_key][lobby_id] = player_id
+            balance_insert = """
+                INSERT INTO balance (lobby_id, money, type)
+                VALUES (%s, %s, %s)
+                RETURNING id
+            """
+            balance_id = conn.execute(balance_insert, (str(lobby_id), initial_balance, 'personal')).fetchone()['id']
 
-    if lobby['owner_id'] == None:
-        hostess.database.execute_query('UPDATE lobby SET owner_id=%s WHERE lobby_id=%s', (player_id, lobby_id,))
+            player_balance_insert = """
+                INSERT INTO player_balance (player_id, balance_id)
+                VALUES (%s, %s)
+            """
+            conn.execute(player_balance_insert, (str(player_id), str(balance_id))
+
+            hostess.clients[client_key][lobby_id] = player_id
+
+        if lobby['owner_id'] == None:
+            hostess.database.execute_query('UPDATE lobby SET owner_id=%s WHERE lobby_id=%s', (player_id, lobby_id,))
 
     return {
         'status': 'ok'
