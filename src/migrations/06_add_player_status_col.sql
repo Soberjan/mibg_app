@@ -1,0 +1,1 @@
+ALTER TABLE player ADD COLUMN IF NOT EXISTS status char(30);
