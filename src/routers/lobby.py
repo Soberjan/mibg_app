@@ -126,12 +126,12 @@ async def get_state(
         cur.execute(personal_balance_id_query, (local_player_id,))
         personal_balance_id = cur.fetchone()['balance_id']
 
-        players_id_query = """
+        players_query = """
             SELECT *
             FROM player
             WHERE lobby_id=%s
         """
-        cur.execute(players_id_query, (lobby_id,))
+        cur.execute(players_query, (lobby_id,))
         res = cur.fetchall()
         players = {}
         for p in res:
@@ -164,20 +164,29 @@ async def register_player(
         client_key: Annotated[str | None, Cookie()] = None,
         hostess: Hostess = Depends(get_hostess),
         ):
+    conn = hostess.database.pool.getconn()
     try:
-        lobby = hostess.get_lobby(lobby_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+        cur = conn.cursor()
 
-    try:
-        player_id = hostess.clients[client_key][lobby_id]
-    except Exception as e:
-        raise HTTPException(status_code=403, detail=f"Couldn't get player_id because {e}")
+        player_id_query = """
+            SELECT player_id
+            FROM client
+            WHERE key=%s AND lobby_id=%s
+        """
+        cur.execute(player_id_query, (client_key, lobby_id,))
+        player_id = cur.fetchone()['player_id']
 
-    player = lobby.players[player_id]
-    player.name = name
-    player.status = "registered"
-    player.update_db_entry()
+        register_player_query = """
+            UPDATE player
+            SET name=%s, status=%s
+            WHERE id=%s
+        """
+        cur.execute(register_player_query, (name, 'registered', player_id,))
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
     for ws in lobby.sockets.values():
         await ws.send_json({'type': 'player_registered', 'player_id': player_id, 'name': name})
@@ -190,37 +199,29 @@ async def register_player(
 async def get_players(
         lobby_id: int,
         hostess: Hostess = Depends(get_hostess),
-        ):
-
+    ):
+    conn = hostess.database.pool.getconn()
     try:
-        lobby = hostess.get_lobby(lobby_id)
+        cur = conn.cursor()
+        players_query = """
+            SELECT *
+            FROM player
+            WHERE lobby_id=%s
+        """
+        cur.execute(players_query, (lobby_id,))
+        res = cur.fetchall()
+        players = {}
+        for p in res:
+            p_dict = dict(p)
+            p_dict['lobbyId'] = p_dict['lobby_id']
+            p_dict.pop('lobby_id')
+            players[p['id']] = p_dict
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
-    players_dict = {}
-    for player in lobby.players.values():
-        balances = {}
-        for balance in player.balances.values():
-            balances[balance.id] = {
-                'id': balance.id,
-                'type': balance.type,
-                'money': balance.money
-            }
-        response = {
-            "status": "ok",
-            "id": player.id,
-            "name": player.name,
-            "role": player.role.value,
-            "balances": balances
-        }
-
-        players_dict[player.id] = response
-
-    if len(players_dict) == 0:
-        response = {"status": "no players yet"}
-        return response
-
-    response = {"status": "ok", "players": players_dict}
+    response = {"status": "ok", "players": players}
     return response
 
 @router.put('/lobby/{lobby_id}/send_money')
@@ -230,18 +231,45 @@ async def send_money(
         receiver_id: int,
         amount: int,
         hostess: Hostess = Depends(get_hostess),
-        ):
+    ):
+    conn = hostess.database.pool.getconn()
     try:
-        lobby = hostess.get_lobby(lobby_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+        cur = conn.cursor()
+        get_money_query = """
+            SELECT money
+            FROM balance
+            WHERE id=%s
+            FOR NO KEY UPDATE
+        """
+        cur.execute(get_money_query, (sender_id,))
+        sender_money = cur.fetchone()['money']
+        cur.execute(get_money_query, (receiver_id,))
+        receiver_money = cur.fetchone()['money']
 
-    lobby.send_money(sender_id, receiver_id, amount)
+        sender_money -= amount
+        if sender_money < 0:
+            conn.rollback()
+            raise HTTPException(status_code=500, detail=f"Sender doesn't have enough money")
+        receiver_money += amount
+        update_money_query = """
+            UPDATE balance SET money=%s
+            WHERE id=%s
+        """
+        cur.execute(update_money_query, (sender_money, sender_id,))
+        cur.execute(update_money_query, (receiver_money, receiver_id,))
+        
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't send money because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
+
     response = {
         'sender_id': sender_id,
+        'sender_money': sender_money,
         'receiver_id': receiver_id,
-        'sender_money': lobby.balances[sender_id].money,
-        'receiver_money': lobby.balances[receiver_id].money
+        'receiver_money': receiver_money
+
     }
 
     for ws in lobby.sockets.values():
