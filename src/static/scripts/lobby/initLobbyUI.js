@@ -64,8 +64,11 @@ function initRegistrationUI() {
     const player = state.players[state.localPlayerId];
     const registerPlayerButton = document.getElementById("registerPlayerButton");
     const registerPlayerText = document.getElementById("registerPlayerText");
+    console.log("entered player registration init");
+    console.log(state);
     if (player.status === "registered")
     {
+    console.log("should've turned off the button");
         registerPlayerButton.disabled = true;
         registerPlayerText.textContent = "Дождитесь начала голосования";
     }

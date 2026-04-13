@@ -1,13 +1,11 @@
 from typing import Annotated
-import secrets
 
 from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 
-from ..dependencies import get_hostess, get_templates
-from ..core.lobby import Lobby
-from ..core.hostess import Hostess
+from ...dependencies import get_hostess, get_templates
+from ...core.hostess import Hostess
 
 router = APIRouter(tags=["Lobby"])
 
@@ -59,7 +57,7 @@ async def get_status(
                 FROM player
                 WHERE id=%s
             """
-            cur.execute(player_status_query, (player_id,))
+            cur.execute(player_status_query, (player_id['player_id'],))
             player_status = cur.fetchone()['status']
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
@@ -75,74 +73,92 @@ async def get_state(
         hostess: Hostess = Depends(get_hostess)
     ):
     conn = hostess.database.pool.getconn()
-    try:
-        cur = conn.cursor()
+    # try:
+    cur = conn.cursor()
 
-        lobby_query = """
-            SELECT *
-            FROM lobby
-            WHERE id=%s
-        """
-        cur.execute(lobby_query, (client_key, lobby_id,))
-        lobby = dict(cur.fetchone())
+    lobby_query = """
+        SELECT *
+        FROM lobby
+        WHERE id=%s
+    """
+    cur.execute(lobby_query, (lobby_id,))
+    lobby = dict(cur.fetchone())
+    print(lobby)
 
-        player_id_query = """
+    player_id_query = """
+        SELECT player_id
+        FROM client
+        WHERE key=%s AND lobby_id=%s
+    """
+    cur.execute(player_id_query, (client_key, lobby_id,))
+    local_player_id = cur.fetchone()['player_id']
+
+    lobby_owner = lobby['owner_id'] == local_player_id
+
+    balance_id_query = """
+        SELECT *
+        FROM balance
+        WHERE lobby_id=%s
+    """
+    cur.execute(balance_id_query, (lobby_id,))
+    res = cur.fetchall()
+    balances = {}
+
+    gov_balance_id = None
+    bank_balance_id = None
+    for b in res:
+        b_dict = dict(b)
+        b_dict['lobbyId'] = b_dict['lobby_id']
+        b_dict.pop('lobby_id')
+        get_owner_query = """
             SELECT player_id
-            FROM client
-            WHERE key=%s AND lobby_id=%s
+            FROM player_balance
+            WHERE balance_id=%s
         """
-        cur.execute(player_id_query, (client_key, lobby_id,))
-        local_player_id = cur.fetchone()['player_id']
+        cur.execute(get_owner_query, (b['id'],))
+        owner_id = cur.fetchone()['player_id']
+        b_dict['ownerId'] = owner_id
+        balances[b['id']] = b_dict
+        if b['type'] == 'gov':
+            gov_balance_id = b['id']
+        elif b['type'] == 'bank':
+            bank_balance_id = b['id']
 
-        lobby_owner = lobby['owner_id'] == local_player_id
+    personal_balance_id_query = """
+        SELECT balance_id
+        FROM player_balance
+        JOIN balance ON player_balance.balance_id=balance.id
+        WHERE player_id=%s AND type='personal'
+    """
+    cur.execute(personal_balance_id_query, (local_player_id,))
+    personal_balance_id = cur.fetchone()['balance_id']
 
-        balance_id_query = """
-            SELECT *
-            FROM balance
-            WHERE lobby_id=%s
-        """
-        cur.execute(balance_id_query, (lobby_id,))
-        res = cur.fetchall()
-        balances = {}
-
-        gov_balance_id = None
-        bank_balance_id = None
-        for b in res:
-            b_dict = dict(b)
-            b_dict['lobbyId'] = b_dict['lobby_id']
-            b_dict.pop('lobby_id')
-            balances[b['id']] = b_dict
-            if b['type'] == 'gov':
-                gov_balance_id = b['id']
-            elif b['type'] == 'bank':
-                bank_balance_id = b['id']
-
-        personal_balance_id_query = """
+    players_query = """
+        SELECT *
+        FROM player
+        WHERE lobby_id=%s
+    """
+    cur.execute(players_query, (lobby_id,))
+    res = cur.fetchall()
+    players = {}
+    for p in res:
+        p_dict = dict(p)
+        p_dict['lobbyId'] = p_dict['lobby_id']
+        p_dict.pop('lobby_id')
+        get_balance_ids_query = """
             SELECT balance_id
             FROM player_balance
-            JOIN balance ON player_balance.balance_id=balance.id
-            WHERE player_id=%s AND type='personal'
+            WHERE player_id=%s
         """
-        cur.execute(personal_balance_id_query, (local_player_id,))
-        personal_balance_id = cur.fetchone()['balance_id']
+        cur.execute(get_balance_ids_query, (p['id'],))
+        balance_ids = cur.fetchall()
+        p_dict['balanceIds'] = [b['balance_id'] for b in balance_ids]
+        players[p['id']] = p_dict
 
-        players_query = """
-            SELECT *
-            FROM player
-            WHERE lobby_id=%s
-        """
-        cur.execute(players_query, (lobby_id,))
-        res = cur.fetchall()
-        players = {}
-        for p in res:
-            p_dict = dict(p)
-            p_dict['lobbyId'] = p_dict['lobby_id']
-            p_dict.pop('lobby_id')
-            players[p['id']] = p_dict
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
-    finally:
-        hostess.database.pool.putconn(conn)
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    # finally:
+    hostess.database.pool.putconn(conn)
 
     state = {
         "lobbyOwner": lobby_owner,
@@ -193,14 +209,27 @@ async def start_game(
         player_id: int,
         hostess: Hostess = Depends(get_hostess),
         ):
+    conn = hostess.database.pool.getconn()
     try:
-        lobby = hostess.get_lobby(lobby_id)
+        cur = conn.cursor()
+        update_status_query = """
+            UPDATE lobby
+            SET status='game'
+            WHERE id=%s AND owner_id=%s
+            RETURNING id
+        """
+        cur.execute(update_status_query, (lobby_id, player_id))
+        res_id = cur.fetchone()
+        conn.commit()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
-    lobby.status = 'game'
+    if not res_id:
+        return {'status': 'bad', 'info': 'you are not allowed to start game or whatever'}
 
-    for socket in lobby.sockets.values():
+    for socket in hostess.sockets[lobby_id].values():
         msg = {'type': 'start_game'}
         await socket.send_json(msg)
 

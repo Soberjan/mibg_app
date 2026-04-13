@@ -1,4 +1,5 @@
 import { roleDict, accountDict } from "../dicts.js";
+import { state } from "../state.js"
 
 export function addPlayerRow(player) {
     const container = document.getElementById("otherPlayers");
@@ -23,6 +24,9 @@ export function addPlayerRow(player) {
     const balances = []
     for (const balanceId of player.balanceIds)
         balances.push(state.balances[balanceId])
+
+    console.log("adding another player");
+    console.log(state);
 
     for (const balance of balances) {
         const balanceSpan = document.createElement("span");

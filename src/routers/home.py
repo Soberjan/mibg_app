@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request, Query, Depends
+from fastapi import APIRouter, Request, Depends
 
 from ..dependencies import get_templates
 

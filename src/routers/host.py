@@ -4,10 +4,7 @@ import secrets
 
 from fastapi import APIRouter, HTTPException, Depends, Cookie, Response
 
-from database import database
-
 from ..dependencies import get_hostess
-from ..core.lobby import Lobby
 from ..core.hostess import Hostess
 
 router = APIRouter(tags=["Hostess"])
@@ -51,9 +48,8 @@ async def join_lobby(
         """
         cur.execute(
             get_player_id_query,
-            params=(client_key, lobby_id,)
+            (client_key, lobby_id,)
         )
-        hostess.database.execute_query(get_player_id_query, (client_key, str(lobby_id),))
         player_id = cur.fetchone()
         if player_id is not None:
             return {
@@ -79,32 +75,32 @@ async def join_lobby(
             VALUES (%s, %s, %s)
             RETURNING id
         """
-        player_id = conn.execute(player_insert, (str(lobby_id), 'dood', role)).fetchone()['id']
+        cur.execute(player_insert, (str(lobby_id), 'dood', role))
+        player_id = cur.fetchone()['id']
 
         balance_insert = """
             INSERT INTO balance (lobby_id, money, type)
             VALUES (%s, %s, %s)
             RETURNING id
         """
-        balance_id = conn.execute(balance_insert, (str(lobby_id), initial_balance, 'personal')).fetchone()['id']
-
+        cur.execute(balance_insert, (str(lobby_id), initial_balance, 'personal'))
+        balance_id = cur.fetchone()['id']
         player_balance_insert = """
             INSERT INTO player_balance (player_id, balance_id)
             VALUES (%s, %s)
         """
-        conn.execute(player_balance_insert, (str(player_id), str(balance_id)))
-
-        hostess.clients[client_key][lobby_id] = player_id
+        cur.execute(player_balance_insert, (str(player_id), str(balance_id)))
 
         client_insert = """
             INSERT INTO client (key, lobby_id, player_id)
             VALUES (%s, %s, %s)
             RETURNING id
         """
-        conn.execute(client_insert, (client_key, str(lobby_id), str(player_id)))
+        cur.execute(client_insert, (client_key, str(lobby_id), str(player_id)))
 
         if lobby['owner_id'] == None:
-            hostess.database.execute_query('UPDATE lobby SET owner_id=%s WHERE lobby_id=%s', (player_id, lobby_id,))
+            cur.execute('UPDATE lobby SET owner_id=%s WHERE id=%s', (player_id, lobby_id,))
+        conn.commit()
     except Exception as e:
         raise Exception
     finally:

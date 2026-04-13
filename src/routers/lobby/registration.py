@@ -1,13 +1,9 @@
 from typing import Annotated
-import secrets
 
 from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
-from fastapi.templating import Jinja2Templates
-from starlette.templating import _TemplateResponse
 
-from ..dependencies import get_hostess, get_templates
-from ..core.lobby import Lobby
-from ..core.hostess import Hostess
+from ...dependencies import get_hostess
+from ...core.hostess import Hostess
 
 router = APIRouter(tags=["Lobby"])
 
@@ -42,8 +38,8 @@ async def register_player(
     finally:
         hostess.database.pool.putconn(conn)
 
-    for ws in lobby.sockets.values():
-        await ws.send_json({'type': 'player_registered', 'player_id': player_id, 'name': name})
+    for socket in hostess.sockets[lobby_id].values():
+        await socket.send_json({'type': 'player_registered', 'player_id': player_id, 'name': name})
 
     return {
         "status": "ok",

@@ -1,17 +1,11 @@
-from typing import Annotated
-import secrets
-
 from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
-from fastapi.templating import Jinja2Templates
-from starlette.templating import _TemplateResponse
 
-from ..dependencies import get_hostess, get_templates
-from ..core.lobby import Lobby
-from ..core.hostess import Hostess
+from ...dependencies import get_hostess
+from ...core.hostess import Hostess
 
 router = APIRouter(tags=["Lobby"])
 
-@router.put('/lobby/{lobby_id}/transactions/send_money')
+@router.put('/lobby/{lobby_id}/send_money')
 async def send_money(
         lobby_id: int,
         sender_id: int,
@@ -44,7 +38,7 @@ async def send_money(
         """
         cur.execute(update_money_query, (sender_money, sender_id,))
         cur.execute(update_money_query, (receiver_money, receiver_id,))
-        
+
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't send money because {e}")
@@ -56,10 +50,9 @@ async def send_money(
         'sender_money': sender_money,
         'receiver_id': receiver_id,
         'receiver_money': receiver_money
-
     }
 
-    for ws in lobby.sockets.values():
-        await ws.send_json({'type': 'money_changed', 'result': response})
+    for socket in hostess.sockets[lobby_id].values():
+        await socket.send_json({'type': 'money_changed', 'result': response})
 
-    return {'status': 'ok', 'result': response}
+    return {'status': 'ok'}

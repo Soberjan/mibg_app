@@ -1,13 +1,7 @@
-from typing import Annotated
-import secrets
-
 from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
-from fastapi.templating import Jinja2Templates
-from starlette.templating import _TemplateResponse
 
-from ..dependencies import get_hostess, get_templates
-from ..core.lobby import Lobby
-from ..core.hostess import Hostess
+from ...dependencies import get_hostess
+from ...core.hostess import Hostess
 
 router = APIRouter(tags=["Lobby"])
 
@@ -25,6 +19,13 @@ async def start_voting(
             VALUES (%s, %s, %s)
         """
         cur.execute(add_election_query, (lobby_id, 1, 'voting'))
+        update_lobby_status_query = """
+            UPDATE lobby
+            SET status='voring'
+            WHERE id=%s
+        """
+        cur.execute(update_lobby_status_query, (lobby_id,))
+        conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
     finally:
@@ -34,8 +35,8 @@ async def start_voting(
         'voting_round': '1',
         'lobby_id': lobby_id
     }
-    # Доработать это говно
-    lobby.notify_sockets(msg)
+    for socket in hostess.sockets[lobby_id].values():
+        await socket.send_json(msg)
 
 @router.post('/lobby/{lobby_id}/vote')
 async def vote(
@@ -47,36 +48,50 @@ async def vote(
     conn = hostess.database.pool.getconn()
     try:
         cur = conn.cursor()
-        vote_query = """
+        insert_query = """
             WITH el_id AS (
                 SELECT id, round
                 FROM election
-                WHERE lobby_id=%s AND status="voting"
-            ),
-            ins AS (
-                INSERT INTO vote (voter_id, elected_id, election_id, round)
-                VALUES (%s, %s, (SELECT id FROM el_id), (SELECT round FROM el_id))
+                WHERE lobby_id=%s AND status='voting'
+            )
+            INSERT INTO vote (voted_id, elected_id, election_id, round)
+            VALUES (%s, %s, (SELECT id FROM el_id), (SELECT round FROM el_id))
+        """
+        cur.execute(insert_query, (str(lobby_id), str(voter_id), str(elected_id)))
+
+        get_votes_query = """
+            WITH el_id AS (
+                SELECT id
+                FROM election
+                WHERE lobby_id=%s AND status='voting'
             )
             SELECT elected_id
             FROM vote
             WHERE election_id=(SELECT id FROM el_id)
         """
-        cur.execute(vote_query, (str(lobby_id), str(voter_id), str(electied_id)))
+        cur.execute(get_votes_query, (lobby_id,))
         el_ids = cur.fetchall()
 
         players_query = """
             SELECT id
-            FROM players
+            FROM player
             WHERE lobby_id=%s
         """
         cur.execute(players_query, (str(lobby_id),))
         player_ids = cur.fetchall()
 
+        print(el_ids)
+        print(player_ids)
         if len(el_ids) == len(player_ids):
+            print('started to finish voting')
             voting_result = {}
             for el_id in el_ids:
-                voting_result[el_id['id']] = voting_result.get(el_id['id'], 0) + 1
-            voting_sorted = sorted(voting.items(), key=lambda item: item[1], reverse=True)_
+                voting_result[el_id['elected_id']] = voting_result.get(el_id['elected_id'], 0) + 1
+            voting_sorted = sorted(
+                voting_result.items(), 
+                key=lambda item: item[1], 
+                reverse=True
+            )
 
             if voting_sorted[0][1] == voting_sorted[1][1]:
                 update_round_query = """
@@ -86,21 +101,47 @@ async def vote(
                     RETURNING round
                 """
                 cur.execute(update_round_query, (lobby_id,))
-                round = cur.fetchone()['round']
+                voting_round = cur.fetchone()['round']
 
                 msg = {
                     'type': 'start_voting_round',
-                    'round': round
+                    'round': voting_round
                 }
             else:
+                update_role_query = """
+                    UPDATE player
+                    SET role='politician'
+                    WHERE id=%s
+                """
+                cur.execute(update_role_query, (voting_sorted[0][0],))
+                update_owner_query = """
+                    UPDATE lobby
+                    SET owner_id=%s
+                    WHERE id=%s
+                """
+                cur.execute(update_owner_query, (voting_sorted[0][0], lobby_id))
+
+                change_gov_owner_query = """
+                    WITH gov_id AS (
+                        SELECT id
+                        FROM balance
+                        WHERE type='gov' AND lobby_id=%s
+                    )
+                    UPDATE player_balance
+                    SET player_id=%s
+                    WHERE balance_id=(SELECT id FROM gov_id)
+                """
+                cur.execute(change_gov_owner_query, (lobby_id, voting_sorted[0][0]))
+
                 msg = {
                     'type': 'end_voting',
-                    'winner_id': voting_sorted[0][1]
+                    'winner_id': voting_sorted[0][0]
                 }
 
-            # ДОРАБОТАТЬ
-            for ws in some_sokcets:
-                ws.send_json(msg)
+            print(msg)
+            for socket in hostess.sockets[lobby_id].values():
+                await socket.send_json(msg)
+        conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
     finally:
@@ -116,12 +157,38 @@ async def choose_banker(
         hostess: Hostess = Depends(get_hostess),
         ):
 
-    # try:
-    lobby.choose_banker(voter_id, elected_id)
-    # except Exception as e:
-        # raise HTTPException(status_code=500, detail=f"Banker error {e}")
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        choose_banker_query = """
+            WITH pol_id AS (
+                SELECT id
+                FROM player
+                WHERE id=%s AND role='politician'
+            )
+            UPDATE player
+            SET role='banker'
+            WHERE id=%s AND (SELECT * FROM pol_id) IS NOT NULL
+        """
+        cur.execute(choose_banker_query, (voter_id, elected_id))
+        change_bank_owner_query = """
+            WITH bank_id AS (
+                SELECT id
+                FROM balance
+                WHERE type='bank' AND lobby_id=%s
+            )
+            UPDATE player_balance
+            SET player_id=%s
+            WHERE balance_id=(SELECT id FROM bank_id)
+        """
+        cur.execute(change_bank_owner_query, (lobby_id, elected_id))
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
-    for socket in lobby.sockets.values():
+    for socket in hostess.sockets[lobby_id].values():
         msg = {'type': 'banker_chosen', 'banker_id': elected_id}
         await socket.send_json(msg)
 
@@ -133,11 +200,27 @@ async def has_voted(
         player_id: int,
         hostess: Hostess = Depends(get_hostess),
         ):
+    conn = hostess.database.pool.getconn()
     try:
-        lobby = hostess.get_lobby(lobby_id)
+        cur = conn.cursor()
+        choose_banker_query = """
+            WITH el_id AS (
+                SELECT id
+                FROM election
+                WHERE lobby_id=%s AND status='voting'
+            )
+            SELECT id
+            FROM vote
+            WHERE election_id=(SELECT id FROM el_id) AND voted_id=%s
+        """
+        cur.execute(choose_banker_query, (lobby_id, player_id))
+        voted_id = cur.fetchone()
+        conn.commit()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+        raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
-    has_voted = player_id in lobby.voter.voted_players_ids
+    has_voted = voted_id is None
 
     return {'status': 'ok', 'has_voted': has_voted}

@@ -26,10 +26,8 @@ export function handleSocket(event) {
     switch (res.type) {
         case "other_player_joined":
             state.players[res.player.id] = res.player;
-            for (const balance of Object.values(res.balances)) {
-                state.balances[balance.id] = balance;
-                addBalanceToSelector(balance);
-            }
+            state.balances[res.balance.id] = res.balance;
+            addBalanceToSelector(res.balance);
             addPlayerRow(res.player);
 
             const totalPlayersSpan = document.getElementById("totalPlayers");
@@ -149,7 +147,7 @@ export function handleSocket(event) {
             upperRight = document.getElementById(`upperRight`);
             govBalanceOption = document.getElementById(`balance${govBalance.id}Option`);
             govSenderBalanceOption = document.getElementById(`senderBalance${govBalance.id}Option`);
-            if (govBalance.ownerId === -1 && state.localPlayerId != res.winner_id) {
+            if (govBalance.ownerId === 1 && state.localPlayerId != res.winner_id) {
                 govBalance.ownerId = res.winner_id;
 
                 if (govSenderBalanceOption)
@@ -165,7 +163,7 @@ export function handleSocket(event) {
 
                 playerRow.appendChild(balanceSpan);
             }
-            else if (govBalance.ownerId === -1 && state.localPlayerId === res.winner_id) {
+            else if (govBalance.ownerId === 1 && state.localPlayerId === res.winner_id) {
                 govBalance.ownerId = res.winner_id;
 
                 if (!govSenderBalanceOption)
@@ -180,7 +178,7 @@ export function handleSocket(event) {
 
                 upperRight.appendChild(balanceSpan);
             }
-            else if (govBalance.ownerId != -1 && state.localPlayerId != res.winner_id) {
+            else if (govBalance.ownerId != 1 && state.localPlayerId != res.winner_id) {
                 govBalance.ownerId = res.winner_id;
 
                 if (govSenderBalanceOption)
@@ -195,7 +193,7 @@ export function handleSocket(event) {
 
                 playerRow.appendChild(balanceSpan);
             }
-            else if (govBalance.ownerId != -1 && state.localPlayerId === res.winner_id) {
+            else if (govBalance.ownerId != 1 && state.localPlayerId === res.winner_id) {
                 govBalance.ownerId = res.winner_id;
 
                 if (!govSenderBalanceOption)
@@ -232,7 +230,7 @@ export function handleSocket(event) {
             upperRight = document.getElementById(`upperRight`);
             bankBalanceOption = document.getElementById(`balance${bankBalance.id}Option`);
             bankSenderBalanceOption = document.getElementById(`senderBalance${bankBalance.id}Option`);
-            if (bankBalance.ownerId === -1 && state.localPlayerId != res.banker_id) {
+            if (bankBalance.ownerId === 1 && state.localPlayerId != res.banker_id) {
                 bankBalance.ownerId = res.banker_id;
 
                 if (bankSenderBalanceOption)
@@ -248,7 +246,7 @@ export function handleSocket(event) {
 
                 playerRow.appendChild(balanceSpan);
             }
-            else if (bankBalance.ownerId === -1 && state.localPlayerId === res.banker_id) {
+            else if (bankBalance.ownerId === 1 && state.localPlayerId === res.banker_id) {
                 bankBalance.ownerId = res.banker_id;
 
                 if (!bankSenderBalanceOption)
@@ -263,7 +261,7 @@ export function handleSocket(event) {
 
                 upperRight.appendChild(balanceSpan);
             }
-            else if (bankBalance.ownerId != -1 && state.localPlayerId != res.banker_id) {
+            else if (bankBalance.ownerId != 1 && state.localPlayerId != res.banker_id) {
                 bankBalance.ownerId = res.banker_id;
 
                 if (bankSenderBalanceOption)
@@ -278,7 +276,7 @@ export function handleSocket(event) {
 
                 playerRow.appendChild(balanceSpan);
             }
-            else if (bankBalance.ownerId != -1 && state.localPlayerId === res.banker_id) {
+            else if (bankBalance.ownerId != 1 && state.localPlayerId === res.banker_id) {
                 bankBalance.ownerId = res.banker_id;
 
                 if (!bankSenderBalanceOption)

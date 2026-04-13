@@ -2,12 +2,9 @@ from typing import Annotated
 import secrets
 
 from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
-from fastapi.templating import Jinja2Templates
-from starlette.templating import _TemplateResponse
 
-from ..dependencies import get_hostess, get_templates
-from ..core.lobby import Lobby
-from ..core.hostess import Hostess
+from ...dependencies import get_hostess
+from ...core.hostess import Hostess
 
 router = APIRouter(tags=["Lobby"])
 
@@ -21,18 +18,29 @@ async def is_free(
     if lobby_id != -1:
         raise HTTPException(status_code=500, detail=f"Only lobby_id -1 get execute this endpoint")
 
+    conn = hostess.database.pool.getconn()
+    free = True
     try:
-        lobby: Lobby = hostess.get_lobby(lobby_id)
+        cur = conn.cursor()
+
+        get_players_query = """
+            SELECT *
+            FROM player
+            WHERE lobby_id=-1
+        """
+        cur.execute(get_players_query)
+        players = cur.fetchall()
+        if -1 in hostess.sockets.keys():
+            connected_player_ids = hostess.sockets[-1].keys()
+            for player in players:
+                if player['role'] == role:
+                    free = player['id'] not in connected_player_ids
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
-    for player_id in lobby.sockets.keys():
-        if lobby.players[player_id].role == role:
-            print(f'role {role} already picked')
-            return {'status': 'ok', 'free': False}
-
-    print(f'role {role} is free')
-    return {'status': 'ok', 'free': True}
+    return {'status': 'ok', 'free': free}
 
 @router.post('/lobby/{lobby_id}/assign_client_key')
 async def assign_client_key(
@@ -42,11 +50,6 @@ async def assign_client_key(
     client_key: Annotated[str | None, Cookie()] = None,
     hostess: Hostess = Depends(get_hostess),
 ):
-    try:
-        lobby: Lobby = hostess.get_lobby(lobby_id)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
-
     if client_key is None:
         client_key = secrets.token_hex()
         response.set_cookie(
@@ -57,18 +60,33 @@ async def assign_client_key(
         )
 
     if client_key not in hostess.clients.keys():
-        print('added client key to clients')
         hostess.clients[client_key] = {}
 
-    player_id = None
-    for player in lobby.players.values():
-        if role == player.role.value:
-            player_id = player.id
-    print(lobby.players)
-    print(player_id)
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        get_players_query = """
+            SELECT *
+            FROM player
+            WHERE lobby_id=-1 AND role=%s
+        """
+        cur.execute(get_players_query, (role,))
+        player = cur.fetchone()
 
-    hostess.clients[client_key][lobby_id] = player_id
+        insert_key_query = """
+            INSERT INTO client (key, lobby_id, player_id)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (key, lobby_id)
+            DO UPDATE SET player_id = EXCLUDED.player_id;
+        """
+        cur.execute(insert_key_query, (client_key, lobby_id, player['id']))
+
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
     return {
-        'status': 'ok',
+        'status': 'ok'
     }
