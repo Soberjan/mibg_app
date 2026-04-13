@@ -73,92 +73,92 @@ async def get_state(
         hostess: Hostess = Depends(get_hostess)
     ):
     conn = hostess.database.pool.getconn()
-    # try:
-    cur = conn.cursor()
+    try:
+        cur = conn.cursor()
 
-    lobby_query = """
-        SELECT *
-        FROM lobby
-        WHERE id=%s
-    """
-    cur.execute(lobby_query, (lobby_id,))
-    lobby = dict(cur.fetchone())
-    print(lobby)
-
-    player_id_query = """
-        SELECT player_id
-        FROM client
-        WHERE key=%s AND lobby_id=%s
-    """
-    cur.execute(player_id_query, (client_key, lobby_id,))
-    local_player_id = cur.fetchone()['player_id']
-
-    lobby_owner = lobby['owner_id'] == local_player_id
-
-    balance_id_query = """
-        SELECT *
-        FROM balance
-        WHERE lobby_id=%s
-    """
-    cur.execute(balance_id_query, (lobby_id,))
-    res = cur.fetchall()
-    balances = {}
-
-    gov_balance_id = None
-    bank_balance_id = None
-    for b in res:
-        b_dict = dict(b)
-        b_dict['lobbyId'] = b_dict['lobby_id']
-        b_dict.pop('lobby_id')
-        get_owner_query = """
-            SELECT player_id
-            FROM player_balance
-            WHERE balance_id=%s
+        lobby_query = """
+            SELECT *
+            FROM lobby
+            WHERE id=%s
         """
-        cur.execute(get_owner_query, (b['id'],))
-        owner_id = cur.fetchone()['player_id']
-        b_dict['ownerId'] = owner_id
-        balances[b['id']] = b_dict
-        if b['type'] == 'gov':
-            gov_balance_id = b['id']
-        elif b['type'] == 'bank':
-            bank_balance_id = b['id']
+        cur.execute(lobby_query, (lobby_id,))
+        lobby = dict(cur.fetchone())
+        print(lobby)
 
-    personal_balance_id_query = """
-        SELECT balance_id
-        FROM player_balance
-        JOIN balance ON player_balance.balance_id=balance.id
-        WHERE player_id=%s AND type='personal'
-    """
-    cur.execute(personal_balance_id_query, (local_player_id,))
-    personal_balance_id = cur.fetchone()['balance_id']
+        player_id_query = """
+            SELECT player_id
+            FROM client
+            WHERE key=%s AND lobby_id=%s
+        """
+        cur.execute(player_id_query, (client_key, lobby_id,))
+        local_player_id = cur.fetchone()['player_id']
 
-    players_query = """
-        SELECT *
-        FROM player
-        WHERE lobby_id=%s
-    """
-    cur.execute(players_query, (lobby_id,))
-    res = cur.fetchall()
-    players = {}
-    for p in res:
-        p_dict = dict(p)
-        p_dict['lobbyId'] = p_dict['lobby_id']
-        p_dict.pop('lobby_id')
-        get_balance_ids_query = """
+        lobby_owner = lobby['owner_id'] == local_player_id
+
+        balance_id_query = """
+            SELECT *
+            FROM balance
+            WHERE lobby_id=%s
+        """
+        cur.execute(balance_id_query, (lobby_id,))
+        res = cur.fetchall()
+        balances = {}
+
+        gov_balance_id = None
+        bank_balance_id = None
+        for b in res:
+            b_dict = dict(b)
+            b_dict['lobbyId'] = b_dict['lobby_id']
+            b_dict.pop('lobby_id')
+            get_owner_query = """
+                SELECT player_id
+                FROM player_balance
+                WHERE balance_id=%s
+            """
+            cur.execute(get_owner_query, (b['id'],))
+            owner_id = cur.fetchone()['player_id']
+            b_dict['ownerId'] = owner_id
+            balances[b['id']] = b_dict
+            if b['type'] == 'gov':
+                gov_balance_id = b['id']
+            elif b['type'] == 'bank':
+                bank_balance_id = b['id']
+
+        personal_balance_id_query = """
             SELECT balance_id
             FROM player_balance
-            WHERE player_id=%s
+            JOIN balance ON player_balance.balance_id=balance.id
+            WHERE player_id=%s AND type='personal'
         """
-        cur.execute(get_balance_ids_query, (p['id'],))
-        balance_ids = cur.fetchall()
-        p_dict['balanceIds'] = [b['balance_id'] for b in balance_ids]
-        players[p['id']] = p_dict
+        cur.execute(personal_balance_id_query, (local_player_id,))
+        personal_balance_id = cur.fetchone()['balance_id']
 
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
-    # finally:
-    hostess.database.pool.putconn(conn)
+        players_query = """
+            SELECT *
+            FROM player
+            WHERE lobby_id=%s
+        """
+        cur.execute(players_query, (lobby_id,))
+        res = cur.fetchall()
+        players = {}
+        for p in res:
+            p_dict = dict(p)
+            p_dict['lobbyId'] = p_dict['lobby_id']
+            p_dict.pop('lobby_id')
+            get_balance_ids_query = """
+                SELECT balance_id
+                FROM player_balance
+                WHERE player_id=%s
+            """
+            cur.execute(get_balance_ids_query, (p['id'],))
+            balance_ids = cur.fetchall()
+            p_dict['balanceIds'] = [b['balance_id'] for b in balance_ids]
+            players[p['id']] = p_dict
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
 
     state = {
         "lobbyOwner": lobby_owner,
