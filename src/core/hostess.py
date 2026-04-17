@@ -2,11 +2,9 @@ from typing import Dict
 
 from ..database.database import Database
 
-from .lobby import Lobby
 
 class Hostess:
     def __init__(self, database: Database) -> None:
-        self.lobbies: Dict[int, Lobby] = {}
         self.database = database
         self.clients = {}
         self.sockets = {}
@@ -44,3 +42,13 @@ class Hostess:
             [balance_id, '1']
         )
         return lobby_id
+
+    def get_lobby(self, lobby_id):
+        query = """
+            SELECT *
+            FROM lobby
+            WHERE id = %s
+        """
+        res = self.database.execute_query(query, (str(lobby_id),))
+        if res != None:
+            return dict(res[0])
