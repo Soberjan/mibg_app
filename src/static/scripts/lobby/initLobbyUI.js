@@ -132,6 +132,28 @@ function initChoosingBankerUI() {
     chooseBankerUI()
 }
 
+function initFinancePage() {
+	console.log("initing finance page");
+    const borrowerBalances = document.getElementById("borrowerBalances");
+    for (const balance of Object.values(state.balances)) {
+		console.log("adding balance");
+        const option = document.createElement("option");
+        option.id = `loan{balance.id}Option`;
+        option.value = `loan{balance.id}Option`;
+        option.textContent = `${accountDict[balance.type]} ${state.players[balance.ownerId].name}`;
+
+		borrowerBalances.appendChild(option);
+    }
+
+}
+function initManagmentPage() {
+
+}
+
+function initObligationPage() {
+
+}
+
 export async function initLobbyUI() {
     initLocalPlayerUI();
     initOtherPlayersUI();
@@ -139,6 +161,8 @@ export async function initLobbyUI() {
     initVotingUI();
     initRegistrationUI();
     initChoosingBankerUI();
+
+
 
     const registrationOverlay = document.getElementById("registrationOverlay");
     const votingOverlay = document.getElementById("votingOverlay");
@@ -166,4 +190,7 @@ export async function initLobbyUI() {
     }
 
     loadGamePage();
+
+	if (state.players[state.localPlayerId].role === "banker")
+		initFinancePage();
 }

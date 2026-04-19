@@ -9,6 +9,8 @@ import { startCountdown } from "./timer/countDownTimer.js";
 import { state } from "./state.js";
 import { accountDict } from "./dicts.js";
 import { startVoteText } from "./voting/startVoteText.js";
+import { giveLoanSocket } from "./finances/giveLoanSocket.js";
+import { closeLoanSocket } from "./finances/closeLoanSocket.js";
 
 export function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -296,6 +298,12 @@ export function handleSocket(event) {
             if (playerRoleText)
                 playerRoleText.innerHTML = "банкир";
             break;
+
+		case "loan_given":
+			giveLoanSocket(res);
+
+		case "loan_closed":
+			closeLoanSocket(res);
 
         case "start_game":
             console.log("game started");

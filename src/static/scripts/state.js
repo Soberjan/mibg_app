@@ -9,5 +9,7 @@ export const state = {
     ws: null,
     players: {},
     balances: {},
-    intervals: {}
+    intervals: {},
+    credits: {}
+
 };
