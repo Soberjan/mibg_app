@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS credit (
+CREATE TABLE IF NOT EXISTS loan(
     id SERIAL PRIMARY KEY,
     balance_id INT REFERENCES balance(id),
     start_time TIMESTAMP,

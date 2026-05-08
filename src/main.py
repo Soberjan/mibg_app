@@ -8,7 +8,7 @@ from .config import Config
 load_dotenv()
 Config.init()
 from .routers import host, home, player_sockets
-from .routers.lobby import lobby, test_lobby, registration, transactions, voting
+from .routers.lobby import lobby, test_lobby, registration, transactions, voting, finances
 from .core.hostess import Hostess
 from .database.database import Database
 
@@ -32,4 +32,5 @@ app.include_router(test_lobby.router)
 app.include_router(registration.router)
 app.include_router(transactions.router)
 app.include_router(voting.router)
+app.include_router(finances.router)
 

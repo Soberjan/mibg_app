@@ -299,11 +299,15 @@ export function handleSocket(event) {
                 playerRoleText.innerHTML = "банкир";
             break;
 
-		case "loan_given":
-			giveLoanSocket(res);
+	case "loan_given":
+	    console.log("niger! loan is given");
+	    giveLoanSocket(res);
+	    break;
 
-		case "loan_closed":
-			closeLoanSocket(res);
+	case "loan_closed":
+	    console.log("faggot! loan is closed");
+	    closeLoanSocket(res);
+	    break;
 
         case "start_game":
             console.log("game started");

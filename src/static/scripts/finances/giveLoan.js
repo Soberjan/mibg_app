@@ -13,5 +13,8 @@ export async function giveLoan() {
     const loanTimeInput = document.getElementById("loanTime");
     const loanTime = loanTimeInput.value;
 
-    var response = await fetch(`/lobby/{state.lobby_id}/give_loan?borrower_balance_id={borrowerBalanceId}&loan_sum={loanSum}&loan_interest={loanInterest}&loan_time={loanTime}`);
+    console.log("niger");
+    console.log(borrowerBalanceId);
+
+    var response = await fetch(`/lobby/${state.lobbyId}/give_loan?borrower_balance_id=${borrowerBalanceId}&loan_sum=${loanSum}&loan_interest=${loanInterest}&loan_time=${loanTime}`, {method: "POST"});
 }

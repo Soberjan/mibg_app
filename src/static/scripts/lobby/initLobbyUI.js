@@ -8,6 +8,7 @@ import { loadGamePage } from "./loadGamePage.js";
 import { startVoteText } from "../voting/startVoteText.js";
 import { roleDict, accountDict } from "../dicts.js";
 import { chooseBankerUI } from "../voting/chooseBankerUI.js";
+import { createObligationLoan, createFinanceLoan } from "../finances/loanElements.js";
 
 function initLocalPlayerUI() {
     const player = state.players[state.localPlayerId];
@@ -129,29 +130,43 @@ async function initVotingUI() {
 
 function initChoosingBankerUI() {
     // работает и ладно, чтобы было красиво, нужно по другому скрипты раскидать
-    chooseBankerUI()
+    chooseBankerUI();
 }
 
-function initFinancePage() {
-	console.log("initing finance page");
+async function initFinancePage() {
+    console.log("initing finance page");
     const borrowerBalances = document.getElementById("borrowerBalances");
     for (const balance of Object.values(state.balances)) {
 		console.log("adding balance");
         const option = document.createElement("option");
-        option.id = `loan{balance.id}Option`;
-        option.value = `loan{balance.id}Option`;
+        option.id = `loan${balance.id}Option`;
+        option.value = `${balance.id}`;
         option.textContent = `${accountDict[balance.type]} ${state.players[balance.ownerId].name}`;
-
 		borrowerBalances.appendChild(option);
     }
 
+    const result = await fetch(`/lobby/${state.lobbyId}/finance/get_loans`);
+	const res = await result.json();
+	console.log("initfinancepage");
+	console.log(result);
+	for (const loan of Object.values(res.loans)) {
+		createFinanceLoan(loan.id, loan.balance_id, loan.sum, loan.interest, loan.duration_time, loan.start_time);
+	}
 }
+
 function initManagmentPage() {
 
 }
 
-function initObligationPage() {
-
+async function initObligationPage() {
+    const result = await fetch(`/lobby/${state.lobbyId}/finance/get_loans`);
+	const res = await result.json();
+	console.log("initing obligations");
+	for (var loan of Object.values(res.loans)) {
+		const loanOwnerId = state.balances[loan.balance_id].ownerId;
+		if (loanOwnerId === state.localPlayerId)
+			createObligationLoan(loan.id, loan.sum, loan.interest, loan.duration_time, loan.start_time);
+	}
 }
 
 export async function initLobbyUI() {
@@ -161,8 +176,6 @@ export async function initLobbyUI() {
     initVotingUI();
     initRegistrationUI();
     initChoosingBankerUI();
-
-
 
     const registrationOverlay = document.getElementById("registrationOverlay");
     const votingOverlay = document.getElementById("votingOverlay");
@@ -192,5 +205,8 @@ export async function initLobbyUI() {
     loadGamePage();
 
 	if (state.players[state.localPlayerId].role === "banker")
-		initFinancePage();
+		await initFinancePage();
+
+	if (state.players[state.localPlayerId].role === "jobless" || state.players[state.localPlayerId].role === "worker")
+		await initObligationPage();
 }

@@ -17,14 +17,14 @@ async def give_loan(
     conn = hostess.database.pool.getconn()
     try:
         cur = conn.cursor()
-        add_election_query = """
-            INSERT INTO credit (balance_id, start_time, duration_time, sum, interest, state)
-            VALUES (%s, NOW(), %s, %s, %s, %s)
-            RETURING id
+        give_credit_query = """
+            INSERT INTO loan (balance_id, start_time, duration_time, sum, interest, state)
+            VALUES (%s, NOW(), MAKE_INTERVAL(mins => %s), %s, %s, %s)
+            RETURNING id, start_time, duration_time, balance_id
         """
-        cur.execute(add_election_query,
+        cur.execute(give_credit_query,
                     (borrower_balance_id, loan_time, loan_sum, loan_interest, "active"))
-        id = cur.fetchone()[0]
+        res = cur.fetchone()
 
         conn.commit()
     except Exception as e:
@@ -35,15 +35,19 @@ async def give_loan(
         "res": "ok",
         "type": "loan_given",
         "loan_sum": loan_sum,
-        "interest": interest,
-        "return_sum": loan_sum * (100. + interest) / 100.,
-        "id": id
+        "interest": loan_interest,
+        "id": res['id'],
+        "balance_id": res['balance_id'],
+        "start_time": res['start_time'].timestamp() // 60,
+        "duration_time": int(res['duration_time'].total_seconds() // 60)
     }
+    print('giving loan')
     for socket in hostess.sockets[lobby_id].values():
+        print('sending shit')
         await socket.send_json(msg)
 
 @router.post('/lobby/{lobby_id}/close_loan')
-async def give_loan(
+async def close_loan(
         lobby_id: int,
         loan_id: int,
         hostess: Hostess = Depends(get_hostess)
@@ -52,22 +56,61 @@ async def give_loan(
     try:
         cur = conn.cursor()
         update_loan_status_query = """
-            UPDATE credit 
-            SET status='closed'
+            UPDATE loan 
+            SET state='closed'
             WHERE id=%s
         """
         cur.execute(update_loan_status_query,
                     (loan_id, )
+                    )
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
     finally:
         hostess.database.pool.putconn(conn)
+    print('closing loan')
 
     msg = {
         "res": "ok",
         "type": "loan_closed",
-        "id": id
+        "id": loan_id
     }
     for socket in hostess.sockets[lobby_id].values():
         await socket.send_json(msg)
+
+@router.get('/lobby/{lobby_id}/finance/get_loans')
+async def get_loans(
+        lobby_id: int,
+        hostess: Hostess = Depends(get_hostess)
+    ):
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        get_loans_query = """
+            WITH balance_ids AS (
+                SELECT id
+                FROM balance
+                WHERE lobby_id=%s
+            )
+            SELECT *
+            FROM loan 
+            WHERE state = 'active' AND balance_id IN (SELECT id FROM balance_ids)
+        """
+        cur.execute(get_loans_query, (lobby_id,))
+        res = cur.fetchall()
+
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
+    loans = {}
+    for loan in res:
+        loans[loan['id']] = dict(loan)
+        loans[loan['id']]['start_time'] = loans[loan['id']]['start_time'].timestamp() // 60
+    
+    msg = {
+        "res": "ok",
+        "loans": loans
+    }
+    return msg
