@@ -1,14 +1,33 @@
-hostess = {} # словарь словарей
-socket = 'shit'
+import asyncio
+from psycopg2 import connect
 
-lobby_id = 1
-player_id = 3
-hostess.setdefault(lobby_id, {})[player_id] = socket
-player_id = 4
-hostess.setdefault(lobby_id, {})[player_id] = socket
-lobby_id = 2
-player_id = 5
-hostess.setdefault(lobby_id, {})[player_id] = socket
+class Timer:
+    def __init__(self, time_left):
+        self.paused = False
+        self.time_left = time_left
 
-print(hostess)
+class Lobby:
+    def __init__(self):
+        self.timers = []
+        self.start_time = 1
 
+
+    def loop(self):
+        while True:
+            for timer in self.timers():
+                if not self.paused:
+                    timer.tick()
+            asyncio.sleep(0.05)
+
+l = Lobby()
+timer = Timer(2)
+timer2 = Timer(3)
+
+
+conn = connect(user='mibg_admin', password='12345', host='localhost', dbname='mibg_base')
+cur = conn.cursor()
+cur.execute("SELECT * FROM loan")
+t = cur.fetchone()[2]
+print(t)
+print(t.__dict__)
+print(cur.fetchone())

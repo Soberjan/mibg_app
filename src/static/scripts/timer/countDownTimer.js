@@ -1,8 +1,9 @@
 import { formatSeconds } from "./formatSeconds.js";
 
-export function startCountdown(timerId, countdownDurationSec) {
+export function startCountdown(timerId, countdownDurationSec, onEnd = null) {
     const countdownStartTime = Date.now();
 
+	console.log("starting timer!");
     const intervalId = setInterval(() => {
         const now = Date.now();
         const elapsedSeconds = Math.floor((now - countdownStartTime) / 1000);
@@ -12,13 +13,20 @@ export function startCountdown(timerId, countdownDurationSec) {
             remainingSeconds = 0;
         }
 
-        document.getElementById(timerId).textContent = formatSeconds(remainingSeconds);
+		const timer = document.getElementById(timerId);
+
+		if (timer === null) {
+			clearInterval(intervalId);
+			return;
+		}
+
+        timer.textContent = formatSeconds(remainingSeconds);
+
+		console.log(remainingSeconds);
 
         if (remainingSeconds <= 0) {
             clearInterval(intervalId);
-            console.log("oh shit, you've run out of time");
+			if (typeof(onEnd) === "function") onEnd();
         }
     }, 200);
-
-    return intervalId;
 }

@@ -1,5 +1,11 @@
 import { state } from "../state.js";
 import { closeLoan } from "./closeLoan.js";
+import { startCountdown } from "../timer/countDownTimer.js";
+
+function loanTimeout(loanTimer) {
+	loanTimer.style.color = "red";
+	loanTimer.textContent = "Время уплаты долга вышло";
+}
 
 export function createObligationLoan(id, loanSum, interest, durationTime, startTime) {
 	const loans = document.getElementById("obligationLoans");
@@ -11,10 +17,10 @@ export function createObligationLoan(id, loanSum, interest, durationTime, startT
 	const loanText = document.createElement("section");
 	loanText.textContent = `Вы заняли ${loanSum} под процент ${interest} и должны вернуть банку ${returnSum}`;
 
-	// как-то добавить запуск таймера
 	const loanTimer = document.createElement("section");
 	loanTimer.id = `loan${id}Timer`;
 	loanTimer.textContent = `Осталось времени: ${durationTime}`;
+	startCountdown(loanTimer.id, durationTime, () => loanTimeout(loanTimer));
 
 	loan.appendChild(loanText);
 	loan.appendChild(loanTimer);
@@ -34,10 +40,9 @@ export function createFinanceLoan(id, balanceId, loanSum, interest, durationTime
 	const returnSum = loanSum * (100 + interest) / 100;
 	loanText.textContent = `Игрок ${playerName} занял ${loanSum} под процент ${interest} должен вернуть ${returnSum}`;
 
-	// как-то добавить запуск таймера
 	const loanTimer = document.createElement("section");
 	loanTimer.id = `loan${id}Timer`;
-	loanTimer.textContent = `Осталось времени: ${durationTime}`;
+	startCountdown(loanTimer.id, durationTime, () => loanTimeout(loanTimer));
 	
 	const loanButton = document.createElement("button");
 	loanButton.id = `loan${id}Button`;

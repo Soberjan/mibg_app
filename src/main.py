@@ -34,3 +34,37 @@ app.include_router(transactions.router)
 app.include_router(voting.router)
 app.include_router(finances.router)
 
+async def heartbeat():
+    query = """
+        UPDATE server_state
+        SET heartbeat=NOW()
+    """
+    while True:
+        conn = db.pool.getconn()
+        try:
+            cur = conn.cursor()
+            cur.execute(query)`
+        finally:
+            db.pool.putconn(conn)
+        await asyncio.sleep(1.)
+
+@app.on_event("startup")
+async def startup():
+    asyncio.create_task(heartbeat())
+
+    active_loans_query = """
+        SELECT lobby_id, loan_id, start_time 
+        FROM loan
+        JOIN balance ON loan.balance_id = balance.id
+        WHERE state='active'
+    """
+    conn = db.pool.getconn()
+    try:
+        cur = conn.cursor()
+        cur.execute(active_loans_query)
+        loans = cur.fetchall()
+        for loan in loans:
+            print('do shit')
+            `
+        
+

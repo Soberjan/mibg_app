@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS server_state (
+	id SERIAL PRIMARY KEY,
+	heartbeat TIMESTAMP
+)
