@@ -7,7 +7,7 @@ function loanTimeout(loanTimer) {
 	loanTimer.textContent = "Время уплаты долга вышло";
 }
 
-export function createObligationLoan(id, loanSum, interest, durationTime, startTime) {
+export function createObligationLoan(id, loanSum, interest, endsAt) {
 	const loans = document.getElementById("obligationLoans");
 
 	const loan = document.createElement("section");
@@ -19,8 +19,14 @@ export function createObligationLoan(id, loanSum, interest, durationTime, startT
 
 	const loanTimer = document.createElement("section");
 	loanTimer.id = `loan${id}Timer`;
-	loanTimer.textContent = `Осталось времени: ${durationTime}`;
-	startCountdown(loanTimer.id, durationTime, () => loanTimeout(loanTimer));
+    if (Date.now() < Date.parse(endsAt))
+    {
+        state.timers[loanTimer.id] = {}
+        state.timers[loanTimer.id].endsAt = Date.parse(endsAt);
+        startCountdown(loanTimer.id, () => loanTimeout(loanTimer));
+    }
+    else
+        loanTimeout(loanTimer);
 
 	loan.appendChild(loanText);
 	loan.appendChild(loanTimer);
@@ -28,8 +34,9 @@ export function createObligationLoan(id, loanSum, interest, durationTime, startT
 	loans.appendChild(loan);
 }
 
-export function createFinanceLoan(id, balanceId, loanSum, interest, durationTime, startTime) {
+export function createFinanceLoan(id, balanceId, loanSum, interest, endsAt) {
 	console.log("appeding shit to finance loan");
+    console.log(`end time from server looks like this: ${endsAt}`);
 	const loans = document.getElementById("financeLoans");
 
 	const loan = document.createElement("section");
@@ -42,7 +49,15 @@ export function createFinanceLoan(id, balanceId, loanSum, interest, durationTime
 
 	const loanTimer = document.createElement("section");
 	loanTimer.id = `loan${id}Timer`;
-	startCountdown(loanTimer.id, durationTime, () => loanTimeout(loanTimer));
+
+    if (Date.now() < Date.parse(endsAt))
+    {
+        state.timers[loanTimer.id] = {}
+        state.timers[loanTimer.id].endsAt = Date.parse(endsAt);
+        startCountdown(loanTimer.id, () => loanTimeout(loanTimer));
+    }
+    else
+        loanTimeout(loanTimer);
 	
 	const loanButton = document.createElement("button");
 	loanButton.id = `loan${id}Button`;

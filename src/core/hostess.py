@@ -1,4 +1,4 @@
-from typing import Dict
+import datetime as dt
 
 from ..database.database import Database
 
@@ -10,7 +10,7 @@ class Hostess:
         self.sockets = {}
 
     def create_lobby(self):
-        lobby_id = self.database.insert_entry('lobby', ['status'], ['registration'])
+        lobby_id = self.database.insert_entry('lobby', ['status', 'started_at'], ['registration', dt.datetime.now().isoformat()])
         if lobby_id == None:
             return
 

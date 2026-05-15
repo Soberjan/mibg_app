@@ -13,6 +13,7 @@
             <label>Роль: <span id="localRole"></span></label>
             <label>Ваш баланс: <span id="localBalance"></span></label>
             <label>Очки влияния: <span id="localInfluence">0</span></label>
+            <span id="gameTimer"></span>
         </div>
 
         <div class="menu" id="buttonsMenu">
@@ -64,9 +65,11 @@
                 <label>Сумма
                     <input type="number" id="loanSum" autocomplete="off"/></label>
                 <label>Ставка
-                    <input type="number" id="loanInterest" autocomplete="off"/></label>
-                <label>Дедлайн
-                    <input type="text" id="loanTime" autocomplete="off"/></label>
+                    <input type="number" id="loanInterest" autocomplete="off"/>
+                </label>
+                <label>Дедлайн</label>
+                    <input type="number" id="loanTimeMin" min="0" max="59" value="0" autocomplete="off"/>
+                    <input type="number" id="loanTimeSec" min="0" max="59" value="0" autocomplete="off"/>
             </div>
             <button type="button" onClick="giveLoan()" >Выдать долг</button>
             <h2>Зарегистрировать депозит</h2>
@@ -154,6 +157,11 @@
             <div class="popuptext page hidden" id="errorOverlay">
                 <h1>
                     Не удалось загрузить лобби
+                </h1>
+            </div>
+            <div class="popuptext page hidden" id="pauseOverlay">
+                <h1>
+                    Пауза
                 </h1>
             </div>
             <div class="popuptext page hidden" id="testServerOverlay">

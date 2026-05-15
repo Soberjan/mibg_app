@@ -6,15 +6,13 @@ export async function giveLoan() {
 
     const loanSumInput = document.getElementById("loanSum");
     const loanSum = loanSumInput.value;
-    
+
     const loanInterestInput = document.getElementById("loanInterest");
     const loanInterest = loanInterestInput.value;
 
-    const loanTimeInput = document.getElementById("loanTime");
-    const loanTime = loanTimeInput.value;
-
-    console.log("niger");
-    console.log(borrowerBalanceId);
+    const loanTimeInputMin = document.getElementById("loanTimeMin");
+    const loanTimeInputSec = document.getElementById("loanTimeSec");
+    const loanTime = parseInt(loanTimeInputMin.value, 10) * 60 + parseInt(loanTimeInputSec.value, 10);
 
     var response = await fetch(`/lobby/${state.lobbyId}/give_loan?borrower_balance_id=${borrowerBalanceId}&loan_sum=${loanSum}&loan_interest=${loanInterest}&loan_time=${loanTime}`, {method: "POST"});
 }

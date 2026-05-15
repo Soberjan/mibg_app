@@ -1,33 +1,81 @@
+import inspect
+
 import asyncio
-from psycopg2 import connect
+import datetime as dt
 
 class Timer:
-    def __init__(self, time_left):
-        self.paused = False
-        self.time_left = time_left
+    def __init__(self, f, f_params, starts_at, duration, task):
+        self.f = f
+        self.f_params = f_params
+        self.starts_at = starts_at
+        self.duration = duration
+        self.ends_at = starts_at + duration
 
-class Lobby:
+class Lobby():
     def __init__(self):
         self.timers = []
-        self.start_time = 1
-
-
-    def loop(self):
+        self.paused = True
+        self.sleep_time = 0.5
+        pass
+    
+    async def update(self):
         while True:
-            for timer in self.timers():
-                if not self.paused:
-                    timer.tick()
-            asyncio.sleep(0.05)
+            now = dt.datetime.now()
+            if self.paused:
+                await asyncio.sleep(self.sleep_time)
+                continue
 
-l = Lobby()
-timer = Timer(2)
-timer2 = Timer(3)
+            for t in self.timers:
+                if t.ends_at <= now:
+                    if inspect.iscoroutinefunction(f):
+                        asyncio.create_task(t.f(*t.f_params))
+                    else:
+                        t.f(*t.f_params)
+                    self.timers.remove(t)
+
+            await asyncio.sleep(self.sleep_time)
+
+    def pause(self):
+        self.pause_time = dt.datetime.now()
+        self.paused = True
+
+    def unpause(self):
+        self.unpause_time = dt.datetime.now()
+        self.paused = False
+
+        for t in self.timers:
+            t.ends_at += self.unpause_time - self.pause_time
 
 
-conn = connect(user='mibg_admin', password='12345', host='localhost', dbname='mibg_base')
-cur = conn.cursor()
-cur.execute("SELECT * FROM loan")
-t = cur.fetchone()[2]
-print(t)
-print(t.__dict__)
-print(cur.fetchone())
+
+def f(a, b):
+    pass
+
+async def g(a):
+    pass
+
+loan_time=10
+ends_at = dt.datetime.now() + dt.timedelta(seconds=loan_time)
+print(str(ends_at))
+# start_time = dt.datetime.now()
+# timer1 = 30.
+# timer2 = 15.
+# end_time_1 = start_time + dt.timedelta(seconds=timer1)
+# end_time_2 = start_time + dt.timedelta(seconds=timer2)
+# # task = asyncio.create_task(timeout(1))
+# niger = timeout(10)
+# asyncio.run(niger)
+# print(niger)
+# print(start_time, end_time_1, end_time_2)
+#
+#
+#
+#
+#
+#
+# conn = connect(user='mibg_admin', password='12345', host='localhost', dbname='mibg_base')
+# cur = conn.cursor()
+# cur.execute("SELECT * FROM server_state")
+# t = cur.fetchone()
+# print(t)
+# # print(cur.fetchone())

@@ -1,4 +1,5 @@
 from typing import Annotated
+import datetime as dt
 
 from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
 from fastapi.templating import Jinja2Templates
@@ -83,7 +84,6 @@ async def get_state(
         """
         cur.execute(lobby_query, (lobby_id,))
         lobby = dict(cur.fetchone())
-        print(lobby)
 
         player_id_query = """
             SELECT player_id
@@ -162,6 +162,7 @@ async def get_state(
 
     state = {
         "lobbyOwner": lobby_owner,
+        "startedAt": lobby['started_at'],
         "lobbyStatus": lobby['status'],
         "localPlayerId": local_player_id,
         "personalBalanceId": personal_balance_id,
@@ -202,7 +203,6 @@ async def get_players(
     response = {"status": "ok", "players": players}
     return response
 
-
 @router.post('/lobby/{lobby_id}/start_game')
 async def start_game(
         lobby_id: int,
@@ -235,3 +235,86 @@ async def start_game(
 
     return {'status': 'ok'}
 
+@router.post('/lobby/{lobby_id}/pause')
+async def pause(
+        lobby_id: int,
+        player_id: int,
+        hostess: Hostess = Depends(get_hostess)
+        ):
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        pause_lobby_query = """
+            UPDATE lobby
+            SET status='paused', paused_at=NOW()
+            WHERE id=%s AND owner_id=%s AND status='game'
+            RETURNING id
+        """
+        cur.execute(pause_lobby_query, (lobby_id, player_id))
+        res_id = cur.fetchone()
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
+
+    if not res_id:
+        return {'status': 'bad', 'info': 'you are not allowed to start game or whatever'}
+
+    for socket in hostess.sockets[lobby_id].values():
+        msg = {'type': 'game_paused'}
+        await socket.send_json(msg)
+
+    return {'status': 'ok'}
+
+@router.post('/lobby/{lobby_id}/resume')
+async def resume(
+        lobby_id: int,
+        player_id: int,
+        hostess: Hostess = Depends(get_hostess)
+        ):
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        pause_lobby_query = """
+            UPDATE lobby
+            SET status='game'
+            WHERE id=%s AND owner_id=%s AND status='paused'
+            RETURNING id, paused_at, started_at
+        """
+        cur.execute(pause_lobby_query, (lobby_id, player_id))
+        res = cur.fetchone()
+
+        pause_duration = dt.datetime.now() - res['paused_at']
+        started_at = res['started_at'] + pause_duration
+
+        update_started_at_query = """
+            UPDATE lobby
+            SET started_at = %s
+            WHERE id=%s AND owner_id=%s
+        """
+        cur.execute(update_started_at_query, (started_at, lobby_id, player_id))
+        update_loan_timers = """
+            UPDATE loan
+            SET ends_at = ends_at + %s
+            WHERE lobby_id=%s AND state != 'closed'
+            RETURNING id, ends_at
+        """
+        cur.execute(update_loan_timers, (pause_duration, lobby_id))
+        res = cur.fetchall()
+        loans = {}
+        for r in res:
+            r['ends_at'] = r['ends_at'].isoformat()
+            loans[r['id']] = r
+
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
+
+    for socket in hostess.sockets[lobby_id].values():
+        msg = {'type': 'game_resumed', 'started_at': started_at.isoformat(), 'loans': loans}
+        await socket.send_json(msg)
+
+    return {'status': 'ok'}

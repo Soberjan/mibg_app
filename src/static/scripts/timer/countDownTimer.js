@@ -1,13 +1,12 @@
 import { formatSeconds } from "./formatSeconds.js";
+import { state } from "../state.js";
 
-export function startCountdown(timerId, countdownDurationSec, onEnd = null) {
+export function startCountdown(timerId, onEnd = null) {
     const countdownStartTime = Date.now();
 
-	console.log("starting timer!");
     const intervalId = setInterval(() => {
-        const now = Date.now();
-        const elapsedSeconds = Math.floor((now - countdownStartTime) / 1000);
-        let remainingSeconds = countdownDurationSec - elapsedSeconds;
+        console.log(state.timers[timerId].endsAt);
+        let remainingSeconds = Math.floor((state.timers[timerId].endsAt - Date.now())/1000);
 
         if (remainingSeconds < 0) {
             remainingSeconds = 0;
@@ -21,8 +20,6 @@ export function startCountdown(timerId, countdownDurationSec, onEnd = null) {
 		}
 
         timer.textContent = formatSeconds(remainingSeconds);
-
-		console.log(remainingSeconds);
 
         if (remainingSeconds <= 0) {
             clearInterval(intervalId);

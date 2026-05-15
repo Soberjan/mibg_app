@@ -5,12 +5,12 @@ import { addBalanceToSelector } from "./transactions/addBalanceToSelector.js";
 import { addBalanceToSender } from "./transactions/addBalanceToSender.js";
 import { savePlayerState } from "./lobby/savePlayerState.js";
 import { addVotingOption } from "./voting/addVotingOption.js";
-import { startCountdown } from "./timer/countDownTimer.js";
 import { state } from "./state.js";
 import { accountDict } from "./dicts.js";
 import { startVoteText } from "./voting/startVoteText.js";
 import { giveLoanSocket } from "./finances/giveLoanSocket.js";
 import { closeLoanSocket } from "./finances/closeLoanSocket.js";
+import { pauseGameSocket, resumeGameSocket } from "./lobby/pauseGame.js";
 
 export function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -125,7 +125,6 @@ export function handleSocket(event) {
             const round_number_text = document.getElementById("roundNumberText");
             round_number_text.innerHTML = res.voting_round;
 
-            startCountdown("votingTimer", 30);
             const voteButton = document.getElementById("voteButton");
             voteButton.disabled = false;
 
@@ -309,14 +308,21 @@ export function handleSocket(event) {
 	    closeLoanSocket(res);
 	    break;
 
-        case "start_game":
-            console.log("game started");
-            startGame();
-            break;
+    case "game_paused":
+        pauseGameSocket();
+        break;
 
-        case "error":
-            console.error(res.message);
-            break;
+    case "game_resumed":
+        resumeGameSocket(res);
+        break;
+
+    case "start_game":
+        console.log("game started");
+        startGame();
+        break;
+
+    case "error":
+        console.error(res.message);
+        break;
     }
 }
-

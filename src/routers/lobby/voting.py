@@ -21,7 +21,7 @@ async def start_voting(
         cur.execute(add_election_query, (lobby_id, 1, 'voting'))
         update_lobby_status_query = """
             UPDATE lobby
-            SET status='voring'
+            SET status='voting'
             WHERE id=%s
         """
         cur.execute(update_lobby_status_query, (lobby_id,))

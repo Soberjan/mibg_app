@@ -9,9 +9,13 @@ import { startVoteText } from "../voting/startVoteText.js";
 import { roleDict, accountDict } from "../dicts.js";
 import { chooseBankerUI } from "../voting/chooseBankerUI.js";
 import { createObligationLoan, createFinanceLoan } from "../finances/loanElements.js";
+import { startGameTimer } from "../timer/gameTimer.js";
+import { pauseGame, pauseGameSocket } from "./pauseGame.js";
 
 function initLocalPlayerUI() {
     const player = state.players[state.localPlayerId];
+
+    startGameTimer("gameTimer");
 
     const nameSpan = document.getElementById("localName");
     const roleSpan = document.getElementById("localRole");
@@ -47,6 +51,17 @@ function initLocalPlayerUI() {
         bankBalanceSpan.textContent = accountDict[bankBalance.type] + " " + bankBalance.money;
 
         upperRight.appendChild(bankBalanceSpan);
+    }
+
+    if (state.lobbyOwner) {
+        console.log("adding pause button");
+        const managmentMenu = document.getElementById("managment");
+        const pauseButton = document.createElement("Button");
+        pauseButton.id = `pauseButton`;
+        pauseButton.textContent = `Пауза`;
+        pauseButton.onclick = pauseGame;
+
+        upperRight.appendChild(pauseButton);
     }
 
 }
@@ -150,7 +165,7 @@ async function initFinancePage() {
 	console.log("initfinancepage");
 	console.log(result);
 	for (const loan of Object.values(res.loans)) {
-		createFinanceLoan(loan.id, loan.balance_id, loan.sum, loan.interest, loan.duration_time, loan.start_time);
+		createFinanceLoan(loan.id, loan.balance_id, loan.sum, loan.interest, loan.ends_at);
 	}
 }
 
@@ -165,7 +180,7 @@ async function initObligationPage() {
 	for (var loan of Object.values(res.loans)) {
 		const loanOwnerId = state.balances[loan.balance_id].ownerId;
 		if (loanOwnerId === state.localPlayerId)
-			createObligationLoan(loan.id, loan.sum, loan.interest, loan.duration_time, loan.start_time);
+			createObligationLoan(loan.id, loan.sum, loan.interest, loan.ends_at);
 	}
 }
 
@@ -180,26 +195,39 @@ export async function initLobbyUI() {
     const registrationOverlay = document.getElementById("registrationOverlay");
     const votingOverlay = document.getElementById("votingOverlay");
     const chooseBankerOverlay = document.getElementById("chooseBankerOverlay");
+    const pausePopup = document.getElementById("pauseOverlay");
+
+
 
     if (state.lobbyStatus === "registration") {
         registrationOverlay.classList.remove("hidden");
         votingOverlay.classList.add("hidden");
         chooseBankerOverlay.classList.add("hidden");
+        pausePopup.classList.add("hidden");
     }
     if (state.lobbyStatus === "voting") {
         registrationOverlay.classList.add("hidden");
         votingOverlay.classList.remove("hidden");
         chooseBankerOverlay.classList.add("hidden");
+        pausePopup.classList.add("hidden");
     }
     if (state.lobbyStatus === "choosing_banker") {
         registrationOverlay.classList.add("hidden");
         votingOverlay.classList.add("hidden");
         chooseBankerOverlay.classList.remove("hidden");
+        pausePopup.classList.add("hidden");
     }
     if (state.lobbyStatus === "game") {
         registrationOverlay.classList.add("hidden");
         votingOverlay.classList.add("hidden");
         chooseBankerOverlay.classList.add("hidden");
+        pausePopup.classList.add("hidden");
+    }
+    if (state.lobbyStatus === "paused") {
+        registrationOverlay.classList.add("hidden");
+        votingOverlay.classList.add("hidden");
+        chooseBankerOverlay.classList.add("hidden");
+        pauseGameSocket();
     }
 
     loadGamePage();

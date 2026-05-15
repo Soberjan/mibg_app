@@ -1,4 +1,4 @@
-INSERT INTO lobby (id, status) VALUES (-1, 'game');
+INSERT INTO lobby (id, status, owner_id) VALUES (-1, 'game', -1);
 INSERT INTO player (id, role, "name", lobby_id) VALUES (-1, 'politician', 'sasha', -1);
 INSERT INTO player (id, role, "name", lobby_id) VALUES (-2, 'banker', 'petya', -1);
 INSERT INTO player (id, role, "name", lobby_id) VALUES (-3, 'jobless', 'vasya', -1);

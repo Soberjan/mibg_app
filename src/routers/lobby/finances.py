@@ -1,3 +1,5 @@
+import datetime as dt
+
 from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
 
 from ...dependencies import get_hostess
@@ -18,33 +20,33 @@ async def give_loan(
     try:
         cur = conn.cursor()
         give_credit_query = """
-            INSERT INTO loan (balance_id, start_time, duration_time, sum, interest, state)
-            VALUES (%s, NOW(), MAKE_INTERVAL(mins => %s), %s, %s, %s)
-            RETURNING id, start_time, duration_time, balance_id
+            INSERT INTO loan (lobby_id, balance_id, ends_at, sum, interest, state)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id, balance_id
         """
+        ends_at = dt.datetime.now() + dt.timedelta(seconds=loan_time)
         cur.execute(give_credit_query,
-                    (borrower_balance_id, loan_time, loan_sum, loan_interest, "active"))
+                    (lobby_id, borrower_balance_id, ends_at, loan_sum, loan_interest, "active"))
         res = cur.fetchone()
+        msg = {
+            "res": "ok",
+            "type": "loan_given",
+            "loan_sum": loan_sum,
+            "interest": loan_interest,
+            "id": res['id'],
+            "balance_id": res['balance_id'],
+            "ends_at": ends_at.isoformat()
+        }
+        print('giving loan')
+        for socket in hostess.sockets[lobby_id].values():
+            print('sending shit')
+            await socket.send_json(msg)
 
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
     finally:
         hostess.database.pool.putconn(conn)
-    msg = {
-        "res": "ok",
-        "type": "loan_given",
-        "loan_sum": loan_sum,
-        "interest": loan_interest,
-        "id": res['id'],
-        "balance_id": res['balance_id'],
-        "start_time": res['start_time'].timestamp() // 60,
-        "duration_time": int(res['duration_time'].total_seconds() // 60)
-    }
-    print('giving loan')
-    for socket in hostess.sockets[lobby_id].values():
-        print('sending shit')
-        await socket.send_json(msg)
 
 @router.post('/lobby/{lobby_id}/close_loan')
 async def close_loan(
@@ -107,8 +109,8 @@ async def get_loans(
     loans = {}
     for loan in res:
         loans[loan['id']] = dict(loan)
-        loans[loan['id']]['start_time'] = loans[loan['id']]['start_time'].timestamp() // 60
-    
+        loans[loan['id']]['ends_at'] = loans[loan['id']]['ends_at'].isoformat();
+
     msg = {
         "res": "ok",
         "loans": loans

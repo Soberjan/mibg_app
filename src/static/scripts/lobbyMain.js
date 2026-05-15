@@ -62,6 +62,7 @@ export async function initPage() {
         return;
     }
     state.lobbyStatus = result.state.lobbyStatus;
+    state.startedAt = result.state.startedAt;
     state.lobbyOwner = result.state.lobbyOwner;
     state.localPlayerId = result.state.localPlayerId;
     state.personalBalanceId = result.state.personalBalanceId;
