@@ -8,6 +8,7 @@ import { registerPlayer } from "./lobby/registerPlayer.js";
 import { roleDict } from "./dicts.js";
 import { chooseJobless, choosePolitician, chooseBanker } from "./testLobby/chooseRole.js";
 import { giveLoan } from "./finances/giveLoan.js";
+import { giveDeposit } from "./finances/giveDeposit.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -20,6 +21,7 @@ window.chooseJobless = chooseJobless;
 window.choosePolitician = choosePolitician;
 window.chooseBanker = chooseBanker;
 window.giveLoan = giveLoan;
+window.giveDeposit = giveDeposit;
 
 export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});

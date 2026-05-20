@@ -46,8 +46,11 @@
         </div>
         <div id="obligations" class="submenu">
             <h2> Кредиты: </h2>
+			<div id="obligationLoans">
+			</div>
 
-			<div id="obligationLoans" class="submenu">
+            <h2> Депозиты: </h2>
+			<div id="obligationDeposits">
 			</div>
         </div>
         <div id="messages" class="submenu">
@@ -75,17 +78,18 @@
             <h2>Зарегистрировать депозит</h2>
             <div id="deposit_giver" class="section buttonRow">
                 <label>Счет отправки
-                    <select name="счета" id="depositPlayerBalances">
+                    <select name="счета" id="depositBalances">
                     </select>
                 </label>
-                <label for="depositAmount">Сумма
-                    <input type="number" id="depositAmount" autocomplete="off"/></label>
+                <label for="depositSum">Сумма
+                    <input type="number" id="depositSum" autocomplete="off"/></label>
                 <label for="depositInterest">Ставка
                     <input type="number" id="depositInterest" autocomplete="off"/></label>
-                <label for="depositTime">Дедлайн
-                    <input type="number" id="depositTime" autocomplete="off"/></label>
+                <label>Дедлайн</label>
+                    <input type="number" id="depositTimeMin" min="0" max="59" value="0" autocomplete="off"/>
+                    <input type="number" id="depositTimeSec" min="0" max="59" value="0" autocomplete="off"/>
             </div>
-            <button type="button">Регистрация депозита</button>
+            <button type="button" onClick="giveDeposit()">Регистрация депозита</button>
             <h2>
                 Кредиты:
             </h2>
@@ -94,11 +98,8 @@
             <h2>
                 Депозиты:
             </h2>
-            <section id="loans2">
-                Счет: Петя Дедлайн: 20:00 Ставка: 10% Сумма: 1999
-
-                <button type="button">Вернуть депозит</button>
-            </section>
+	    <section id="financeDeposits">
+	    </section>
         </div>
         <div id="managment" class="submenu">
             <button type="button">Ввести новый налог</button>

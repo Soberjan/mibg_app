@@ -10,6 +10,8 @@ import { accountDict } from "./dicts.js";
 import { startVoteText } from "./voting/startVoteText.js";
 import { giveLoanSocket } from "./finances/giveLoanSocket.js";
 import { closeLoanSocket } from "./finances/closeLoanSocket.js";
+import { giveDepositSocket } from "./finances/giveDepositSocket.js";
+import { closeDepositSocket } from "./finances/closeDepositSocket.js";
 import { pauseGameSocket, resumeGameSocket } from "./lobby/pauseGame.js";
 
 export function handleSocket(event) {
@@ -306,6 +308,16 @@ export function handleSocket(event) {
 	case "loan_closed":
 	    console.log("faggot! loan is closed");
 	    closeLoanSocket(res);
+	    break;
+
+	case "deposit_given":
+	    console.log("niger! deposit is given");
+	    giveDepositSocket(res);
+	    break;
+
+	case "deposit_closed":
+	    console.log("faggot! deposit is closed");
+	    closeDepositSocket(res);
 	    break;
 
     case "game_paused":

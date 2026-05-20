@@ -5,7 +5,6 @@ export function startCountdown(timerId, onEnd = null) {
     const countdownStartTime = Date.now();
 
     const intervalId = setInterval(() => {
-        console.log(state.timers[timerId].endsAt);
         let remainingSeconds = Math.floor((state.timers[timerId].endsAt - Date.now())/1000);
 
         if (remainingSeconds < 0) {
