@@ -1,0 +1,11 @@
+INSERT INTO luxury ("name", price, influence) VALUES ('остров', 600, 6);
+INSERT INTO luxury ("name", price, influence) VALUES ('лайнер', 400, 4);
+INSERT INTO luxury ("name", price, influence) VALUES ('самолет', 400, 4);
+INSERT INTO luxury ("name", price, influence) VALUES ('вилла', 300, 3);
+INSERT INTO luxury ("name", price, influence) VALUES ('вертолет', 300, 3);
+INSERT INTO luxury ("name", price, influence) VALUES ('яхта', 300, 3);
+INSERT INTO luxury ("name", price, influence) VALUES ('бриллианты', 300, 3);
+INSERT INTO luxury ("name", price, influence) VALUES ('ваучер на путешествие', 200, 2);
+INSERT INTO luxury ("name", price, influence) VALUES ('антиквариат', 200, 2);
+INSERT INTO luxury ("name", price, influence) VALUES ('автомобиль', 200, 2);
+INSERT INTO luxury ("name", price, influence) VALUES ('гараж', 100, 1);

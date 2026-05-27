@@ -51,4 +51,4 @@ class Hostess:
         """
         res = self.database.execute_query(query, (str(lobby_id),))
         if res != None:
-            return dict(res[0])
+            return dict(res)

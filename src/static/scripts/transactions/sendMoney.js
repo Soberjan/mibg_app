@@ -15,7 +15,6 @@ export async function sendMoney() {
         return;
     }
 
-
     var response = await fetch(
         `/lobby/${state.lobbyId}/send_money?sender_id=${senderId}&receiver_id=${receiverId}&amount=${amount}`,
         {
@@ -28,6 +27,4 @@ export async function sendMoney() {
     if (res.status === "ok") {
         console.log("money sent");
     }
-
-
 }

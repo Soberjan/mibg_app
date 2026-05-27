@@ -13,6 +13,7 @@ import { closeLoanSocket } from "./finances/closeLoanSocket.js";
 import { giveDepositSocket } from "./finances/giveDepositSocket.js";
 import { closeDepositSocket } from "./finances/closeDepositSocket.js";
 import { pauseGameSocket, resumeGameSocket } from "./lobby/pauseGame.js";
+import { startEventSocket } from "./events/events.js";
 
 export function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -331,6 +332,12 @@ export function handleSocket(event) {
     case "start_game":
         console.log("game started");
         startGame();
+        break;
+
+    case "start_event":
+        console.log("event");
+        console.log(res);
+        startEventSocket(res);
         break;
 
     case "error":

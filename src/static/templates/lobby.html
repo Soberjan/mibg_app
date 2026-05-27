@@ -43,6 +43,17 @@
                 <button type="button" onclick="sendMoney()">Отправить деньги</button>
             </div>
 
+            <div id="luxuries" class="section">
+                <div id="luxuryByer">
+                    <select id="luxurySelector">
+                    </select>
+                    <button type="button" onclick="buyLuxury()">Купить</button>
+                </div>
+                <div id="luxuryList">
+                    Мои роскоши:
+                </div>
+            </div>
+
         </div>
         <div id="obligations" class="submenu">
             <h2> Кредиты: </h2>
@@ -50,8 +61,8 @@
 			</div>
 
             <h2> Депозиты: </h2>
-			<div id="obligationDeposits">
-			</div>
+		    <div id="obligationDeposits">
+            </div>
         </div>
         <div id="messages" class="submenu">
             <h1> Сообщения: </h1>
@@ -102,8 +113,13 @@
 	    </section>
         </div>
         <div id="managment" class="submenu">
-            <button type="button">Ввести новый налог</button>
-            <div id="company_register" class="section buttonRow">
+            <div id="eventController">
+                <select id="playerEventSelector">
+                </select>
+                <button type="button" onClick="startPersonalEvent()">Событие игрока</button>
+                <button type="button" onClick="startGlobalEvent()">Черный лебедь</button>
+            </div>
+            <div id="companyRegister" class="section buttonRow">
                 <label>Игрок
                     <select id="playerCompaniesSelector">
                     </select>
@@ -128,6 +144,14 @@
             <button type="button">Начать новое голосование</button>
         </div>
         <div class="popup" id="popups">
+            <div class="popuptext page hidden" id="eventOverlay">
+                <div id="eventDescription">
+                </div>
+                <div id="eventEffect">
+                </div>
+                <button type="button" onclick="hideEvent()">Ок</button>
+            </div>
+
             <div class="popuptext page hidden" id="registrationOverlay">
                 <label>
                     Введите ваше имя:

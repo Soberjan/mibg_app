@@ -9,6 +9,8 @@ import { roleDict } from "./dicts.js";
 import { chooseJobless, choosePolitician, chooseBanker } from "./testLobby/chooseRole.js";
 import { giveLoan } from "./finances/giveLoan.js";
 import { giveDeposit } from "./finances/giveDeposit.js";
+import { buyLuxury } from "./luxuries/buyLuxury.js";
+import { startPersonalEvent, startGlobalEvent, hideEvent } from "./events/events.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -22,6 +24,10 @@ window.choosePolitician = choosePolitician;
 window.chooseBanker = chooseBanker;
 window.giveLoan = giveLoan;
 window.giveDeposit = giveDeposit;
+window.buyLuxury = buyLuxury;
+window.startPersonalEvent = startPersonalEvent;
+window.startGlobalEvent = startGlobalEvent;
+window.hideEvent = hideEvent;
 
 export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
@@ -72,10 +78,11 @@ export async function initPage() {
     state.bankBalanceId = result.state.bankBalanceId;
     state.players = result.state.players;
     state.balances = result.state.balances;
+    state.luxuries = result.state.luxuries;
     console.log("initialized game state");
     console.log(state);
 
-    await initLobbyUI();
+    await initLobbyUI(result.state.playerLuxuries);
     console.log("inititalized lobby UI");
 
     state.ws = new WebSocket(

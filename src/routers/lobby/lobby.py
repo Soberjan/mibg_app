@@ -155,6 +155,25 @@ async def get_state(
             p_dict['balanceIds'] = [b['balance_id'] for b in balance_ids]
             players[p['id']] = p_dict
 
+        get_luxuries_query = """
+            SELECT *
+            FROM luxury
+        """
+        cur.execute(get_luxuries_query)
+        luxuries = cur.fetchall()
+        lux_dict = {}
+        for luxury in luxuries:
+            lux_dict[luxury['id']] = dict(luxury)
+
+        get_player_luxury_ids = """
+            SELECT luxury_id
+            FROM player_luxury
+            WHERE player_id=%s
+        """
+        cur.execute(get_player_luxury_ids, (local_player_id,))
+        luxury_ids_db = cur.fetchall()
+        luxury_ids = [l['luxury_id'] for l in luxury_ids_db]
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
     finally:
@@ -169,7 +188,9 @@ async def get_state(
         "govBalanceId": gov_balance_id,
         "bankBalanceId": bank_balance_id,
         "players": players,
-        "balances": balances
+        "balances": balances,
+        "luxuries": lux_dict,
+        "playerLuxuries": luxury_ids
     }
 
     return {'status': 'ok', 'state': state}

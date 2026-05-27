@@ -12,16 +12,21 @@ import { createObligationLoan, createFinanceLoan } from "../finances/loanElement
 import { createObligationDeposit, createFinanceDeposit } from "../finances/depositElements.js";
 import { startGameTimer } from "../timer/gameTimer.js";
 import { pauseGame, pauseGameSocket } from "./pauseGame.js";
+import { initLuxuryUI } from "../luxuries/luxuryUI.js";
+import { updateInfluence } from "../influence/updateInfluence.js";
+import { initEventUI } from "../events/events.js";
 
-function initLocalPlayerUI() {
+function initLocalPlayerUI(playerLuxuries) {
     const player = state.players[state.localPlayerId];
+
+    initLuxuryUI(playerLuxuries);
 
     startGameTimer("gameTimer");
 
     const nameSpan = document.getElementById("localName");
     const roleSpan = document.getElementById("localRole");
     const balanceSpan = document.getElementById("localBalance");
-    const influenceSpan = document.getElementById("localInfluence");
+    updateInfluence(player.influence);
 
     nameSpan.textContent = player.name;
     nameSpan.id = `player${player.id}Name`;
@@ -53,7 +58,6 @@ function initLocalPlayerUI() {
 
         upperRight.appendChild(bankBalanceSpan);
     }
-
     if (state.lobbyOwner) {
         console.log("adding pause button");
         const managmentMenu = document.getElementById("managment");
@@ -64,7 +68,6 @@ function initLocalPlayerUI() {
 
         upperRight.appendChild(pauseButton);
     }
-
 }
 
 function initOtherPlayersUI() {
@@ -183,7 +186,7 @@ async function initFinancePage() {
 }
 
 function initManagmentPage() {
-
+    initEventUI();
 }
 
 async function initObligationPage() {
@@ -203,8 +206,8 @@ async function initObligationPage() {
 	}
 }
 
-export async function initLobbyUI() {
-    initLocalPlayerUI();
+export async function initLobbyUI(playerLuxuries) {
+    initLocalPlayerUI(playerLuxuries);
     initOtherPlayersUI();
 
     initVotingUI();
@@ -215,8 +218,6 @@ export async function initLobbyUI() {
     const votingOverlay = document.getElementById("votingOverlay");
     const chooseBankerOverlay = document.getElementById("chooseBankerOverlay");
     const pausePopup = document.getElementById("pauseOverlay");
-
-
 
     if (state.lobbyStatus === "registration") {
         registrationOverlay.classList.remove("hidden");
@@ -253,6 +254,9 @@ export async function initLobbyUI() {
 
 	if (state.players[state.localPlayerId].role === "banker")
 		await initFinancePage();
+
+	if (state.players[state.localPlayerId].role === "politician")
+		initManagmentPage();
 
 	if (state.players[state.localPlayerId].role === "jobless" || state.players[state.localPlayerId].role === "worker")
 		await initObligationPage();
