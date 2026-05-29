@@ -14,5 +14,6 @@ export const state = {
     balances: {},
     intervals: {},
     credits: {},
-    timers: {}
+    timers: {},
+    properties: {}
 };

@@ -79,6 +79,7 @@ export async function initPage() {
     state.players = result.state.players;
     state.balances = result.state.balances;
     state.luxuries = result.state.luxuries;
+    state.properties = result.state.properties;
     console.log("initialized game state");
     console.log(state);
 

@@ -174,6 +174,24 @@ async def get_state(
         luxury_ids_db = cur.fetchall()
         luxury_ids = [l['luxury_id'] for l in luxury_ids_db]
 
+        get_properties_query = """
+            SELECT *
+            FROM property
+            WHERE lobby_id=%s
+        """
+        cur.execute(get_properties_query, (lobby_id,))
+        properties_res = cur.fetchall()
+        properties = {}
+        for prop in properties_res:
+            new_prop = dict(prop)
+            new_prop['ownerId'] = new_prop['owner_id']
+            new_prop.pop('owner_id')
+            new_prop['tileNumber'] = new_prop['tile_number']
+            new_prop.pop('tile_number')
+            new_prop['lobbyId'] = new_prop['lobby_id']
+            new_prop.pop('lobby_id')
+            properties[new_prop['id']] = new_prop
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
     finally:
@@ -190,7 +208,8 @@ async def get_state(
         "players": players,
         "balances": balances,
         "luxuries": lux_dict,
-        "playerLuxuries": luxury_ids
+        "playerLuxuries": luxury_ids,
+        "properties": properties
     }
 
     return {'status': 'ok', 'state': state}

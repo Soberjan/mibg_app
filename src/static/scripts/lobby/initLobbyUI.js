@@ -15,6 +15,7 @@ import { pauseGame, pauseGameSocket } from "./pauseGame.js";
 import { initLuxuryUI } from "../luxuries/luxuryUI.js";
 import { updateInfluence } from "../influence/updateInfluence.js";
 import { initEventUI } from "../events/events.js";
+import { addPropertyToManagment, addPropertyToAssets } from "../property/propertyUI.js";
 
 function initLocalPlayerUI(playerLuxuries) {
     const player = state.players[state.localPlayerId];
@@ -68,6 +69,10 @@ function initLocalPlayerUI(playerLuxuries) {
 
         upperRight.appendChild(pauseButton);
     }
+
+    for (const property of Object.values(state.properties))
+        if (property.ownerId === state.personalBalanceId)
+            addPropertyToAssets(property);
 }
 
 function initOtherPlayersUI() {
@@ -187,6 +192,8 @@ async function initFinancePage() {
 
 function initManagmentPage() {
     initEventUI();
+    for (const property of Object.values(state.properties))
+        addPropertyToManagment(property);
 }
 
 async function initObligationPage() {
@@ -252,12 +259,12 @@ export async function initLobbyUI(playerLuxuries) {
 
     loadGamePage();
 
-	if (state.players[state.localPlayerId].role === "banker")
-		await initFinancePage();
+    if (state.players[state.localPlayerId].role === "banker")
+        await initFinancePage();
 
-	if (state.players[state.localPlayerId].role === "politician")
-		initManagmentPage();
+    if (state.players[state.localPlayerId].role === "politician")
+        initManagmentPage();
 
-	if (state.players[state.localPlayerId].role === "jobless" || state.players[state.localPlayerId].role === "worker")
-		await initObligationPage();
+    if (state.players[state.localPlayerId].role === "jobless" || state.players[state.localPlayerId].role === "worker")
+        await initObligationPage();
 }

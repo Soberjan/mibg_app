@@ -19,8 +19,23 @@ class Hostess:
             ['lobby_id', 'money', 'type'],
             [lobby_id, '20000', 'gov']
         )
+
         if balance_id == None:
             return
+
+        for i in range(1, 10):
+            self.database.insert_entry(
+                'property',
+                ['tile_number', 'lobby_id', 'owner_id', 'price', 'level', 'income'],
+                [str(i), str(lobby_id), str(balance_id), '200', '1', '50']
+             )
+        for i in range(10, 18):
+            self.database.insert_entry(
+                'property',
+                ['tile_number', 'lobby_id', 'owner_id', 'price', 'level', 'income'],
+                [str(i), str(lobby_id), str(balance_id), '100', '1', '50']
+             )
+
         self.database.insert_entry(
             'player_balance', 
             ['balance_id', 'player_id'],

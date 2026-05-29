@@ -24,12 +24,12 @@ async def join_lobby(
     client_key: Annotated[str | None, Cookie()] = None,
     hostess: Hostess = Depends(get_hostess),
 ):
-    try:
-        lobby = hostess.get_lobby(lobby_id)
-        if lobby == None:
-            return
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
+    # try:
+    #     lobby = hostess.get_lobby(lobby_id)
+    #     if lobby == None:
+    #         return
+    # except Exception as e:
+    #     raise HTTPException(status_code=500, detail=f"Couldn't get lobby because {e}")
 
     if client_key is None:
         client_key = secrets.token_hex()
@@ -56,11 +56,11 @@ async def join_lobby(
                 'status': 'ok'
             }
 
-        if lobby['status'] != 'registration':
-            raise HTTPException(
-                status_code=403,
-                detail="You can't join the lobby since game started."
-            )
+        # if lobby['status'] != 'registration':
+        #     raise HTTPException(
+        #         status_code=403,
+        #         detail="You can't join the lobby since game started."
+        #     )
 
         coin = random.randint(1, 2)
         if coin == 1:
@@ -98,8 +98,7 @@ async def join_lobby(
         """
         cur.execute(client_insert, (client_key, str(lobby_id), str(player_id)))
 
-        if lobby['owner_id'] == None:
-            cur.execute('UPDATE lobby SET owner_id=%s WHERE id=%s', (player_id, lobby_id,))
+        cur.execute('UPDATE lobby SET owner_id=%s WHERE id=%s AND owner_id IS NULL', (player_id, lobby_id,))
         conn.commit()
     except Exception as e:
         raise Exception

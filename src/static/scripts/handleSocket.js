@@ -14,6 +14,7 @@ import { giveDepositSocket } from "./finances/giveDepositSocket.js";
 import { closeDepositSocket } from "./finances/closeDepositSocket.js";
 import { pauseGameSocket, resumeGameSocket } from "./lobby/pauseGame.js";
 import { startEventSocket } from "./events/events.js";
+import { upgradePropertySocket, givePropertySocket } from "./property/property.js";
 
 export function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -335,9 +336,15 @@ export function handleSocket(event) {
         break;
 
     case "start_event":
-        console.log("event");
-        console.log(res);
         startEventSocket(res);
+        break;
+
+    case "give_property":
+        givePropertySocket(res);
+        break;
+
+    case "upgrade_property":
+        upgradePropertySocket(res);
         break;
 
     case "error":
