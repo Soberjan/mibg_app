@@ -15,6 +15,7 @@ import { closeDepositSocket } from "./finances/closeDepositSocket.js";
 import { pauseGameSocket, resumeGameSocket } from "./lobby/pauseGame.js";
 import { startEventSocket } from "./events/events.js";
 import { upgradePropertySocket, givePropertySocket } from "./property/property.js";
+import { questionAskedSocket, approvedSocket, disapprovedSocket } from "./questions/question.js";
 
 export function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -345,6 +346,18 @@ export function handleSocket(event) {
 
     case "upgrade_property":
         upgradePropertySocket(res);
+        break;
+
+    case "question_asked":
+        questionAskedSocket(res);
+        break;
+
+    case "question_approved":
+        approvedSocket(res);
+        break;
+
+    case "question_disapproved":
+        disapprovedSocket(res);
         break;
 
     case "error":

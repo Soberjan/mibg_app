@@ -16,6 +16,7 @@ import { initLuxuryUI } from "../luxuries/luxuryUI.js";
 import { updateInfluence } from "../influence/updateInfluence.js";
 import { initEventUI } from "../events/events.js";
 import { addPropertyToManagment, addPropertyToAssets } from "../property/propertyUI.js";
+import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../questions/questionUI.js";
 
 function initLocalPlayerUI(playerLuxuries) {
     const player = state.players[state.localPlayerId];
@@ -191,6 +192,7 @@ async function initFinancePage() {
 }
 
 function initManagmentPage() {
+    initQuestionUI();
     initEventUI();
     for (const property of Object.values(state.properties))
         addPropertyToManagment(property);
@@ -267,4 +269,19 @@ export async function initLobbyUI(playerLuxuries) {
 
     if (state.players[state.localPlayerId].role === "jobless" || state.players[state.localPlayerId].role === "worker")
         await initObligationPage();
+
+    if (state.players[state.localPlayerId].status === null)
+        return;
+    const [playerStatus, questionId] = state.players[state.localPlayerId].status.split("_");
+    if (playerStatus === "asked") {
+        const result = await fetch(`/lobby/${state.lobbyId}/get_question?question_id=${questionId}`);
+        const q = await result.json();
+        showQuestionOverlay(q.question);
+    }
+    if (playerStatus === "approve") { 
+        const result = await fetch(`/lobby/${state.lobbyId}/get_question?question_id=${questionId}`);
+        const q = await result.json();
+        console.log(q.question);
+        showApprovalOverlay(q.question);
+    }
 }

@@ -118,6 +118,11 @@
 	    </section>
         </div>
         <div id="managment" class="submenu">
+            <div id="questionController">
+                <select id="playerQuestionSelector">
+                </select>
+                <button type="button" onClick="askQuestion()">Задать вопрос</button>
+            </div>
             <div id="eventController">
                 <select id="playerEventSelector">
                 </select>
@@ -135,6 +140,23 @@
                 <div id="eventEffect">
                 </div>
                 <button type="button" onclick="hideEvent()">Ок</button>
+            </div>
+
+            <div class="popuptext page hidden" id="questionOverlay">
+                <button id="hideQuestionButton" type="button" onclick="hideQuestion()">Ок</button>
+                <div id="answerResult">
+                </div>
+                <div id="questionText">
+                </div>
+            </div>
+
+            <div class="popuptext page hidden" id="approvalOverlay">
+                <div id="questionApprovalText">
+                </div>
+                <div id="questionAnswer">
+                </div>
+                <button id="aprroveQuestionButton" type="button" onclick="approveAnswer()">Правильный ответ</button>
+                <button id="disaprroveQuestionButton" type="button" onclick="disapproveAnswer()">Неправильный ответ</button>
             </div>
 
             <div class="popuptext page hidden" id="registrationOverlay">

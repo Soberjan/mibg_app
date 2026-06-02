@@ -11,6 +11,7 @@ import { giveLoan } from "./finances/giveLoan.js";
 import { giveDeposit } from "./finances/giveDeposit.js";
 import { buyLuxury } from "./luxuries/buyLuxury.js";
 import { startPersonalEvent, startGlobalEvent, hideEvent } from "./events/events.js";
+import { askQuestion, approveAnswer, disapproveAnswer } from "./questions/question.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -28,6 +29,10 @@ window.buyLuxury = buyLuxury;
 window.startPersonalEvent = startPersonalEvent;
 window.startGlobalEvent = startGlobalEvent;
 window.hideEvent = hideEvent;
+window.askQuestion = askQuestion;
+window.approveAnswer = approveAnswer;
+window.disapproveAnswer = disapproveAnswer;
+
 
 export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
