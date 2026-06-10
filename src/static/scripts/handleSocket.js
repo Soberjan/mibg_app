@@ -29,6 +29,7 @@ export function handleSocket(event) {
     let balanceSpan;
     let govSenderBalanceOption;
     let bankSenderBalanceOption;
+    console.log(res);
 
     switch (res.type) {
         case "other_player_joined":
