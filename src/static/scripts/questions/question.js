@@ -49,18 +49,18 @@ export function questionAskedSocket(msg) {
 }
 
 export function approvedSocket(msg) {
-    if (msg.askerId === state.localPlayerId) {
+    if (msg.asker_id === state.localPlayerId) {
         const approvalOverlay = document.getElementById("approvalOverlay");
         approvalOverlay.classList.add("hidden");
         state.players[state.localPlayerId].status = 'game';
     }
     else if (state.localPlayerId === msg.player_id) {
         if (msg.question.reward_type === "money") {
-            updateBalance(question.reward, state.personalBalanceId);
-            updateBalance(-1 * question.reward, state.govBalanceId);
+            updateBalance(msg.question.reward, state.personalBalanceId);
+            updateBalance(-1 * msg.question.reward, state.govBalanceId);
         }
-        if (question.reward_type === "influence") {
-            updateInfluence(question.reward);
+        if (msg.question.reward_type === "influence") {
+            updateInfluence(msg.question.reward);
         }
         state.players[state.localPlayerId].status = 'game';
 
@@ -70,18 +70,18 @@ export function approvedSocket(msg) {
 }
 
 export function disapprovedSocket(msg) {
-    if (msg.askerId === state.localPlayerId) {
+    if (msg.asker_id === state.localPlayerId) {
         const approvalOverlay = document.getElementById("approvalOverlay");
         approvalOverlay.classList.add("hidden");
         state.players[state.localPlayerId].status = 'game';
     }
     else if (state.localPlayerId === msg.player_id) {
         if (msg.question.reward_type === "money") {
-            updateBalance(-1 * question.reward, state.personalBalanceId);
-            updateBalance(question.reward, state.govBalanceId);
+            updateBalance(-1 * msg.question.reward, state.personalBalanceId);
+            updateBalance(msg.question.reward, state.govBalanceId);
         }
-        if (question.reward_type === "influence") {
-            updateInfluence(-1 * question.reward);
+        if (msg.question.reward_type === "influence") {
+            updateInfluence(-1 * msg.question.reward);
         }
 
         state.players[state.localPlayerId].status = 'game';

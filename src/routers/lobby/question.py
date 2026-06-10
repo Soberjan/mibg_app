@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, HTTPException, Depends
 
 from ...dependencies import get_hostess
@@ -75,9 +74,16 @@ async def ask_question(
         cur.execute(update_player_state, (approver_state, owner_id))
         print('shit2')
 
+        player_question_query = """
+            INSERT INTO player_question(player_id, question_id)
+            VALUES (%s, %s)
+        """
+        cur.execute(player_question_query, (player_id, question['id']))
+
         msg = {
             'type': 'question_asked',
             'player_id': player_id,
+            'asker_id': owner_id,
             'answererState': answerer_state,
             'approverState': approver_state,
             'question': question
@@ -121,6 +127,7 @@ async def approve_answer(
         """
         cur.execute(get_question, (question_id,))
         question = cur.fetchone()
+        print('niger1')
 
         get_player_id = """
             SELECT player_id
@@ -129,6 +136,7 @@ async def approve_answer(
         """
         cur.execute(get_player_id, (question_id,))
         player_id = cur.fetchone()['player_id']
+        print('niger2')
 
         if question['reward_type'] == 'influence':
             update_balance = """
@@ -146,6 +154,7 @@ async def approve_answer(
             """
             cur.execute(get_balance_id, (player_id,))
             balance_id = cur.fetchone()['balance_id']
+            print('niger3')
             update_balance = """
                 UPDATE balance
                 SET money = money+%s
@@ -175,8 +184,8 @@ async def approve_answer(
 
         msg = {
             'type': 'question_approved',
-            'askerId': asker_id,
-            'playerId': player_id,
+            'asker_id': asker_id,
+            'player_id': player_id,
             'question': question
         }
 

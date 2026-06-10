@@ -16,6 +16,12 @@ export function showQuestionOverlay(question) {
     questionText.textContent = question.text;
 }
 
+export function hideQuestion(question) {
+    const questionOverlay = document.getElementById("questionOverlay");
+    if (!questionOverlay.classList.contains("hidden"))
+        questionOverlay.classList.add("hidden");
+}
+
 export function showApprovalOverlay(question) {
     const approvalOverlay = document.getElementById("approvalOverlay");
     if (approvalOverlay.classList.contains("hidden"))
