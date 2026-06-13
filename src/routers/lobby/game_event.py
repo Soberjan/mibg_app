@@ -35,14 +35,16 @@ async def start_personal_event(
         cur.execute(get_random_event)
         res = cur.fetchone()
 
-        await hostess.sockets[lobby_id][receiver_id].send_json({'type': 'start_event', 'description': res['description'], 'effect': res['effect']})
+
+        if receiver_id in hostess.sockets[lobby_id].keys():
+            await hostess.sockets[lobby_id][receiver_id].send_json({'type': 'start_event', 'description': res['description'], 'effect': res['effect']})
 
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
     finally:
         hostess.database.pool.putconn(conn)
-    return {'status': 'ok'}
+    return {'status': 'ok', 'res': res, 'receiver_id': receiver_id}
 
 @router.post('/lobby/{lobby_id}/start_global_event')
 async def start_global_event(
