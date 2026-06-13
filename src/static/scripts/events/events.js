@@ -12,6 +12,9 @@ export async function startPersonalEvent() {
             method: "POST"
         }
     );
+    console.log(response);
+    let msg = await response.json();
+    console.log(msg);
 }
 
 export async function startGlobalEvent() {
