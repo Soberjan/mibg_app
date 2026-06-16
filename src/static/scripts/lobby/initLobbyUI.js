@@ -158,7 +158,7 @@ function initChoosingBankerUI() {
     chooseBankerUI();
 }
 
-async function initFinancePage() {
+export async function initFinancePage() {
     console.log("initing finance page");
     const borrowerBalances = document.getElementById("borrowerBalances");
     for (const balance of Object.values(state.balances)) {
@@ -191,14 +191,14 @@ async function initFinancePage() {
 	}
 }
 
-function initManagmentPage() {
+export function initManagmentPage() {
     initQuestionUI();
     initEventUI();
     for (const property of Object.values(state.properties))
         addPropertyToManagment(property);
 }
 
-async function initObligationPage() {
+export async function initObligationPage() {
     const result = await fetch(`/lobby/${state.lobbyId}/finance/get_loans_and_deposits`);
 	const res = await result.json();
 	console.log("initing obligations");
