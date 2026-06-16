@@ -12,7 +12,7 @@ export async function buyLuxury() {
     }
 
     var response = await fetch(
-        `/lobby/${state.lobbyId}/buy_luxury?buyer_id=${state.localPlayerId}&luxury_id=${luxuryId}`,
+        `/lobby/${state.lobbyId}/buy_luxury?buyer_id=${state.personalBalanceId}&luxury_id=${luxuryId}`,
         {
             method: "POST"
         }

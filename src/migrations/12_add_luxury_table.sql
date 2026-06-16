@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS luxury (
     price INT,
     influence INT
 );
-CREATE TABLE IF NOT EXISTS player_luxury (
+CREATE TABLE IF NOT EXISTS balance_luxury (
     id SERIAL PRIMARY KEY,
-    player_id INT REFERENCES player(id),
-    luxury_id INT REFERENCES balance(id)
+    balance_id INT REFERENCES balance(id),
+    luxury_id INT REFERENCES luxury(id)
 );

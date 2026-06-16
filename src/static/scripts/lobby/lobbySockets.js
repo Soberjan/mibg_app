@@ -1,4 +1,8 @@
 import { state } from "../state.js"
+import { addVotingOption } from "../voting/addVotingOption.js";
+import { startVoteText } from "../voting/startVoteText.js";
+import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
+import { addPlayerRow } from "../lobby/addPlayerRow.js";
 
 export function otherPlayerJoinedSocket(res) {
     state.players[res.player.id] = res.player;

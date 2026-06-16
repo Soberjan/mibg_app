@@ -154,6 +154,8 @@ async def get_state(
             balance_ids = cur.fetchall()
             p_dict['balanceIds'] = [b['balance_id'] for b in balance_ids]
             players[p['id']] = p_dict
+            print(p)
+        print(players)
 
         get_luxuries_query = """
             SELECT *
@@ -167,10 +169,10 @@ async def get_state(
 
         get_player_luxury_ids = """
             SELECT luxury_id
-            FROM player_luxury
-            WHERE player_id=%s
+            FROM balance_luxury
+            WHERE balance_id=%s
         """
-        cur.execute(get_player_luxury_ids, (local_player_id,))
+        cur.execute(get_player_luxury_ids, (personal_balance_id,))
         luxury_ids_db = cur.fetchall()
         luxury_ids = [l['luxury_id'] for l in luxury_ids_db]
 

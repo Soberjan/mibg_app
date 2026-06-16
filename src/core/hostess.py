@@ -23,12 +23,26 @@ class Hostess:
         if balance_id == None:
             return
 
+        for i in range(1, 166):
+            self.database.insert_entry(
+                'lobby_question',
+                ['lobby_id', 'question_id', 'asked'],
+                [str(lobby_id), str(i), str(False)]
+             )
+
         for i in range(1, 10):
             self.database.insert_entry(
                 'property',
                 ['tile_number', 'lobby_id', 'owner_id', 'price', 'level', 'income'],
                 [str(i), str(lobby_id), str(balance_id), '200', '1', '50']
              )
+        for i in range(10, 18):
+            self.database.insert_entry(
+                'property',
+                ['tile_number', 'lobby_id', 'owner_id', 'price', 'level', 'income'],
+                [str(i), str(lobby_id), str(balance_id), '100', '1', '50']
+             )
+
         for i in range(10, 18):
             self.database.insert_entry(
                 'property',

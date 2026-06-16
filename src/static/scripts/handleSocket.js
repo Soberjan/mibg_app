@@ -1,13 +1,5 @@
-import { addPlayerRow } from "./lobby/addPlayerRow.js";
 import { startGame } from "./lobby/startGame.js";
-import { chooseBankerUI } from "./voting/chooseBankerUI.js";
-import { addBalanceToSelector } from "./transactions/addBalanceToSelector.js";
-import { addBalanceToSender } from "./transactions/addBalanceToSender.js";
-import { savePlayerState } from "./lobby/savePlayerState.js";
-import { addVotingOption } from "./voting/addVotingOption.js";
 import { state } from "./state.js";
-import { accountDict } from "./dicts.js";
-import { startVoteText } from "./voting/startVoteText.js";
 import { giveLoanSocket } from "./finances/giveLoanSocket.js";
 import { closeLoanSocket } from "./finances/closeLoanSocket.js";
 import { giveDepositSocket } from "./finances/giveDepositSocket.js";
@@ -18,8 +10,9 @@ import { upgradePropertySocket, givePropertySocket } from "./property/property.j
 import { questionAskedSocket, approvedSocket, disapprovedSocket } from "./questions/question.js";
 import { otherPlayerJoinedSocket, playerRegisteredSocket } from "./lobby/lobbySockets.js";
 import { startVotingRoundSocket, endVotingSocket, bankerChosenSocket } from "./voting/votingSockets.js";
+import { moneyChangedSocket } from "./transactions/transactionSockets.js";
 
-export function handleSocket(event) {
+export async function handleSocket(event) {
     const res = JSON.parse(event.data);
     console.log(res);
 
@@ -45,7 +38,7 @@ export function handleSocket(event) {
             break;
 
         case "banker_chosen":
-            bankerChosenSocket(res);
+            await bankerChosenSocket(res);
             break;
 
         case "loan_given":
@@ -93,7 +86,7 @@ export function handleSocket(event) {
             break;
 
         case "question_approved":
-            approvedSocket(res);
+            await approvedSocket(res);
             break;
 
         case "question_disapproved":

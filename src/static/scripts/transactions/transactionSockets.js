@@ -1,4 +1,5 @@
-import { state } from "./state.js";
+import { state } from "../state.js";
+import { accountDict } from "../dicts.js";
 
 export function moneyChangedSocket(res) {
     const data = res.result;

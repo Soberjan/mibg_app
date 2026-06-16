@@ -38,9 +38,9 @@ async def ask_question(
         
         get_random_question = """
             SELECT question.id, question.type, question.role, question.text, question.answer, question.reward, question.reward_type
-            FROM lobby_questions
-            JOIN question on lobby_questions.question_id = question.id
-            WHERE lobby_questions.lobby_id=%s AND asked=FALSE AND role=%s
+            FROM lobby_question
+            JOIN question on lobby_question.question_id = question.id
+            WHERE lobby_question.lobby_id=%s AND asked=FALSE AND role=%s
             ORDER BY RANDOM()
             LIMIT 1
         """
@@ -49,7 +49,7 @@ async def ask_question(
         question = cur.fetchone()
         if question is None:
             update_asked = """
-                UPDATE lobby_questions
+                UPDATE lobby_question
                 SET asked=FALSE
                 WHERE lobby_id=%s AND role=%s
             """
@@ -57,7 +57,7 @@ async def ask_question(
             cur.execute(get_random_question, (lobby_id, role))
             question = cur.fetchone()
         set_asked = """
-            UPDATE lobby_questions
+            UPDATE lobby_question
             SET asked=TRUE
             WHERE question_id=%s
         """

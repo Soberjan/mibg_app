@@ -1,4 +1,10 @@
-import { state } from "./state.js";
+import { state } from "../state.js";
+import { addPlayerRow } from "../lobby/addPlayerRow.js";
+import { chooseBankerUI } from "../voting/chooseBankerUI.js";
+import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
+import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
+import { accountDict } from "../dicts.js";
+import { initFinancePage, initManagmentPage } from "../lobby/initLobbyUI.js"
 
 export function startVotingRoundSocket(res) {
     const registrationOverlay = document.getElementById("registrationOverlay");
@@ -6,7 +12,7 @@ export function startVotingRoundSocket(res) {
         registrationOverlay.classList.add("hidden");
     }
 
-    votingOverlay = document.getElementById("votingOverlay");
+    const votingOverlay = document.getElementById("votingOverlay");
     if (votingOverlay.classList.contains("hidden")) {
         votingOverlay.classList.remove("hidden");
     }
@@ -29,22 +35,27 @@ export function endVotingSocket(res) {
 
     changeBalanceOwner("gov", res.winner_id);
 
-    playerRoleText = document.getElementById(`player${res.winner_id}Role`);
+    const playerRoleText = document.getElementById(`player${res.winner_id}Role`);
     if (playerRoleText)
     {
         playerRoleText.innerHTML = "политик";
     }
     chooseBankerUI();
+
+    if (state.localPlayerId === res.winner_id) 
+        initManagmentPage();
 }
 
-export function bankerChosenSocket(res) {
+export async function bankerChosenSocket(res) {
     state.players[res.banker_id].role = "banker";
 
     changeBalanceOwner("bank", res.banker_id);
 
-    playerRoleText = document.getElementById(`player${res.banker_id}Role`);
+    const playerRoleText = document.getElementById(`player${res.banker_id}Role`);
     if (playerRoleText)
         playerRoleText.innerHTML = "банкир";
+    if (res.banker_id === state.localPlayerId)
+        await initFinancePage();
 }
 
 function changeBalanceOwner(balanceType, newOwnerId) {
@@ -57,7 +68,6 @@ function changeBalanceOwner(balanceType, newOwnerId) {
     const upperRight = document.getElementById(`upperRight`);
     const balanceOption = document.getElementById(`balance${balance.id}Option`);
     const govSenderBalanceOption = document.getElementById(`senderBalance${balance.id}Option`);
-
 
     if (state.localPlayerId != newOwnerId) {
         if (govSenderBalanceOption)

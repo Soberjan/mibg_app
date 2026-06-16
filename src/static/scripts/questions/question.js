@@ -48,17 +48,26 @@ export function questionAskedSocket(msg) {
     }
 }
 
-export function approvedSocket(msg) {
+export async function approvedSocket(msg) {
     if (msg.asker_id === state.localPlayerId) {
         const approvalOverlay = document.getElementById("approvalOverlay");
         approvalOverlay.classList.add("hidden");
         state.players[state.localPlayerId].status = 'game';
+
+        if (msg.question.reward_type === "money") {
+            let receiverBalanceId;
+            for (const b of Object.values(state.balances))
+                if (b.ownerId === msg.player_id && b.type === "personal")
+                    receiverBalanceId = b.id;
+            var response = await fetch(
+                `/lobby/${state.lobbyId}/send_money?sender_id=${state.govBalanceId}&receiver_id=${receiverBalanceId}&amount=${msg.question.reward}`,
+                {
+                    method: "PUT"
+                }
+            );
+        }
     }
     else if (state.localPlayerId === msg.player_id) {
-        if (msg.question.reward_type === "money") {
-            updateBalance(msg.question.reward, state.personalBalanceId);
-            updateBalance(-1 * msg.question.reward, state.govBalanceId);
-        }
         if (msg.question.reward_type === "influence") {
             updateInfluence(msg.question.reward);
         }
@@ -76,10 +85,6 @@ export function disapprovedSocket(msg) {
         state.players[state.localPlayerId].status = 'game';
     }
     else if (state.localPlayerId === msg.player_id) {
-        if (msg.question.reward_type === "money") {
-            updateBalance(-1 * msg.question.reward, state.personalBalanceId);
-            updateBalance(msg.question.reward, state.govBalanceId);
-        }
         if (msg.question.reward_type === "influence") {
             updateInfluence(-1 * msg.question.reward);
         }

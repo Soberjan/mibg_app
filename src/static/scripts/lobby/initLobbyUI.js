@@ -28,6 +28,8 @@ function initLocalPlayerUI(playerLuxuries) {
     const nameSpan = document.getElementById("localName");
     const roleSpan = document.getElementById("localRole");
     const balanceSpan = document.getElementById("localBalance");
+    console.log('updating influence');
+    console.log(player);
     updateInfluence(player.influence);
 
     nameSpan.textContent = player.name;

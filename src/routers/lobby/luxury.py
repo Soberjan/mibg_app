@@ -35,25 +35,29 @@ async def buy_luxury(
             raise HTTPException(status_code=500, detail=f"Buyer doesn't have enough money")
 
         add_luxury_query = """
-            INSERT INTO player_luxury(player_id, luxury_id)
+            INSERT INTO balance_luxury(balance_id, luxury_id)
             VALUES (%s, %s)
         """
         cur.execute(add_luxury_query, (buyer_id, luxury_id))
+
+        get_player_id = """
+            SELECT player_id
+            FROM player_balance
+            WHERE balance_id=%s
+        """
+        cur.execute(get_player_id, (buyer_id,))
+        player_id = cur.fetchone()['player_id']
+
         update_influence = """
             UPDATE player
             SET influence=influence+%s
             WHERE id=%s
         """
-        cur.execute(update_influence, (influence, buyer_id))
+        cur.execute(update_influence, (influence, player_id))
 
         update_money_query = """
             UPDATE balance SET money=money-%s
-            WHERE id=(
-                SELECT balance.id 
-                FROM balance 
-                JOIN player_balance ON balance.id=player_balance.balance_id
-                WHERE player_balance.player_id=%s AND type='personal'
-            )
+            WHERE id = %s
             RETURNING money
         """
         cur.execute(update_money_query, (price, buyer_id))

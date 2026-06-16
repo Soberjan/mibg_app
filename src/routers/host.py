@@ -71,8 +71,8 @@ async def join_lobby(
             initial_balance = '2200'
 
         player_insert = """
-            INSERT INTO player (lobby_id, name, role)
-            VALUES (%s, %s, %s)
+            INSERT INTO player (lobby_id, name, role, influence)
+            VALUES (%s, %s, %s, 0)
             RETURNING id
         """
         cur.execute(player_insert, (str(lobby_id), 'dood', role))
