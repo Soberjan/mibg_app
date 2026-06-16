@@ -15,6 +15,38 @@ export async function askQuestion() {
     );
 }
 
+export async function answerQuestion() {
+    const questionAnswer = document.getElementById("questionAnswer");
+    const [playerStatus, questionId] = state.players[state.localPlayerId].status.split("_");
+
+    var response = await fetch(
+        `/lobby/${state.lobbyId}/answer_question?answerer_id=${state.localPlayerId}&question_id=${questionId}&answer=${questionAnswer.value}`,
+        {
+            method: "POST"
+        }
+    );
+
+    var res = await response.json();
+    const answerResult = document.getElementById("answerResult");
+    if (res.answered) {
+        var response = await fetch(
+            `/lobby/${state.lobbyId}/send_money?sender_id=${state.govBalanceId}&receiver_id=${state.personalBalanceId}&amount=${res.reward}`,
+            {
+                method: "PUT"
+            }
+        );
+        answerResult.textContent = `Вы правильно ответили на вопрос! Ваша награда ${res.reward} у.е.`;
+    }
+    else
+        answerResult.textContent = `Вы неправильно ответили на вопрос!`;
+
+    const answerButton = document.getElementById("answerQuestionButton");
+    answerButton.disabled = true;
+
+    const hideQuestionButton = document.getElementById("hideQuestionButton");
+    hideQuestionButton.disabled = false;
+}
+
 export async function approveAnswer() {
     const [player_status, question_id] = state.players[state.localPlayerId].status.split("_");
     console.log(question_id);
@@ -37,7 +69,7 @@ export async function disapproveAnswer() {
 }
 
 export function questionAskedSocket(msg) {
-    if (msg.asker_id === state.localPlayerId) {
+    if (msg.asker_id === state.localPlayerId && msg.question.type === "soft") {
         showApprovalOverlay(msg.question);
         state.players[state.localPlayerId].status = msg.approverState;
     }
@@ -54,20 +86,11 @@ export async function approvedSocket(msg) {
         approvalOverlay.classList.add("hidden");
         state.players[state.localPlayerId].status = 'game';
 
-        if (msg.question.reward_type === "money") {
-            let receiverBalanceId;
-            for (const b of Object.values(state.balances))
-                if (b.ownerId === msg.player_id && b.type === "personal")
-                    receiverBalanceId = b.id;
-            var response = await fetch(
-                `/lobby/${state.lobbyId}/send_money?sender_id=${state.govBalanceId}&receiver_id=${receiverBalanceId}&amount=${msg.question.reward}`,
-                {
-                    method: "PUT"
-                }
-            );
-        }
     }
     else if (state.localPlayerId === msg.player_id) {
+        const answerResult = document.getElementById("answerResult");
+        answerResult.textContent = `Политик одобрил ваш ответ! Ваша награда ${res.reward} очков влияния`;
+
         if (msg.question.reward_type === "influence") {
             updateInfluence(msg.question.reward);
         }
@@ -85,6 +108,9 @@ export function disapprovedSocket(msg) {
         state.players[state.localPlayerId].status = 'game';
     }
     else if (state.localPlayerId === msg.player_id) {
+        const answerResult = document.getElementById("answerResult");
+        answerResult.textContent = `Политик не одобрил ваш ответ!`;
+
         if (msg.question.reward_type === "influence") {
             updateInfluence(-1 * msg.question.reward);
         }

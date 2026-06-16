@@ -13,6 +13,7 @@ import { buyLuxury } from "./luxuries/buyLuxury.js";
 import { startPersonalEvent, startGlobalEvent, hideEvent } from "./events/events.js";
 import { askQuestion, approveAnswer, disapproveAnswer } from "./questions/question.js";
 import { hideQuestion } from "./questions/questionUI.js";
+import { answerQuestion } from "./questions/question.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -34,7 +35,7 @@ window.askQuestion = askQuestion;
 window.approveAnswer = approveAnswer;
 window.disapproveAnswer = disapproveAnswer;
 window.hideQuestion = hideQuestion;
-
+window.answerQuestion = answerQuestion;
 
 export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});

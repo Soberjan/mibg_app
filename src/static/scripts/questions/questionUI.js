@@ -8,6 +8,18 @@ export function showQuestionOverlay(question) {
     const questionText = document.getElementById("questionText");
     const answerResult = document.getElementById("answerResult");
     const hideQuestionButton = document.getElementById("hideQuestionButton");
+    const questionAnswer = document.getElementById("questionAnswer");
+    const answerButton = document.getElementById("answerQuestionButton");
+
+    if (question.type === "soft") {
+        questionAnswer.classList.add("hidden");
+        answerButton.classList.add("hidden");
+    }
+    else if (question.type === "hard") {
+        questionAnswer.classList.remove("hidden");
+        answerButton.classList.remove("hidden");
+        answerButton.disabled = false;
+    }
 
     if (!hideQuestionButton.disabled)
         hideQuestionButton.disabled = true;

@@ -51,11 +51,17 @@ async def ask_question(
             update_asked = """
                 UPDATE lobby_question
                 SET asked=FALSE
-                WHERE lobby_id=%s AND role=%s
+                WHERE lobby_id=%s
+                    AND question_id IN (
+                        SELECT id
+                        FROM question
+                        WHERE role=%s
+                    )
             """
             cur.execute(update_asked, (lobby_id, role))
             cur.execute(get_random_question, (lobby_id, role))
             question = cur.fetchone()
+
         set_asked = """
             UPDATE lobby_question
             SET asked=TRUE
@@ -69,9 +75,11 @@ async def ask_question(
             WHERE id=%s
         """
         answerer_state = 'asked_' + str(question['id']);
-        approver_state = 'approve_' + str(question['id']);
         cur.execute(update_player_state, (answerer_state, player_id))
-        cur.execute(update_player_state, (approver_state, owner_id))
+        approver_state = None
+        if question['type'] == 'soft':
+            approver_state = 'approve_' + str(question['id']);
+            cur.execute(update_player_state, (approver_state, owner_id))
         print('shit2')
 
         player_question_query = """
@@ -145,28 +153,6 @@ async def approve_answer(
                 WHERE id=%s
             """
             cur.execute(update_balance, (question['reward'], player_id))
-
-        if question['reward_type'] == 'money':
-            get_balance_id = """
-                SELECT balance_id
-                FROM player_balance
-                WHERE player_id=%s
-            """
-            cur.execute(get_balance_id, (player_id,))
-            balance_id = cur.fetchone()['balance_id']
-            print('niger3')
-            update_balance = """
-                UPDATE balance
-                SET money = money+%s
-                WHERE id=%s
-            """
-            cur.execute(update_balance, (question['reward'], balance_id))
-            update_gov_balance = """
-                UPDATE balance
-                SET money = money-%s
-                WHERE lobby_id=%s AND type='gov'
-            """
-            cur.execute(update_gov_balance, (question['reward'], lobby_id,))
 
         delete_row = """
             DELETE FROM player_question
@@ -317,4 +303,67 @@ async def get_question(
     finally:
         hostess.database.pool.putconn(conn)
 
+    return msg
+
+@router.post('/lobby/{lobby_id}/answer_question')
+async def answer_question(
+        lobby_id: int,
+        answerer_id: int,
+        question_id: int,
+        answer: str,
+        hostess: Hostess = Depends(get_hostess)
+    ):
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        get_player = """
+            SELECT player_id
+            FROM player_question
+            WHERE question_id=%s
+        """
+        cur.execute(get_player, (question_id,))
+        print('shit0')
+        player_id = cur.fetchone()['player_id']
+        print('shit')
+        if player_id == None or player_id != answerer_id:
+            # вроде как finally должен выполниться
+            return {
+                'status': 'not ok',
+                'why': 'you did not ask this question',
+            }
+
+        get_question = """
+            SELECT *
+            FROM question
+            WHERE id=%s
+        """
+        cur.execute(get_question, (question_id,))
+        question = cur.fetchone()
+        answered = question['answer'] == answer
+
+        delete_row = """
+            DELETE FROM player_question
+            WHERE question_id=%s
+        """
+        cur.execute(delete_row, (question_id,))
+        print('shit1')
+
+        update_player_state = """
+            UPDATE player
+            SET status=%s
+            WHERE id=%s
+        """
+        cur.execute(update_player_state, ('game', player_id))
+        print('shit2')
+
+        msg = {
+            'status': 'ok',
+            'answered': answered,
+            'reward': question['reward']
+        }
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
     return msg
