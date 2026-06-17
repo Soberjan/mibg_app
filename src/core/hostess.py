@@ -1,18 +1,23 @@
+import asyncio
 import datetime as dt
 
 from ..database.database import Database
-
+from .lobby import Lobby
 
 class Hostess:
     def __init__(self, database: Database) -> None:
         self.database = database
         self.clients = {}
         self.sockets = {}
+        self.lobbies = {}
 
     def create_lobby(self):
         lobby_id = self.database.insert_entry('lobby', ['status', 'started_at'], ['registration', dt.datetime.now().isoformat()])
         if lobby_id == None:
             return
+
+        self.lobbies[lobby_id] = Lobby()
+        asyncio.create_task(self.lobbies[lobby_id].update())
 
         balance_id = self.database.insert_entry(
             'balance', 

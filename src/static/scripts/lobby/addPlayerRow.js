@@ -1,5 +1,5 @@
 import { roleDict, accountDict } from "../dicts.js";
-import { state } from "../state.js"
+import { state } from "../state.js";
 
 export function addPlayerRow(player) {
     const container = document.getElementById("otherPlayers");

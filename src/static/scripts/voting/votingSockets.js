@@ -4,24 +4,49 @@ import { chooseBankerUI } from "../voting/chooseBankerUI.js";
 import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
 import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
 import { accountDict } from "../dicts.js";
-import { initFinancePage, initManagmentPage } from "../lobby/initLobbyUI.js"
+import { initFinancePage, initManagmentPage, addPauseButton } from "../lobby/initLobbyUI.js";
 
 export function startVotingRoundSocket(res) {
+    for (const player of Object.values(state.players)) {
+        console.log(player);
+        if (state.players[player.id].role === "politician" || state.players[player.id].role === "banker") {
+            state.players[player.id].role = "jobless";
+            console.log("updated role");
+            const playerRoleText = document.getElementById(`player${player.id}Role`);
+            if (playerRoleText)
+                playerRoleText.innerHTML = "безработный";
+        }
+    }
+
+    console.log('shit fuck started voting round');
+
+    const pauseButton = document.getElementById("pauseButton");
+    if (pauseButton)
+        pauseButton.remove();
+
+    if (state.lobbyOwner)
+        state.lobbyOwner = false;
+
     const registrationOverlay = document.getElementById("registrationOverlay");
     if (!registrationOverlay.classList.contains("hidden")) {
         registrationOverlay.classList.add("hidden");
     }
 
+    console.log('shit fuck started voting round');
     const votingOverlay = document.getElementById("votingOverlay");
     if (votingOverlay.classList.contains("hidden")) {
         votingOverlay.classList.remove("hidden");
     }
 
-    const round_number_text = document.getElementById("roundNumberText");
-    round_number_text.innerHTML = res.voting_round;
+    const roundNumberText = document.getElementById("roundNumberText");
+    roundNumberText.innerHTML = res.voting_round;
 
+    console.log('shit fuck started voting round');
     const voteButton = document.getElementById("voteButton");
+    voteButton.removeAttribute('disabled');
     voteButton.disabled = false;
+    console.log(voteButton.disabled);
+    console.log('shit fuck started voting round');
 }
 
 export function endVotingSocket(res) {
@@ -30,6 +55,12 @@ export function endVotingSocket(res) {
         votingOverlay.classList.add("hidden");
     }
 
+    state.lobbyStatus = "choosingBanker";
+
+    console.log("finished voting, now i need to choose the banker");
+    console.log(res);
+    console.log(state);
+
     state.players[res.winner_id].role = "politician";
     state.lobbyOwner = state.localPlayerId === res.winner_id;
 
@@ -37,13 +68,13 @@ export function endVotingSocket(res) {
 
     const playerRoleText = document.getElementById(`player${res.winner_id}Role`);
     if (playerRoleText)
-    {
         playerRoleText.innerHTML = "политик";
-    }
     chooseBankerUI();
 
-    if (state.localPlayerId === res.winner_id) 
+    if (state.localPlayerId === res.winner_id) {
+        addPauseButton();
         initManagmentPage();
+    }
 }
 
 export async function bankerChosenSocket(res) {
@@ -80,7 +111,7 @@ function changeBalanceOwner(balanceType, newOwnerId) {
         if (!govSenderBalanceOption)
             addBalanceToSender(balance);
         if (balanceOption)
-            balance.remove();
+            balanceOption.remove();
     }
 
     let balanceSpan;

@@ -3,6 +3,10 @@ import inspect
 import asyncio
 import datetime as dt
 
+async def end_term(sockets):
+    for socket in sockets:
+        await socket.send_json({'type': 'term_ended'})
+
 class Timer:
     def __init__(self, f, f_params, starts_at, duration):
         self.f = f
@@ -21,15 +25,13 @@ class Lobby():
     async def update(self):
         while True:
             now = dt.datetime.now()
-            # print('inside update function ', now, 'watching timers ', self.timers[0].ends_at)
             if self.paused:
                 await asyncio.sleep(self.sleep_time)
                 continue
 
             for t in self.timers:
-                print(t)
                 if t.ends_at <= now:
-                    if inspect.iscoroutinefunction(f):
+                    if inspect.iscoroutinefunction(t.f):
                         asyncio.create_task(t.f(*t.f_params))
                     else:
                         t.f(*t.f_params)
@@ -47,23 +49,3 @@ class Lobby():
 
         for t in self.timers:
             t.ends_at += self.unpause_time - self.pause_time
-
-
-
-def f(a, b):
-    print(dt.datetime.now())
-    print(a, b)
-
-
-async def main():
-    t = Timer(f, [1,2], dt.datetime.now(), dt.timedelta(seconds=2))
-
-    l = Lobby()
-    l.unpause()
-    l.timers.append(t)
-    asyncio.create_task(l.update())
-
-    while True:
-        await asyncio.sleep(1)
-
-asyncio.run(main())

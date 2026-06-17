@@ -25,7 +25,7 @@ export function loadGamePage() {
         managmentButton.classList.remove("hidden");
     if (state.players[state.localPlayerId].role === "banker")
         financesButton.classList.remove("hidden");
-    if (state.players[state.localPlayerId].role === "marketer" || state.players[state.localPlayerId].role === "jobless")
+    if (state.players[state.localPlayerId].role === "marketer" || state.players[state.localPlayerId].role === "jobless" || state.players[state.localPlayerId].role === "worker")
         obligationsButton.classList.remove("hidden");
 
     function open_menu(menuToShow) {

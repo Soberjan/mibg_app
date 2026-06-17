@@ -18,6 +18,17 @@ import { initEventUI } from "../events/events.js";
 import { addPropertyToManagment, addPropertyToAssets } from "../property/propertyUI.js";
 import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../questions/questionUI.js";
 
+export function addPauseButton() {
+    console.log("adding pause button");
+    const managmentMenu = document.getElementById("managment");
+    const pauseButton = document.createElement("Button");
+    pauseButton.id = `pauseButton`;
+    pauseButton.textContent = `Пауза`;
+    pauseButton.onclick = pauseGame;
+
+    upperRight.appendChild(pauseButton);
+}
+
 function initLocalPlayerUI(playerLuxuries) {
     const player = state.players[state.localPlayerId];
 
@@ -63,14 +74,7 @@ function initLocalPlayerUI(playerLuxuries) {
         upperRight.appendChild(bankBalanceSpan);
     }
     if (state.lobbyOwner) {
-        console.log("adding pause button");
-        const managmentMenu = document.getElementById("managment");
-        const pauseButton = document.createElement("Button");
-        pauseButton.id = `pauseButton`;
-        pauseButton.textContent = `Пауза`;
-        pauseButton.onclick = pauseGame;
-
-        upperRight.appendChild(pauseButton);
+        addPauseButton();
     }
 
     for (const property of Object.values(state.properties))
@@ -136,7 +140,6 @@ function initRegistrationUI() {
 
         startVoteText(registeredPlayers, totalPlayers);
     }
-
 }
 
 async function initVotingUI() {
@@ -145,14 +148,20 @@ async function initVotingUI() {
             continue;
         addVotingOption(state.players[player.id]);
     }
+    if (state.lobbyStatus != "voting")
+        return;
 
     const voteButton = document.getElementById("voteButton");
     const result = await fetch(`/lobby/${state.lobbyId}/has_voted?player_id=${state.localPlayerId}`);
     const res = await result.json();
+
+    const roundNumberText = document.getElementById("roundNumberText");
+    roundNumberText.innerHTML = res.voting_round;
+
     if (res.status != "ok")
-	return;
+        return;
     if (res.has_voted)
-	voteButton.disabled = true;
+        voteButton.disabled = true;
 }
 
 function initChoosingBankerUI() {

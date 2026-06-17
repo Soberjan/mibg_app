@@ -14,6 +14,7 @@ import { startPersonalEvent, startGlobalEvent, hideEvent } from "./events/events
 import { askQuestion, approveAnswer, disapproveAnswer } from "./questions/question.js";
 import { hideQuestion } from "./questions/questionUI.js";
 import { answerQuestion } from "./questions/question.js";
+import { startVoting } from "./voting/startVoting.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -36,6 +37,7 @@ window.approveAnswer = approveAnswer;
 window.disapproveAnswer = disapproveAnswer;
 window.hideQuestion = hideQuestion;
 window.answerQuestion = answerQuestion;
+window.startVoting = startVoting;
 
 export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
@@ -53,7 +55,7 @@ export async function initPage() {
         console.log("you've made a grave mistake");
 
         errorOverlay.classList.remove("hidden");
-        return; // заменить на попап с ошибкой
+        return;
     }
 
     if (playerStatus === "new") {

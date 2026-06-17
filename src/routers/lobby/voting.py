@@ -1,7 +1,10 @@
-from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, Response, WebSocket
+import datetime as dt
+
+from fastapi import APIRouter, HTTPException, Depends
 
 from ...dependencies import get_hostess
 from ...core.hostess import Hostess
+from ...core.lobby import Timer, end_term
 
 router = APIRouter(tags=["Lobby"])
 
@@ -19,12 +22,22 @@ async def start_voting(
             VALUES (%s, %s, %s)
         """
         cur.execute(add_election_query, (lobby_id, 1, 'voting'))
+
         update_lobby_status_query = """
             UPDATE lobby
             SET status='voting'
             WHERE id=%s
         """
         cur.execute(update_lobby_status_query, (lobby_id,))
+
+        change_role = """
+            UPDATE player
+            SET role='jobless'
+            WHERE lobby_id = %s AND role=%s
+        """
+        cur.execute(change_role, (lobby_id, 'banker'))
+        cur.execute(change_role, (lobby_id, 'politician'))
+
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
@@ -61,13 +74,13 @@ async def vote(
 
         get_votes_query = """
             WITH el_id AS (
-                SELECT id
+                SELECT id, round
                 FROM election
                 WHERE lobby_id=%s AND status='voting'
             )
             SELECT elected_id
             FROM vote
-            WHERE election_id=(SELECT id FROM el_id)
+            WHERE election_id=(SELECT id FROM el_id) AND round=(SELECT round FROM el_id)
         """
         cur.execute(get_votes_query, (lobby_id,))
         el_ids = cur.fetchall()
@@ -97,7 +110,7 @@ async def vote(
                 update_round_query = """
                     UPDATE election
                     SET round=round+1
-                    WHERE lobby_id=%s
+                    WHERE lobby_id=%s AND status='voting'
                     RETURNING round
                 """
                 cur.execute(update_round_query, (lobby_id,))
@@ -105,7 +118,7 @@ async def vote(
 
                 msg = {
                     'type': 'start_voting_round',
-                    'round': voting_round
+                    'voting_round': voting_round
                 }
             else:
                 update_role_query = """
@@ -114,12 +127,27 @@ async def vote(
                     WHERE id=%s
                 """
                 cur.execute(update_role_query, (voting_sorted[0][0],))
+
                 update_owner_query = """
                     UPDATE lobby
                     SET owner_id=%s
                     WHERE id=%s
                 """
                 cur.execute(update_owner_query, (voting_sorted[0][0], lobby_id))
+
+                update_status = """
+                    UPDATE lobby
+                    SET status=%s
+                    WHERE id=%s
+                """
+                cur.execute(update_status, ('choosing_banker', lobby_id))
+
+                end_voting = """
+                    UPDATE election
+                    SET status='ended'
+                    WHERE lobby_id=%s AND status='voting'
+                """
+                cur.execute(end_voting, (lobby_id,))
 
                 change_gov_owner_query = """
                     WITH gov_id AS (
@@ -132,6 +160,12 @@ async def vote(
                     WHERE balance_id=(SELECT id FROM gov_id)
                 """
                 cur.execute(change_gov_owner_query, (lobby_id, voting_sorted[0][0]))
+
+                lobby = hostess.lobbies[lobby_id]
+                end_term_timer = Timer(end_term, [hostess.sockets[lobby_id].values()], dt.datetime.now(), dt.timedelta(seconds=20))
+                print('appending timers to lobby')
+                print(f'timer {end_term_timer} starts at {end_term_timer.ends_at}')
+                lobby.timers.append(end_term_timer)
 
                 msg = {
                     'type': 'end_voting',
@@ -215,6 +249,13 @@ async def has_voted(
         """
         cur.execute(choose_banker_query, (lobby_id, player_id))
         voted_id = cur.fetchone()
+        get_round = """
+            SELECT round
+            FROM election
+            WHERE lobby_id=%s AND status='voting'
+        """
+        cur.execute(get_round, (lobby_id, ))
+        voting_round = cur.fetchone()['round']
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
@@ -223,4 +264,4 @@ async def has_voted(
 
     has_voted = voted_id is None
 
-    return {'status': 'ok', 'has_voted': has_voted}
+    return {'status': 'ok', 'has_voted': has_voted, 'voting_round': voting_round}

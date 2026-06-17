@@ -307,6 +307,8 @@ async def pause(
         msg = {'type': 'game_paused'}
         await socket.send_json(msg)
 
+    hostess.lobbies[lobby_id].pause()
+
     return {'status': 'ok'}
 
 @router.post('/lobby/{lobby_id}/resume')
@@ -359,4 +361,5 @@ async def resume(
         msg = {'type': 'game_resumed', 'started_at': started_at.isoformat(), 'loans': loans}
         await socket.send_json(msg)
 
+    hostess.lobbies[lobby_id].unpause()
     return {'status': 'ok'}

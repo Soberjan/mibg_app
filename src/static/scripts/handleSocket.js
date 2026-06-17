@@ -1,4 +1,5 @@
 import { startGame } from "./lobby/startGame.js";
+import { startVoting } from "./voting/startVoting.js";
 import { state } from "./state.js";
 import { giveLoanSocket } from "./finances/giveLoanSocket.js";
 import { closeLoanSocket } from "./finances/closeLoanSocket.js";
@@ -35,6 +36,11 @@ export async function handleSocket(event) {
 
         case "end_voting":
             endVotingSocket(res);
+            break;
+
+        case "term_ended":
+            startVoting();
+            console.log("politician term ended!");
             break;
 
         case "banker_chosen":

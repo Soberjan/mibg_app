@@ -12,19 +12,18 @@ export async function chooseBankerUI() {
         chooseBankerOverlay.classList.remove("hidden");
     
     if (state.players[state.localPlayerId].role != 'politician') {
-	console.log("not a politician");
+        console.log("not a politician");
         bankerTextSpan.textContent = "Дождитесь, пока политик выберет банкира";
-	bankerOptionsSelect.classList.add("hidden");
-	chooseBankerButton.classList.add("hidden");
+        bankerOptionsSelect.classList.add("hidden");
+        chooseBankerButton.classList.add("hidden");
         return;
     }
     bankerTextSpan.innerHTML = "Выберите банкира";
     bankerOptionsSelect.classList.remove("hidden");
     chooseBankerButton.classList.remove("hidden");
 
-    const L = bankerOptionsSelect.options.length - 1;
-    for (let i = L; i >= 0; i++)
-	bankerOptionsSelect.remove(i);
+    bankerOptionsSelect.options.length = 0;
+
     for (const player of Object.values(state.players)) {
         if (player.id === state.localPlayerId)
             continue;

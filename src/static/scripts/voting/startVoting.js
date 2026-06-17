@@ -6,6 +6,14 @@ export async function startVoting() {
         return;
     }
 
+    console.log("gonna start voting");
+    console.log(state);
+
+    if (!state.lobbyOwner)
+        return;
+
+    state.lobbyOwner = false;
+
     const response = await fetch(
         `/lobby/${state.lobbyId}/start_voting?player_id=${state.localPlayerId}`,
         {
