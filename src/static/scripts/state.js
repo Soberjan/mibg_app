@@ -17,5 +17,6 @@ export const state = {
     credits: {},
     timers: {},
     properties: {},
-    messages: {}
+    messages: {},
+    branches: {}
 };

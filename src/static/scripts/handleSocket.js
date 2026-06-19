@@ -13,6 +13,7 @@ import { otherPlayerJoinedSocket, playerRegisteredSocket } from "./lobby/lobbySo
 import { startVotingRoundSocket, endVotingSocket, bankerChosenSocket } from "./voting/votingSockets.js";
 import { moneyChangedSocket } from "./transactions/transactionSockets.js";
 import { messageSentSocket } from "./messenger/messageSocket.js";
+import { branchOwnerChangedSocket } from "./xCompany/xCompanySocket.js";
 
 export async function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -102,6 +103,10 @@ export async function handleSocket(event) {
 
         case "message_sent":
             messageSentSocket(res);
+            break;
+
+        case "branch_owner_changed":
+            branchOwnerChangedSocket(res);
             break;
 
         case "error":

@@ -93,6 +93,7 @@ export async function initPage() {
     state.luxuries = result.state.luxuries;
     state.properties = result.state.properties;
     state.messages = result.state.messages;
+    state.branches = result.state.branches;
     console.log("initialized game state");
     console.log(state);
 

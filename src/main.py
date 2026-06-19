@@ -8,7 +8,7 @@ from .config import Config
 load_dotenv()
 Config.init()
 from .routers import host, home, player_sockets
-from .routers.lobby import lobby, test_lobby, registration, transactions, voting, finances, luxury, game_event, property as prop, question, messenger
+from .routers.lobby import lobby, test_lobby, registration, transactions, voting, finances, luxury, game_event, property as prop, question, messenger, x_company
 
 from .core.hostess import Hostess
 from .database.database import Database
@@ -39,6 +39,7 @@ app.include_router(game_event.router)
 app.include_router(prop.router)
 app.include_router(question.router)
 app.include_router(messenger.router)
+app.include_router(x_company.router)
 # async def heartbeat():
 #     query = """
 #         UPDATE server_state

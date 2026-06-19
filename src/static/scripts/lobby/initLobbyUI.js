@@ -18,6 +18,7 @@ import { initEventUI } from "../events/events.js";
 import { addPropertyToManagment, addPropertyToAssets } from "../property/propertyUI.js";
 import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../questions/questionUI.js";
 import { initChatSelector, openChat } from "../messenger/messageUI.js";
+import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
 
 export function addPauseButton() {
     console.log("adding pause button");
@@ -34,6 +35,7 @@ function initLocalPlayerUI(playerLuxuries) {
     const player = state.players[state.localPlayerId];
 
     initLuxuryUI(playerLuxuries);
+    initXAssetsUI();
 
     startGameTimer("gameTimer");
 
@@ -217,6 +219,8 @@ export function initManagmentPage() {
     initEventUI();
     for (const property of Object.values(state.properties))
         addPropertyToManagment(property);
+
+    initXManagmentUI();
 }
 
 export async function initObligationPage() {

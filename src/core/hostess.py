@@ -28,6 +28,27 @@ class Hostess:
         if balance_id == None:
             return
 
+        self.database.insert_entry(
+            'branch',
+            ['lobby_id', 'owner_id', 'name'],
+            [str(lobby_id), str(balance_id), "Экономический филиал"]
+        )
+        self.database.insert_entry(
+            'branch',
+            ['lobby_id', 'owner_id', 'name'],
+            [str(lobby_id), str(balance_id), "Филиал влияния"]
+        )
+        self.database.insert_entry(
+            'branch',
+            ['lobby_id', 'owner_id', 'name'],
+            [str(lobby_id), str(balance_id), "Филиал возможностей"]
+        )
+        self.database.insert_entry(
+            'branch',
+            ['lobby_id', 'owner_id', 'name'],
+            [str(lobby_id), str(balance_id), "Деловой филиал"]
+        )
+
         for i in range(1, 166):
             self.database.insert_entry(
                 'lobby_question',

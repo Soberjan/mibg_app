@@ -166,7 +166,7 @@ async def get_state(
         messages = {}
         for m in res:
             m_dict = dict(m)
-            m_dict['lobbyid'] = m_dict['lobby_id']
+            m_dict['lobbyId'] = m_dict['lobby_id']
             m_dict.pop('lobby_id')
             m_dict['sentFrom'] = m_dict['sent_from']
             m_dict.pop('sent_from')
@@ -175,6 +175,22 @@ async def get_state(
             m_dict['sentAt'] = m_dict['sent_at']
             m_dict.pop('sent_at')
             messages[m['id']] = m_dict
+
+        get_messages = """
+            SELECT *
+            FROM branch
+            WHERE lobby_id=%s
+        """
+        cur.execute(get_messages, (lobby_id,))
+        res = cur.fetchall()
+        branches = {}
+        for b in res:
+            b_dict = dict(b)
+            b_dict['lobbyId'] = b_dict['lobby_id']
+            b_dict.pop('lobby_id')
+            b_dict['ownerId'] = b_dict['owner_id']
+            b_dict.pop('owner_id')
+            branches[b['id']] = b_dict
 
         get_luxuries_query = """
             SELECT *
@@ -230,6 +246,7 @@ async def get_state(
         "balances": balances,
         "luxuries": lux_dict,
         "messages": messages,
+        "branches": branches,
         "playerLuxuries": luxury_ids,
         "properties": properties
     }
