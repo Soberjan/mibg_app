@@ -95,7 +95,7 @@ function initOtherPlayersUI() {
     }
 }
 
-function initMessanger() {
+export function initMessenger() {
     initChatSelector();
     for (const player of Object.values(state.players))
         if (player.id != state.localPlayerId) {
@@ -244,7 +244,9 @@ export async function initLobbyUI(playerLuxuries) {
     initLocalPlayerUI(playerLuxuries);
     initOtherPlayersUI();
 
-    initMessanger();
+    if (state.lobbyStatus != "registration")
+        initMessenger();
+
     initVotingUI();
     initRegistrationUI();
     initChoosingBankerUI();
