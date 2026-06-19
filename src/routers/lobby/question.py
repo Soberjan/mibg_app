@@ -261,8 +261,8 @@ async def disapprove_answer(
 
         msg = {
             'type': 'question_disapproved',
-            'askerId': asker_id,
-            'playerId': player_id,
+            'asker_id': asker_id,
+            'player_id': player_id,
             'question': question
         }
 
