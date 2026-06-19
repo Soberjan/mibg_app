@@ -142,3 +142,46 @@
         word-break: break-word;
     }
 }
+
+.chat {
+    width: 400px;
+    height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.message {
+    max-width: 70%;
+    width: fit-content;
+
+    margin-bottom: 8px;
+    padding: 8px 12px;
+
+    border-radius: 8px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.messageOutgoing {
+    align-self: flex-start; /* наши слева */
+    background: #d8fdd2;
+}
+
+.messageIncoming {
+    align-self: flex-end; /* собеседник справа */
+    background: #f0f0f0;
+}
+.messageText {
+    margin-bottom: 4px;
+}
+.messageTime {
+    font-size: 0.8em;
+    color: #999;
+    text-align: right;
+}

@@ -8,6 +8,7 @@ export const state = {
     personalBalanceId: -1,
     govBalanceId: -1,
     bankBalanceId: -1,
+    chatterId: null,
     ws: null,
     luxuries: {},
     players: {},
@@ -15,5 +16,6 @@ export const state = {
     intervals: {},
     credits: {},
     timers: {},
-    properties: {}
+    properties: {},
+    messages: {}
 };

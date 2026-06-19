@@ -69,10 +69,18 @@
 		    <div id="obligationDeposits">
             </div>
         </div>
-        <div id="messages" class="submenu">
-            <h1> Сообщения: </h1>
+        <div id="messenger" class="submenu">
+            <div id="chatSelector">
+            </div>
 
-            <span> Чат 1</span>
+            <div id="chatCanvas" class="chat">
+            </div>
+
+            <div id="messageSender">
+                <input type="text" id="messageInput" autocomplete="off"/>
+
+                <button type="button" onclick="sendMessage()">Отправить</button>
+            </div>
         </div>
         <div id="finances" class="submenu">
             <h2>Выдать кредит</h2>

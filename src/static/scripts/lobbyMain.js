@@ -15,6 +15,7 @@ import { askQuestion, approveAnswer, disapproveAnswer } from "./questions/questi
 import { hideQuestion } from "./questions/questionUI.js";
 import { answerQuestion } from "./questions/question.js";
 import { startVoting } from "./voting/startVoting.js";
+import { sendMessage } from "./messenger/message.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -38,6 +39,7 @@ window.disapproveAnswer = disapproveAnswer;
 window.hideQuestion = hideQuestion;
 window.answerQuestion = answerQuestion;
 window.startVoting = startVoting;
+window.sendMessage = sendMessage;
 
 export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
@@ -90,6 +92,7 @@ export async function initPage() {
     state.balances = result.state.balances;
     state.luxuries = result.state.luxuries;
     state.properties = result.state.properties;
+    state.messages = result.state.messages;
     console.log("initialized game state");
     console.log(state);
 

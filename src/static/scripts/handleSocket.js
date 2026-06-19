@@ -12,6 +12,7 @@ import { questionAskedSocket, approvedSocket, disapprovedSocket } from "./questi
 import { otherPlayerJoinedSocket, playerRegisteredSocket } from "./lobby/lobbySockets.js";
 import { startVotingRoundSocket, endVotingSocket, bankerChosenSocket } from "./voting/votingSockets.js";
 import { moneyChangedSocket } from "./transactions/transactionSockets.js";
+import { messageSentSocket } from "./messenger/messageSocket.js";
 
 export async function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -97,6 +98,10 @@ export async function handleSocket(event) {
 
         case "question_disapproved":
             disapprovedSocket(res);
+            break;
+
+        case "message_sent":
+            messageSentSocket(res);
             break;
 
         case "error":

@@ -17,6 +17,7 @@ import { updateInfluence } from "../influence/updateInfluence.js";
 import { initEventUI } from "../events/events.js";
 import { addPropertyToManagment, addPropertyToAssets } from "../property/propertyUI.js";
 import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../questions/questionUI.js";
+import { initChatSelector, openChat } from "../messenger/messageUI.js";
 
 export function addPauseButton() {
     console.log("adding pause button");
@@ -90,6 +91,15 @@ function initOtherPlayersUI() {
         for (const balanceId of state.players[player.id].balanceIds)
             addBalanceToSelector(state.balances[balanceId]);
     }
+}
+
+function initMessanger() {
+    initChatSelector();
+    for (const player of Object.values(state.players))
+        if (player.id != state.localPlayerId) {
+            openChat(player.id);
+            break;
+        }
 }
 
 function initRegistrationUI() {
@@ -230,6 +240,7 @@ export async function initLobbyUI(playerLuxuries) {
     initLocalPlayerUI(playerLuxuries);
     initOtherPlayersUI();
 
+    initMessanger();
     initVotingUI();
     initRegistrationUI();
     initChoosingBankerUI();
