@@ -1,0 +1,111 @@
+#upMenu {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+
+    display: flex;
+    flex-direction: column;
+
+    width: calc(100% + 32px);
+    margin: -16px -16px 16px -16px;
+    padding: 16px;
+
+    background: rgba(159, 159, 159, 0.98);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+#upMenu .upMenuTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+}
+
+#upMenu .upMenuLeft {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    display: flex;
+    justify-content: center; /* центр по горизонтали внутри левой части */
+    align-items: center;     /* центр по вертикали */
+
+    text-align: center;
+}
+
+#upMenu #localName {
+    display: block;
+    margin: 0;
+
+    font-size: 42px;
+    font-weight: 900;
+    text-transform: uppercase;
+
+    line-height: 1;
+    word-break: break-word;
+}
+
+#upMenu .upMenuRight {
+    flex: 0 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+
+    margin: 0;
+    text-align: right;
+}
+
+#upMenu .upMenuItem {
+    margin: 0;
+    width: auto;
+}
+
+#localBalances,
+#timers {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+#upMenu #buttonsMenu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    width: 100%;
+    margin: 12px 0 0 0;
+}
+
+#upMenu #buttonsMenu button {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 140px;
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    #upMenu {
+        width: calc(100% + 24px);
+        margin: -12px -12px 12px -12px;
+        padding: 12px;
+    }
+
+    #upMenu .upMenuTop {
+        gap: 8px;
+    }
+
+    #upMenu #localName {
+        font-size: 48px;
+    }
+
+    #upMenu .upMenuRight {
+        gap: 4px;
+    }
+
+    #upMenu #buttonsMenu button {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}

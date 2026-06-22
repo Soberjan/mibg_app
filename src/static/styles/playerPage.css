@@ -1,11 +1,3 @@
-#localName {
-    display: block;
-    margin-bottom: 12px;
-    font-size: 32px;
-    font-weight: 700;
-    word-break: break-word;
-}
-
 .upperRight {
     display: flex;
     flex-direction: column;
