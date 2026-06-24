@@ -5,7 +5,7 @@ export function addPropertyToAssets(property) {
     const propertyDiv = document.getElementById("property");
     const propertySpan = document.createElement("span");
     propertySpan.id = `property${property.id}Assets`;
-    propertySpan.textContent = `Владение ${property.tileNumber} Уровень ${property.level} Доходность ${property.income}`;
+    propertySpan.textContent = `Владение ${property.tileNumber} · Уровень ${property.level} · Доходность ${property.income}`;
     propertyDiv.appendChild(propertySpan);
 }
 
@@ -20,7 +20,7 @@ export function addPropertyToManagment(property) {
     const propertySpan = document.createElement("span");
 
     propertySpan.id = `property${property.id}Managment`;
-    propertySpan.textContent = `Владение ${property.tileNumber} Уровень ${property.level} Доходность ${property.income} Владелец ${propertyOwnerName}`;
+    propertySpan.textContent = `Владение ${property.tileNumber} · Уровень ${property.level} · Доходность ${property.income} · Владелец ${propertyOwnerName}`;
 
     const ownerSelector = document.createElement("select");
     ownerSelector.id = `property${property.id}OwnerSelector`;

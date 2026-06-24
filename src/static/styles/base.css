@@ -9,6 +9,30 @@
     box-sizing: border-box;
 }
 
+.hidden {
+    display: none;
+}
+
+#lobbyIdBadge {
+    position: sticky;
+    top: 2px;
+    left: 4px;
+    z-index: 2500;
+
+    width: fit-content;
+    height: 0;
+
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 400;
+    text-transform: lowercase;
+
+    color: rgba(0, 0, 0, 0.6);
+
+    pointer-events: none;
+    user-select: none;
+}
+
 html, body {
     margin: 0;
     padding: 0;
@@ -125,7 +149,6 @@ button:disabled {
 
 .section {
     border-radius: 16px;
-    padding: 12px;
     margin-bottom: 16px;
 }
 

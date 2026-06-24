@@ -42,6 +42,8 @@ window.startVoting = startVoting;
 window.sendMessage = sendMessage;
 
 export async function initPage() {
+    document.getElementById("lobbyIdBadge").textContent = `id лобби: ${state.lobbyId}`;
+
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
     let result = await response.json();
     const errorOverlay = document.getElementById("errorOverlay");;
@@ -50,6 +52,8 @@ export async function initPage() {
         errorOverlay.classList.remove("hidden");
         return;
     }
+
+
     const playerStatus = result.player_status;
     if (playerStatus === "new" && result.lobby_status != "registration")
     {
@@ -82,6 +86,7 @@ export async function initPage() {
         return;
     }
     state.lobbyStatus = result.state.lobbyStatus;
+    state.termEndsAt = result.state.termEndsAt;
     state.startedAt = result.state.startedAt;
     state.lobbyOwner = result.state.lobbyOwner;
     state.localPlayerId = result.state.localPlayerId;

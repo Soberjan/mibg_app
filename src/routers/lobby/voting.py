@@ -163,13 +163,22 @@ async def vote(
 
                 lobby = hostess.lobbies[lobby_id]
                 end_term_timer = Timer(end_term, [hostess.sockets[lobby_id].values()], dt.datetime.now(), dt.timedelta(minutes=10))
+                lobby.timers.append(end_term_timer)
+
                 print('appending timers to lobby')
                 print(f'timer {end_term_timer} starts at {end_term_timer.ends_at}')
-                lobby.timers.append(end_term_timer)
+
+                update_end_term = """
+                    UPDATE lobby
+                    SET term_ends_at=%s
+                    WHERE id=%s
+                """
+                cur.execute(update_end_term, (end_term_timer.ends_at.isoformat(), lobby_id))
 
                 msg = {
                     'type': 'end_voting',
-                    'winner_id': voting_sorted[0][0]
+                    'winner_id': voting_sorted[0][0],
+                    'term_ends_at': end_term_timer.ends_at.isoformat()
                 }
 
             print(msg)

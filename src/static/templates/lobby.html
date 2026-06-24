@@ -9,29 +9,40 @@
 </head>
 <body>
     <div class="page">
+        <div id="lobbyIdBadge">id лобби: {{ lobbyId }}</div>
         <div id="upMenu">
             <div class="upMenuTop">
                 <div class="upMenuLeft">
-                    <span id="localName"></span>
+                    <span id="localName" class="localName"></span>
                 </div>
 
                 <div class="upMenuRight upperRight" id="upperRight">
+
                     <label class="upMenuItem">
                         Роль: <span id="localRole"></span>
                     </label>
 
-                    <div id="localBalances" class="upMenuItem">
-                        <label>
-                            Ваш баланс: <span id="localBalance"></span>
-                        </label>
+                    <div id="localBalances" class="upMenuItem balancesBlock">
+                        <div class="balancesTitle">Ваши балансы:</div>
+
+                        <div id="localBalance" class="balancesList">
+                            <!-- сюда JS будет добавлять балансы -->
+                        </div>
                     </div>
 
                     <label class="upMenuItem">
                         Очки влияния: <span id="localInfluence">0</span>
                     </label>
-
                     <div id="timers" class="upMenuItem">
-                        <span id="gameTimer"></span>
+                        <div id="bigGameTimer" class="timerRow">
+                            <span class="timerLabel">Время игры:</span>
+                            <span id="gameTimer" class="timerValue"></span>
+                        </div>
+
+                        <div id="bigPoliticianTimer" class="timerRow">
+                            <span class="timerLabel">Срок политика:</span>
+                            <span id="politicianTimer" class="timerValue"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,28 +55,42 @@
                 <button type="button" id="messagesButton">Сообщения</button>
             </div>
         </div>
+
         <div id="assets" class="submenu">
             <div id="otherPlayers" class="section">
             </div>
 
-            <div id="moneySender" class="section">
-                <label for="balances">Откуда отправляем
-                    <select name="счета" id="senderBalances">
-                    </select>
-                </label>
-                <label for="balances">Куда отправляем
-                    <select name="счета" id="balances">
-                    </select>
+            <div id="moneySender" class="section moneySender">
+                <h3 class="moneySenderTitle">Перевод денег</h3>
+
+                <div class="moneyTransferRow">
+                    <label class="moneyField" for="senderBalances">
+                        <span>Откуда отправляем</span>
+                        <select name="senderBalances" id="senderBalances">
+                        </select>
+                    </label>
+
+                    <div class="moneyArrow">→</div>
+
+                    <label class="moneyField" for="balances">
+                        <span>Куда отправляем</span>
+                        <select name="balances" id="balances">
+                        </select>
+                    </label>
+                </div>
+
+                <label class="moneyField moneyAmountField" for="moneyAmount">
+                    <span>Сумма</span>
+                    <input type="number" id="moneyAmount" autocomplete="off" placeholder="Введите сумму">
                 </label>
 
-                <label for="moneyAmount">Сумма
-                    <input type="number" id="moneyAmount" autocomplete="off"/></label>
-
-                <button type="button" onclick="sendMoney()">Отправить деньги</button>
+                <button class="moneySendButton" type="button" onclick="sendMoney()">
+                    Отправить деньги
+                </button>
             </div>
 
             <div id="luxuries" class="section">
-                <div id="luxuryByer">
+                <div id="luxuryBuyer">
                     <select id="luxurySelector">
                     </select>
                     <button type="button" onclick="buyLuxury()">Купить</button>
@@ -75,13 +100,13 @@
                 </div>
             </div>
 
-            <div id="property" class="section">
+            <div id="property" class="section card">
                 Мои владения:
 
             </div>
 
-            <div id="xCompanyAssets" class="section buttonRow">
-                <div> Компания Х </div>
+            <div id="xCompanyAssets" class="section card">
+                <div class="xCompanyTitle">Компания Х</div>
             </div>
         </div>
         <div id="obligations" class="submenu">

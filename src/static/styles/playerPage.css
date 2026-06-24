@@ -1,10 +1,22 @@
-.upperRight {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    margin-bottom: 16px;
+/* ===== Base layout ===== */
+
+:root {
+    --card-width: 480px;
+
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.14);
+    --card-inner-bg: rgba(255, 255, 255, 0.07);
+    --card-inner-border: rgba(255, 255, 255, 0.10);
+
+    --text-main: #111;
+    --text-muted: rgba(0, 0, 0, 0.65);
+
+    --radius-card: 16px;
+    --radius-inner: 12px;
 }
+
+
+/* ===== Menu ===== */
 
 .menu {
     display: flex;
@@ -15,48 +27,21 @@
 
 .menu button {
     flex: 1 1 calc(50% - 8px);
-    margin: 0;
     min-width: 140px;
+    margin: 0;
 }
 
 .submenu {
     display: block;
-    border: 1px solid black;
     padding: 12px;
     margin-top: 10px;
+
+    border: 1px solid black;
     border-radius: 12px;
 }
 
 .hidden {
     display: none;
-}
-
-#otherPlayers {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.player {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-}
-
-.playerField {
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    font-size: 16px;
-    white-space: nowrap;
-}
-
-.playerName {
-    font-weight: 700;
 }
 
 .buttonRow {
@@ -71,69 +56,230 @@
     min-width: 0;
 }
 
-#moneySender {
+
+/* ===== Reusable card ===== */
+
+.card,
+#otherPlayers > .player,
+#moneySender.moneySender {
+    display: grid;
+    gap: 12px;
+
+    width: 100%;
+    max-width: var(--card-width);
+    box-sizing: border-box;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: 14px;
+    border-radius: var(--radius-card);
+
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+
+/* ===== Other players ===== */
+
+#otherPlayers {
+    display: grid;
+    gap: 12px;
+
+    width: 100%;
+    max-width: var(--card-width);
+    box-sizing: border-box;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+#otherPlayers > .player {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.playerHeader {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    justify-content: space-between;
+    align-items: center;
     gap: 12px;
 }
 
-#moneySender > * {
-    flex: 1 1 180px;
+.playerName {
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.playerRole {
+    padding: 4px 10px;
+    border-radius: 999px;
+
+    font-size: 14px;
+    opacity: 0.85;
+
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    white-space: nowrap;
+}
+
+.playerBalances {
+    display: grid;
+    gap: 8px;
+}
+
+.playerBalance {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    padding: 8px 10px;
+    border-radius: var(--radius-inner);
+
+    background: var(--card-inner-bg);
+    border: 1px solid var(--card-inner-border);
+}
+
+.balanceType {
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+.balanceValue {
+    font-size: 16px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+
+/* ===== Money sender ===== */
+
+#moneySender {
+    display: grid;
+    gap: 12px;
+}
+
+.moneySenderTitle {
+    margin: 0;
+
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.moneyTransferRow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: end;
+}
+
+.moneyField {
+    display: grid;
+    gap: 6px;
+
     min-width: 0;
+
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+.moneyField span {
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.moneyField select,
+.moneyField input {
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+
+    padding: 0 10px;
+
+    border: 1px solid rgba(0, 0, 0, 0.22);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.82);
+    color: #111;
+
+    font-size: 15px;
+    outline: none;
+}
+
+.moneyField select:focus,
+.moneyField input:focus {
+    border-color: rgba(0, 0, 0, 0.45);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
+}
+
+.moneyArrow {
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 24px;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.moneyAmountField {
+    width: 100%;
 }
 
 #moneyAmount,
-#balances {
+#balances,
+#senderBalances {
+    width: 100%;
     max-width: 100%;
     min-width: 0;
 }
 
-#balances {
+.moneySendButton {
     width: 100%;
+    height: 42px;
+
+    border: 1px solid rgba(0, 0, 0, 0.28);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.72);
+    color: #111;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.12s ease,
+        transform 0.12s ease;
 }
 
-@media (max-width: 600px) {
-    #localName {
-        font-size: 24px;
-        margin-bottom: 10px;
-    }
-
-    .upperRight {
-        gap: 4px;
-    }
-
-    .menu {
-        gap: 8px;
-    }
-
-    .menu button {
-        flex: 1 1 100%;
-        min-width: 0;
-    }
-
-    .submenu {
-        padding: 10px;
-    }
-
-    .buttonRow,
-    #moneySender {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .buttonRow > *,
-    #moneySender > * {
-        flex: 1 1 auto;
-        width: 100%;
-    }
-
-    .playerField {
-        font-size: 14px;
-        white-space: normal;
-        word-break: break-word;
-    }
+.moneySendButton:hover {
+    background: rgba(255, 255, 255, 0.86);
 }
+
+.moneySendButton:active {
+    transform: scale(0.98);
+}
+
+
+/* ===== Chat ===== */
 
 .chat {
     width: 400px;
@@ -161,19 +307,225 @@
 }
 
 .messageOutgoing {
-    align-self: flex-start; /* наши слева */
+    align-self: flex-start;
     background: #d8fdd2;
 }
 
 .messageIncoming {
-    align-self: flex-end; /* собеседник справа */
+    align-self: flex-end;
     background: #f0f0f0;
 }
+
 .messageText {
     margin-bottom: 4px;
 }
+
 .messageTime {
     font-size: 0.8em;
     color: #999;
     text-align: right;
+}
+
+
+/* ===== Luxuries ===== */
+
+#luxuries {
+    display: grid;
+    gap: 14px;
+
+    width: 100%;
+    max-width: var(--card-width);
+    box-sizing: border-box;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding: 14px;
+    border-radius: var(--radius-card);
+
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* блок покупки внутри карточки */
+#luxuryBuyer {
+    display: grid;
+    gap: 12px;
+}
+
+/* селектор покупки */
+#luxurySelector {
+    width: 100%;
+    height: 42px;
+    box-sizing: border-box;
+
+    padding: 0 12px;
+
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.22);
+
+    background: rgba(255, 255, 255, 0.82);
+    color: #111;
+
+    font-size: 15px;
+    outline: none;
+}
+
+#luxurySelector:focus {
+    border-color: rgba(0, 0, 0, 0.45);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
+}
+
+/* кнопка покупки */
+#luxuryBuyer button {
+    width: 100%;
+    height: 42px;
+
+    border: 1px solid rgba(0, 0, 0, 0.28);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.72);
+    color: #111;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.12s ease,
+        transform 0.12s ease;
+}
+
+#luxuryBuyer button:hover {
+    background: rgba(255, 255, 255, 0.86);
+}
+
+#luxuryBuyer button:active {
+    transform: scale(0.98);
+}
+
+/* список уже купленных роскошей внутри той же карточки */
+#luxuryList {
+    display: grid;
+    gap: 10px;
+
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* каждый купленный предмет */
+#luxuryList > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 12px;
+    border-radius: var(--radius-inner);
+
+    background: var(--card-inner-bg);
+    border: 1px solid var(--card-inner-border);
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* иконка перед роскошью */
+#luxuryList > div::before {
+    content: "💎";
+    flex-shrink: 0;
+}
+
+/* Property styles */
+
+#property {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+#property > span {
+    display: block;
+
+    padding: 12px 14px;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+#property > span:hover {
+    background: rgba(255, 255, 255, 0.085);
+}
+
+/* X company */
+#xCompanyAssets {
+    align-content: start;
+}
+
+.xCompanyTitle {
+    font-size: 15px;
+    font-weight: 700;
+    opacity: 0.9;
+}
+
+.branchAsset {
+    display: block;
+
+    padding: 10px 12px;
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ===== Mobile ===== */
+
+@media (max-width: 600px) {
+    .menu {
+        gap: 8px;
+    }
+
+    .menu button {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    .submenu {
+        padding: 10px;
+    }
+
+    .buttonRow {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .buttonRow > * {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .moneyTransferRow {
+        grid-template-columns: 1fr;
+    }
+
+    .moneyArrow {
+        height: auto;
+        transform: rotate(90deg);
+    }
+
+    .chat {
+        width: 100%;
+    }
 }

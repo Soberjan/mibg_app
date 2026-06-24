@@ -8,6 +8,7 @@ export const state = {
     personalBalanceId: -1,
     govBalanceId: -1,
     bankBalanceId: -1,
+    termEndsAt: null,
     chatterId: null,
     ws: null,
     luxuries: {},

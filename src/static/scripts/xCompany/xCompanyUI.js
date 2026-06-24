@@ -9,6 +9,7 @@ export function addXCompanyBranchToManagment(branch) {
     branchDiv.id = `branch${branch.id}Managment`;
     const branchName = document.createElement('div');
     branchName.textContent = branch.name;
+    branchName.classList.add("branchAsset");
     const branchOwnerText = document.createElement('div');
     branchOwnerText.textContent = "Владелец";
     const branchOwner = document.createElement('div');

@@ -1,7 +1,7 @@
 import { state } from "../state.js";
 import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
 import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
-import { addPlayerRow } from "./addPlayerRow.js";
+import { addOtherPlayer } from "./addOtherPlayer.js";
 import { addVotingOption } from "../voting/addVotingOption.js";
 import { startVoting } from "../voting/startVoting.js";
 import { loadGamePage } from "./loadGamePage.js";
@@ -11,6 +11,7 @@ import { chooseBankerUI } from "../voting/chooseBankerUI.js";
 import { createObligationLoan, createFinanceLoan } from "../finances/loanElements.js";
 import { createObligationDeposit, createFinanceDeposit } from "../finances/depositElements.js";
 import { startGameTimer } from "../timer/gameTimer.js";
+import { startCountdown } from "../timer/countDownTimer.js";
 import { pauseGame, pauseGameSocket } from "./pauseGame.js";
 import { initLuxuryUI } from "../luxuries/luxuryUI.js";
 import { updateInfluence } from "../influence/updateInfluence.js";
@@ -19,16 +20,16 @@ import { addPropertyToManagment, addPropertyToAssets } from "../property/propert
 import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../questions/questionUI.js";
 import { initChatSelector, openChat } from "../messenger/messageUI.js";
 import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
+import { addBalanceToUpperMenu } from "../transactions/balance.js";
 
 export function addPauseButton() {
-    console.log("adding pause button");
-    const managmentMenu = document.getElementById("managment");
+    const timers = document.getElementById("bigGameTimer");
     const pauseButton = document.createElement("Button");
     pauseButton.id = `pauseButton`;
     pauseButton.textContent = `Пауза`;
     pauseButton.onclick = pauseGame;
 
-    upperRight.appendChild(pauseButton);
+    timers.appendChild(pauseButton);
 }
 
 function initLocalPlayerUI(playerLuxuries) {
@@ -39,9 +40,12 @@ function initLocalPlayerUI(playerLuxuries) {
 
     startGameTimer("gameTimer");
 
+    state.timers["politicianTimer"] = {}
+    state.timers["politicianTimer"].endsAt = Date.parse(state.termEndsAt);
+    startCountdown("politicianTimer");
+
     const nameSpan = document.getElementById("localName");
     const roleSpan = document.getElementById("localRole");
-    const balanceSpan = document.getElementById("localBalance");
     console.log('updating influence');
     console.log(player);
     updateInfluence(player.influence);
@@ -53,32 +57,20 @@ function initLocalPlayerUI(playerLuxuries) {
     if (player.role === "marketer")
         roleSpan.textContent = "предприниматель";
     roleSpan.id = `player${player.id}Role`;
-    balanceSpan.textContent = state.balances[state.personalBalanceId].money;
-    balanceSpan.id = `balance${state.personalBalanceId}`;
+
+    addBalanceToUpperMenu(state.balances[state.personalBalanceId]);
 
     for (const balanceId of state.players[player.id].balanceIds)
         addBalanceToSender(state.balances[balanceId]);
 
-    const upperRight = document.getElementById("upperRight");
-    if (player.role === "politician") {
-        const govBalance = state.balances[state.govBalanceId];
-        const govBalanceSpan = document.createElement("span");
-        govBalanceSpan.id = `balance${govBalance.id}`;
-        govBalanceSpan.textContent = accountDict[govBalance.type] + " " + govBalance.money;
+    if (player.role === "politician")
+        addBalanceToUpperMenu(state.balances[state.govBalanceId]);
 
-        upperRight.appendChild(govBalanceSpan);
-    }
-    if (player.role === "banker") {
-        const bankBalance = state.balances[state.bankBalanceId];
-        const bankBalanceSpan = document.createElement("span");
-        bankBalanceSpan.id = `balance${bankBalance.id}`;
-        bankBalanceSpan.textContent = accountDict[bankBalance.type] + " " + bankBalance.money;
+    if (player.role === "banker")
+        addBalanceToUpperMenu(state.balances[state.bankBalanceId]);
 
-        upperRight.appendChild(bankBalanceSpan);
-    }
-    if (state.lobbyOwner) {
+    if (state.lobbyOwner)
         addPauseButton();
-    }
 
     for (const property of Object.values(state.properties))
         if (property.ownerId === state.personalBalanceId)
@@ -89,7 +81,7 @@ function initOtherPlayersUI() {
     for (const player of Object.values(state.players)) {
         if (player.id === state.localPlayerId)
             continue;
-        addPlayerRow(state.players[player.id]);
+        addOtherPlayer(player);
         for (const balanceId of state.players[player.id].balanceIds)
             addBalanceToSelector(state.balances[balanceId]);
     }

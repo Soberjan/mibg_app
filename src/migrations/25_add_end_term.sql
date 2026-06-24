@@ -1,0 +1,1 @@
+ALTER TABLE lobby ADD COLUMN term_ends_at TIMESTAMP;

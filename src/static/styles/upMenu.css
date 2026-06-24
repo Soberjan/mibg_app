@@ -6,9 +6,9 @@
     display: flex;
     flex-direction: column;
 
-    width: calc(100% + 32px);
-    margin: -16px -16px 16px -16px;
-    padding: 16px;
+    width: 100%;
+    margin: 0 0 12px 0;
+    padding: 8px;
 
     background: rgba(159, 159, 159, 0.98);
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
@@ -23,7 +23,7 @@
     width: 100%;
 }
 
-#upMenu .upMenuLeft {
+#upMenu .upMenuLeft  {
     flex: 1 1 auto;
     min-width: 0;
 
@@ -34,27 +34,29 @@
     text-align: center;
 }
 
-#upMenu #localName {
+#upMenu .localName {
     display: block;
     margin: 0;
 
-    font-size: 42px;
+    font-size: clamp(40px, 16vw, 60px);
     font-weight: 900;
-    text-transform: uppercase;
+    line-height: 0.85;
 
-    line-height: 1;
+    text-transform: uppercase;
+    text-align: center;
+
     word-break: break-word;
 }
 
 #upMenu .upMenuRight {
     flex: 0 0 auto;
+    max-width: 45%;
 
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 6px;
 
-    margin: 0;
     text-align: right;
 }
 
@@ -63,8 +65,7 @@
     width: auto;
 }
 
-#localBalances,
-#timers {
+#localBalances {
     display: flex;
     justify-content: flex-end;
     width: 100%;
@@ -72,17 +73,116 @@
 
 #upMenu #buttonsMenu {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-wrap: nowrap;
+    gap: 6px;
 
     width: 100%;
-    margin: 12px 0 0 0;
+    margin: 8px 0 0 0;
 }
 
 #upMenu #buttonsMenu button {
-    flex: 1 1 calc(50% - 8px);
-    min-width: 140px;
+    flex: 1 1 0;
+    min-width: 0;
+
     margin: 0;
+    padding: 8px 6px;
+
+    font-size: 15px;
+    white-space: nowrap;
+}
+
+#timers {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+
+    width: 100%;
+}
+
+#timers .timerRow {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    width: 100%;
+    line-height: 1.1;
+    text-align: right;
+}
+
+#timers .timerLabel,
+#timers .timerValue {
+    line-height: 1.1;
+}
+
+#gameTimer,
+#politicianTimer {
+    display: inline-block;
+    min-width: max-content;
+}
+
+#pauseButton {
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+
+    margin: 0 0 0 6px;
+    padding: 3px 8px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 700;
+
+    flex: 0 0 auto;
+}
+
+#localBalances.balancesBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+
+    width: 100%;
+    text-align: right;
+}
+
+.balancesTitle {
+    line-height: 1;
+    opacity: 0.8;
+}
+
+.balancesList {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+
+    width: 100%;
+}
+
+.balanceRow {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+
+    width: 100%;
+
+    line-height: 1.1;
+
+    white-space: nowrap;
+}
+
+.balanceName {
+    opacity: 0.75;
+}
+
+.balanceValue {
+    font-weight: 700;
 }
 
 @media (max-width: 600px) {
@@ -96,16 +196,19 @@
         gap: 8px;
     }
 
-    #upMenu #localName {
-        font-size: 48px;
+    #upMenu .upMenuRight {
+        max-width: 50%;
     }
 
-    #upMenu .upMenuRight {
-        gap: 4px;
+    #upMenu #buttonsMenu {
+        flex-wrap: nowrap;
+        gap: 5px;
     }
 
     #upMenu #buttonsMenu button {
-        flex: 1 1 100%;
+        flex: 1 1 0;
         min-width: 0;
+
+        padding: 7px 4px;
     }
 }

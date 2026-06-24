@@ -1,10 +1,11 @@
 import { state } from "../state.js";
-import { addPlayerRow } from "../lobby/addPlayerRow.js";
+import { addOtherPlayer } from "../lobby/addOtherPlayer.js";
 import { chooseBankerUI } from "../voting/chooseBankerUI.js";
 import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
 import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
 import { accountDict } from "../dicts.js";
 import { initFinancePage, initManagmentPage, addPauseButton } from "../lobby/initLobbyUI.js";
+import { startCountdown } from "../timer/countDownTimer.js";
 
 export function startVotingRoundSocket(res) {
     for (const player of Object.values(state.players)) {
@@ -54,6 +55,12 @@ export function endVotingSocket(res) {
     if (!votingOverlay.classList.contains("hidden")) {
         votingOverlay.classList.add("hidden");
     }
+
+    state.termEndsAt = res.term_ends_at;
+
+    state.timers["politicianTimer"] = {}
+    state.timers["politicianTimer"].endsAt = Date.parse(state.termEndsAt);
+    startCountdown("politicianTimer");
 
     state.lobbyStatus = "choosingBanker";
 

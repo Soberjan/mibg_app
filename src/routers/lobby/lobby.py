@@ -236,6 +236,7 @@ async def get_state(
 
     state = {
         "lobbyOwner": lobby_owner,
+        "termEndsAt": lobby['term_ends_at'],
         "startedAt": lobby['started_at'],
         "lobbyStatus": lobby['status'],
         "localPlayerId": local_player_id,

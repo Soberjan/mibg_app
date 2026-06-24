@@ -6,7 +6,7 @@ export function addLuxuryAsset(luxuryId) {
     const luxurySpan = document.createElement("div");
     // подумать, как сделать добавление нескольких одинаковых роскошей
     luxurySpan.id = `luxury${luxuryId}`;
-    luxurySpan.textContent = luxury.name + " " + luxury.influence;
+    luxurySpan.textContent = `${luxury.name}, ${luxury.influence} о.в.`;
 
     luxuryList.appendChild(luxurySpan);
 }
@@ -20,8 +20,7 @@ export function initLuxuryUI(playerLuxuryIds) {
         const option = document.createElement("option");
         option.id = `luxury${luxury.id}Option`;
         option.value = luxury.id;
-        option.textContent = luxury.name + " " + luxury.price + " " + luxury.influence;
+        option.textContent = `${luxury.name} ${luxury.price} у.е. -> ${luxury.influence} о.в.`;
         container.appendChild(option);
     }
-
 }
