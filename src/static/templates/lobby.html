@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/styles/popUp.css">
     <link rel="stylesheet" href="/static/styles/playerPage.css">
     <link rel="stylesheet" href="/static/styles/upMenu.css">
+    <link rel="stylesheet" href="/static/styles/xCompany.css">
 </head>
 <body>
     <div class="page">
@@ -109,6 +110,7 @@
                 <div class="xCompanyTitle">Компания Х</div>
             </div>
         </div>
+
         <div id="obligations" class="submenu">
             <h2> Кредиты: </h2>
 			<div id="obligationLoans">
@@ -175,20 +177,76 @@
 	    </section>
         </div>
         <div id="managment" class="submenu">
-            <div id="questionController">
+            <div id="questionController" class="section card questionCard">
+                <div class="cardTitle">ВОПРОСЫ</div>
+
                 <select id="playerQuestionSelector">
                 </select>
                 <button type="button" onClick="askQuestion()">Задать вопрос</button>
             </div>
-            <div id="eventController">
+
+            <div id="eventController" class="section card eventCard">
+                <div class="cardTitle">СОБЫТИЯ</div>
+
                 <select id="playerEventSelector">
                 </select>
+
                 <button type="button" onClick="startPersonalEvent()">Событие игрока</button>
                 <button type="button" onClick="startGlobalEvent()">Черный лебедь</button>
             </div>
-            <div id="companyRegister" class="section buttonRow">
+
+            <div id="companyRegister" class="card companyRegisterCard">
+                <div class="cardTitle">РЕГИСТРАЦИЯ КОМПАНИЙ</div>
+
+                <label class="companyControl">
+                    <span class="companyControlLabel">Компания</span>
+                    <select id="companyRegisterSelector"></select>
+                </label>
+
+                <div class="companyInfoPanel">
+                    <div class="companyInfoRow">
+                        <span>Владение</span>
+                        <strong id="selectedPropertyTile">—</strong>
+                    </div>
+
+                    <div class="companyInfoRow">
+                        <span>Цена</span>
+                        <strong id="selectedPropertyPrice">—</strong>
+                    </div>
+
+                    <div class="companyInfoRow">
+                        <span>Уровень</span>
+                        <strong id="selectedPropertyLevel">—</strong>
+                    </div>
+
+                    <div class="companyInfoRow">
+                        <span>Доходность</span>
+                        <strong id="selectedPropertyIncome">—</strong>
+                    </div>
+
+                    <div class="companyInfoRow">
+                        <span>Владелец</span>
+                        <strong id="selectedPropertyOwner">—</strong>
+                    </div>
+                </div>
+
+                <label class="companyControl">
+                    <span class="companyControlLabel">Новый владелец</span>
+                    <select id="selectedPropertyOwnerSelector"></select>
+                </label>
+
+                <div class="companyActions">
+                    <button type="button" id="giveSelectedPropertyButton">
+                        Передать собственность
+                    </button>
+
+                    <button type="button" id="upgradeSelectedPropertyButton">
+                        Улучшить собственность
+                    </button>
+                </div>
             </div>
-            <div id="xCompanyManagment" class="section buttonRow">
+
+            <div id="xCompanyManagment" class="card">
                 <div> Компания Х </div>
             </div>
         </div>

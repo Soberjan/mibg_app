@@ -16,7 +16,7 @@ import { pauseGame, pauseGameSocket } from "./pauseGame.js";
 import { initLuxuryUI } from "../luxuries/luxuryUI.js";
 import { updateInfluence } from "../influence/updateInfluence.js";
 import { initEventUI } from "../events/events.js";
-import { addPropertyToManagment, addPropertyToAssets } from "../property/propertyUI.js";
+import { setupCompanyRegister, addPropertyToAssets } from "../property/propertyUI.js";
 import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../questions/questionUI.js";
 import { initChatSelector, openChat } from "../messenger/messageUI.js";
 import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
@@ -209,9 +209,7 @@ export async function initFinancePage() {
 export function initManagmentPage() {
     initQuestionUI();
     initEventUI();
-    for (const property of Object.values(state.properties))
-        addPropertyToManagment(property);
-
+    setupCompanyRegister();
     initXManagmentUI();
 }
 

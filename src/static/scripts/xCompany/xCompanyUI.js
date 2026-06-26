@@ -7,13 +7,16 @@ export function addXCompanyBranchToManagment(branch) {
 
     const branchDiv = document.createElement('div');
     branchDiv.id = `branch${branch.id}Managment`;
+    branchDiv.classList.add("xCompanyBranch");
     const branchName = document.createElement('div');
     branchName.textContent = branch.name;
     branchName.classList.add("branchAsset");
     const branchOwnerText = document.createElement('div');
     branchOwnerText.textContent = "Владелец";
+    branchOwnerText.classList.add("branchOwnerLabel");
     const branchOwner = document.createElement('div');
     branchOwner.id = `${branch.id}Owner`;
+    branchOwner.classList.add("branchOwnerName");
     const branchOwnerName = balanceOwnerName(state.balances[branch.ownerId]);
     branchOwner.textContent = `${branchOwnerName}`;
 
@@ -36,9 +39,14 @@ export function addXCompanyBranchToManagment(branch) {
     changeOwnerButton.textContent = "Изменить владельца";
     changeOwnerButton.onclick = () => changeBranchOwner(branch.id);
 
-    branchDiv.appendChild(branchName);
-    branchDiv.appendChild(branchOwnerText);
-    branchDiv.appendChild(branchOwner);
+    const branchInfo = document.createElement("div");
+    branchInfo.classList.add("branchInfo");
+
+    branchInfo.appendChild(branchName);
+    branchInfo.appendChild(branchOwnerText);
+    branchInfo.appendChild(branchOwner);
+
+    branchDiv.appendChild(branchInfo);
     branchDiv.appendChild(ownerSelector);
     branchDiv.appendChild(changeOwnerButton);
 

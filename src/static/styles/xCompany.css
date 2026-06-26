@@ -1,0 +1,116 @@
+#xCompanyManagment {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+/* Заголовок Компания Х */
+#xCompanyManagment > div:first-child {
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Карточка филиала */
+#xCompanyManagment .xCompanyBranch {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    grid-template-areas:
+        "info info"
+        "selector button";
+    gap: 10px 12px;
+    align-items: center;
+
+    padding: 12px;
+    border-radius: 14px;
+
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+/* Первая строка: Экономический филиал · Владелец petya */
+#xCompanyManagment .xCompanyBranch > .branchInfo {
+    grid-area: info;
+
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+
+    min-width: 0;
+}
+
+/* Сбрасываем мусорные стили, которые могли остаться от старого варианта */
+#xCompanyManagment .branchAsset,
+#xCompanyManagment .branchOwnerLabel,
+#xCompanyManagment .branchOwnerName {
+    font-size: 18px;
+    display: inline;
+    grid-column: auto;
+    grid-row: auto;
+
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+/* Название филиала */
+#xCompanyManagment .branchAsset {
+    font-weight: 800;
+}
+
+/* Точка перед владельцем */
+#xCompanyManagment .branchOwnerLabel::before {
+    content: "· ";
+    opacity: 0.6;
+}
+
+#xCompanyManagment .branchOwnerLabel {
+    opacity: 0.7;
+}
+
+/* Имя владельца */
+#xCompanyManagment .branchOwnerName {
+    font-weight: 800;
+}
+
+/* Селектор на второй строке слева */
+#xCompanyManagment .xCompanyBranch > select {
+    grid-area: selector;
+
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.14);
+
+    background: rgba(255, 255, 255, 0.75);
+    color: inherit;
+}
+
+/* Кнопка на второй строке справа */
+/* #xCompanyManagment .xCompanyBranch > button { */
+/*     grid-area: button; */
+/**/
+/*     width: auto; */
+/*     box-sizing: border-box; */
+/**/
+/*     padding: 8px 12px; */
+/*     border: none; */
+/*     border-radius: 10px; */
+/**/
+/*     font-weight: 700; */
+/*     cursor: pointer; */
+/*     white-space: nowrap; */
+/**/
+/*     background: rgba(0, 0, 0, 0.12); */
+/*     color: inherit; */
+/* } */
+
+/* #xCompanyManagment .xCompanyBranch > button:hover { */
+/*     background: rgba(0, 0, 0, 0.18); */
+/* } */

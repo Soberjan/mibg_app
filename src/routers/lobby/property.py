@@ -105,7 +105,7 @@ async def upgrade_property(
         prop.pop('lobby_id')
 
         msg = {
-            'type': 'give_property',
+            'type': 'upgrade_property',
             'property': prop
         }
 

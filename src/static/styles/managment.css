@@ -1,0 +1,203 @@
+#managmentPage {
+    display: grid;
+    gap: 16px;
+}
+
+.questionCard,
+.eventCard {
+    align-items: stretch;
+}
+
+.questionCard .cardTitle,
+.eventCard .cardTitle {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#playerQuestionSelector,
+#playerEventSelector {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+    border-radius: var(--radius-button, 12px);
+
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    outline: none;
+
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#playerQuestionSelector:hover,
+#playerEventSelector:hover {
+    background: rgba(255, 255, 255, 0.11);
+}
+
+#playerQuestionSelector:focus,
+#playerEventSelector:focus {
+    border-color: rgba(255, 255, 255, 0.34);
+}
+
+.questionCard button,
+.eventCard button {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+    border-radius: var(--radius-button, 12px);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.12);
+    color: inherit;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition:
+        transform 0.12s ease,
+        background 0.12s ease,
+        border-color 0.12s ease;
+}
+
+.questionCard button:hover,
+.eventCard button:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+.questionCard button:active,
+.eventCard button:active {
+    transform: translateY(0);
+}
+
+.companyRegisterCard {
+    align-items: stretch;
+}
+
+.companyRegisterCard .cardTitle {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.companyControl {
+    display: grid;
+    gap: 6px;
+}
+
+.companyControlLabel {
+    font-size: 13px;
+    opacity: 0.72;
+}
+
+#companyRegisterSelector,
+#selectedPropertyOwnerSelector {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+    border-radius: var(--radius-button, 12px);
+
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    outline: none;
+
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#companyRegisterSelector:hover,
+#selectedPropertyOwnerSelector:hover {
+    background: rgba(255, 255, 255, 0.11);
+}
+
+#companyRegisterSelector:focus,
+#selectedPropertyOwnerSelector:focus {
+    border-color: rgba(255, 255, 255, 0.34);
+}
+
+.companyInfoPanel {
+    display: grid;
+    gap: 8px;
+
+    padding: 12px;
+    border-radius: var(--radius-button, 12px);
+
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.companyInfoRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.companyInfoRow span {
+    opacity: 0.72;
+}
+
+.companyInfoRow strong {
+    text-align: right;
+    font-weight: 750;
+}
+
+.companyActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.companyActions button {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+    border-radius: var(--radius-button, 12px);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.12);
+    color: inherit;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition:
+        transform 0.12s ease,
+        background 0.12s ease,
+        border-color 0.12s ease;
+}
+
+.companyActions button:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+.companyActions button:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 520px) {
+    .companyActions {
+        grid-template-columns: 1fr;
+    }
+}
+
