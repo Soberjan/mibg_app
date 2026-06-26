@@ -35,7 +35,7 @@ async def ask_question(
         role = cur.fetchone()['role']
         if role == 'jobless':
             role = 'worker'
-        
+
         get_random_question = """
             SELECT question.id, question.type, question.role, question.text, question.answer, question.reward, question.reward_type
             FROM lobby_question
@@ -69,17 +69,31 @@ async def ask_question(
         """
         cur.execute(set_asked, (question['id'],))
 
+        answerer_id = player_id
+        if answerer_id == owner_id:
+            get_random_player_id = """
+                SELECT id
+                FROM player
+                WHERE lobby_id=%s AND role != 'politician'
+                ORDER BY RANDOM()
+                LIMIT 1
+            """
+            cur.execute(get_random_player_id, (lobby_id,))
+            approver_id = cur.fetchone()['id']
+        else:
+            approver_id = owner_id
+
         update_player_state = """
             UPDATE player
             SET status=%s
             WHERE id=%s
         """
         answerer_state = 'asked_' + str(question['id']);
-        cur.execute(update_player_state, (answerer_state, player_id))
+        cur.execute(update_player_state, (answerer_state, answerer_id))
         approver_state = None
         if question['type'] == 'soft':
             approver_state = 'approve_' + str(question['id']);
-            cur.execute(update_player_state, (approver_state, owner_id))
+            cur.execute(update_player_state, (approver_state, approver_id))
         print('shit2')
 
         player_question_query = """
@@ -90,8 +104,8 @@ async def ask_question(
 
         msg = {
             'type': 'question_asked',
-            'player_id': player_id,
-            'asker_id': owner_id,
+            'player_id': answerer_id,
+            'asker_id': approver_id,
             'answererState': answerer_state,
             'approverState': approver_state,
             'question': question
@@ -125,8 +139,6 @@ async def approve_answer(
 
         cur.execute(get_owner_query, (lobby_id,))
         owner_id = cur.fetchone()['owner_id']
-        if owner_id != asker_id:
-            return {"status": "not ok", "reason": "you are not the owner"}
 
         get_question = """
             SELECT *
@@ -195,16 +207,6 @@ async def disapprove_answer(
     conn = hostess.database.pool.getconn()
     try:
         cur = conn.cursor()
-        get_owner_query = """
-            SELECT owner_id
-            FROM lobby
-            WHERE id=%s
-        """
-
-        cur.execute(get_owner_query, (lobby_id,))
-        owner_id = cur.fetchone()['owner_id']
-        if owner_id != asker_id:
-            return {"status": "not ok", "reason": "you are not the owner"}
 
         get_question = """
             SELECT *
@@ -220,7 +222,10 @@ async def disapprove_answer(
             WHERE question_id = %s
         """
         cur.execute(get_player_id, (question_id,))
+        print(question_id)
+        print('shit1')
         player_id = cur.fetchone()['player_id']
+        print('shit2')
 
         if question['reward_type'] == 'influence':
             update_balance = """
@@ -255,9 +260,8 @@ async def disapprove_answer(
             SET status=%s
             WHERE id=%s
         """
-
         cur.execute(update_player_state, ('game', player_id))
-        cur.execute(update_player_state, ('game', owner_id))
+        cur.execute(update_player_state, ('game', asker_id))
 
         msg = {
             'type': 'question_disapproved',

@@ -89,7 +89,10 @@ export async function approvedSocket(msg) {
     }
     else if (state.localPlayerId === msg.player_id) {
         const answerResult = document.getElementById("answerResult");
-        answerResult.textContent = `Политик одобрил ваш ответ! Ваша награда ${msg.question.reward} очков влияния`;
+        if (state.lobbyOwner)
+            answerResult.textContent = `Ваш ответ одобрили! Ваша награда ${msg.question.reward} очков влияния`;
+        else
+            answerResult.textContent = `Политик одобрил ваш ответ! Ваша награда ${msg.question.reward} очков влияния`;
 
         if (msg.question.reward_type === "influence") {
             updateInfluence(msg.question.reward);
