@@ -1,4 +1,5 @@
 import { state } from "../state.js";
+import { accountDict } from "../dicts.js";
 import { closeDeposit } from "./closeDeposit.js";
 import { startCountdown } from "../timer/countDownTimer.js";
 
@@ -8,19 +9,37 @@ function depositTimeout(depositTimer) {
 }
 
 export function createObligationDeposit(id, depositSum, interest, endsAt) {
-	const deposits = document.getElementById("obligationDeposits");
+    const deposits = document.getElementById("obligationDeposits");
+    deposits.classList.add("obligationList");
 
-	const deposit = document.createElement("section");
-	deposit.id = `deposit${id}`;
+    const deposit = document.createElement("section");
+    deposit.id = `deposit${id}`;
+    deposit.classList.add("financeDeposit");
+    deposit.classList.add("obligationItem");
 
-	const returnSum = depositSum * (100 + interest) / 100;
-	const depositText = document.createElement("section");
-	depositText.textContent = `Вы вложили ${depositSum} под процент ${interest} и банк вернет ${returnSum}`;
+    const returnSum = depositSum * (100 + interest) / 100;
 
-	const depositTimer = document.createElement("section");
-	depositTimer.id = `deposit${id}Timer`;
-    if (Date.now() < Date.parse(endsAt))
-    {
+    const depositText = document.createElement("section");
+    depositText.classList.add("financeDepositInfo");
+    depositText.classList.add("obligationText");
+
+    const depositTitle = document.createElement("div");
+    depositTitle.classList.add("financeDepositPlayer");
+    depositTitle.textContent = "Ваш депозит";
+
+    const depositMeta = document.createElement("div");
+    depositMeta.classList.add("financeDepositMeta");
+    depositMeta.textContent = `${depositSum} → ${returnSum} · ставка ${interest}%`;
+
+    depositText.appendChild(depositTitle);
+    depositText.appendChild(depositMeta);
+
+    const depositTimer = document.createElement("section");
+    depositTimer.id = `deposit${id}Timer`;
+    depositTimer.classList.add("financeDepositTimer");
+    depositTimer.classList.add("obligationTimer");
+
+    if (Date.now() < Date.parse(endsAt)) {
         state.timers[depositTimer.id] = {}
         state.timers[depositTimer.id].endsAt = Date.parse(endsAt);
         startCountdown(depositTimer.id, () => depositTimeout(depositTimer));
@@ -28,45 +47,66 @@ export function createObligationDeposit(id, depositSum, interest, endsAt) {
     else
         depositTimeout(depositTimer);
 
-	deposit.appendChild(depositText);
-	deposit.appendChild(depositTimer);
+    deposit.appendChild(depositText);
+    deposit.appendChild(depositTimer);
 
-	deposits.appendChild(deposit);
+    deposits.appendChild(deposit);
 }
 
-export function createFinanceDeposit(id, balanceId, depositSum, interest, endsAt) {
-	console.log("appeding shit to finance deposit");
+export function createFinanceDeposit(id, balanceId, depositSum, interest, endsAt, depositState) {
+    console.log("appeding shit to finance deposit");
     console.log(`end time from server looks like this: ${endsAt}`);
-	const deposits = document.getElementById("financeDeposits");
 
-	const deposit = document.createElement("section");
-	deposit.id = `deposit${id}`;
+    const deposits = document.getElementById("financeDeposits");
 
-	const depositText = document.createElement("section");
-	const playerName = state.players[state.balances[balanceId].ownerId].name;
-	const returnSum = depositSum * (100 + interest) / 100;
-	depositText.textContent = `Игрок ${playerName} вложил ${depositSum} под процент ${interest} ему нужно вернуть ${returnSum}`;
+    const deposit = document.createElement("section");
+    deposit.id = `deposit${id}`;
+    deposit.classList.add("financeDeposit");
 
-	const depositTimer = document.createElement("section");
-	depositTimer.id = `deposit${id}Timer`;
+    const depositText = document.createElement("section");
+    depositText.classList.add("financeDepositInfo");
 
-    if (Date.now() < Date.parse(endsAt))
-    {
+    const playerName = state.players[state.balances[balanceId].ownerId].name;
+    const returnSum = depositSum * (100 + interest) / 100;
+
+    const depositPlayer = document.createElement("div");
+    depositPlayer.classList.add("financeDepositPlayer");
+    depositPlayer.textContent = playerName;
+
+    const depositMeta = document.createElement("div");
+    depositMeta.classList.add("financeDepositMeta");
+    depositMeta.textContent = `${depositSum} → ${returnSum} · ставка ${interest}%`;
+
+    depositText.appendChild(depositPlayer);
+    depositText.appendChild(depositMeta);
+
+    const depositTimer = document.createElement("section");
+    depositTimer.id = `deposit${id}Timer`;
+    depositTimer.classList.add("financeDepositTimer");
+
+    if (Date.now() < Date.parse(endsAt) && depositState != "frozen") {
         state.timers[depositTimer.id] = {}
         state.timers[depositTimer.id].endsAt = Date.parse(endsAt);
         startCountdown(depositTimer.id, () => depositTimeout(depositTimer));
     }
-    else
+    else if (depositState != "frozen")
         depositTimeout(depositTimer);
-	
-	const depositButton = document.createElement("button");
-	depositButton.id = `deposit${id}Button`;
-	depositButton.textContent = `Закрыть депозит`;
-	depositButton.addEventListener('click', () => closeDeposit(id));
+    else {
+        depositTimer.style.color = "blue";
+        depositTimer.textContent = "Депозит заморожен";
+    }
 
-	deposit.appendChild(depositText);
-	deposit.appendChild(depositTimer);
-	deposit.appendChild(depositButton);
+    if (depositState != "frozen") {
+        const depositButton = document.createElement("button");
+        depositButton.id = `deposit${id}Button`;
+        depositButton.classList.add("financeDepositButton");
+        depositButton.textContent = `Закрыть`;
+        depositButton.addEventListener('click', () => closeDeposit(id));
+        deposit.appendChild(depositButton);
+    }
 
-	deposits.appendChild(deposit);
+    deposit.appendChild(depositText);
+    deposit.appendChild(depositTimer);
+
+    deposits.appendChild(deposit);
 }

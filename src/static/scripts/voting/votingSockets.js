@@ -6,8 +6,44 @@ import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
 import { accountDict } from "../dicts.js";
 import { initFinancePage, initManagmentPage, addPauseButton } from "../lobby/initLobbyUI.js";
 import { startCountdown } from "../timer/countDownTimer.js";
+import { addBalanceToUpperMenu, addBalanceToOtherPlayer } from "../transactions/balance.js";
 
 export function startVotingRoundSocket(res) {
+    console.log("starting voting round");
+    console.log(res);
+    if (res.voting_round === "1") {
+        console.log("entered first voting round");
+        const pauseButton = document.getElementById("pauseButton");
+        console.log("shit1");
+        if (pauseButton)
+            pauseButton.remove();
+
+        console.log("shit2");
+        state.lobbyOwner = false;
+
+        const registrationOverlay = document.getElementById("registrationOverlay");
+        if (!registrationOverlay.classList.contains("hidden"))
+            registrationOverlay.classList.add("hidden");
+
+        console.log("shit3");
+        state.timers = {};
+        console.log(state);
+        if (state.players[state.localPlayerId].role === "banker") {
+            console.log("removing stuff");
+            const financeLoans = document.getElementById("financeLoans");
+            financeLoans.replaceChildren();
+            const financeDeposits = document.getElementById("financeDeposits");
+            financeDeposits.replaceChildren();
+        }
+
+        if (state.players[state.localPlayerId].role != "banker" && state.players[state.localPlayerId].role != "politician") {
+            const obligationLoans = document.getElementById("obligationLoans");
+            obligationLoans?.replaceChildren();
+            const obligationDeposits = document.getElementById("obligationDeposits");
+            obligationDeposits?.replaceChildren();
+        }
+    }
+
     for (const player of Object.values(state.players)) {
         console.log(player);
         if (state.players[player.id].role === "politician" || state.players[player.id].role === "banker") {
@@ -20,18 +56,6 @@ export function startVotingRoundSocket(res) {
     }
 
     console.log('shit fuck started voting round');
-
-    const pauseButton = document.getElementById("pauseButton");
-    if (pauseButton)
-        pauseButton.remove();
-
-    if (state.lobbyOwner)
-        state.lobbyOwner = false;
-
-    const registrationOverlay = document.getElementById("registrationOverlay");
-    if (!registrationOverlay.classList.contains("hidden")) {
-        registrationOverlay.classList.add("hidden");
-    }
 
     console.log('shit fuck started voting round');
     const votingOverlay = document.getElementById("votingOverlay");
@@ -122,23 +146,12 @@ function changeBalanceOwner(balanceType, newOwnerId) {
     }
 
     let balanceSpan;
-    if (balance.ownerId === 1) {
-        balanceSpan = document.createElement("span");
-        balanceSpan.id = `balance${balance.id}`;
-    }
+    balanceSpan = document.getElementById(`balance${balance.id}`);
+    if (balanceSpan)
+        balanceSpan.remove();
+
+    if (newOwnerId === state.localPlayerId)
+        addBalanceToUpperMenu(balance);
     else
-        balanceSpan = document.getElementById(`balance${balance.id}`);
-
-    balanceSpan.textContent = accountDict[balance.type] + " " + balance.money;
-
-    if (state.localPlayerId != newOwnerId) {
-        balanceSpan.classList.add("playerField");
-        playerRow.appendChild(balanceSpan);
-    }
-    else {
-        balanceSpan.classList.remove("playerField");
-        upperRight.appendChild(balanceSpan);
-    }
-
-    balance.ownerId = newOwnerId;
+        addBalanceToOtherPlayer(balance, newOwnerId);
 }

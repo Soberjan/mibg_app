@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="/static/styles/playerPage.css">
     <link rel="stylesheet" href="/static/styles/upMenu.css">
     <link rel="stylesheet" href="/static/styles/xCompany.css">
+    <link rel="stylesheet" href="/static/styles/credit.css">
+    <link rel="stylesheet" href="/static/styles/deposit.css">
+    <link rel="stylesheet" href="/static/styles/obligation.css">
 </head>
 <body>
     <div class="page">
@@ -112,14 +115,21 @@
         </div>
 
         <div id="obligations" class="submenu">
-            <h2> Кредиты: </h2>
-			<div id="obligationLoans">
-			</div>
+            <section class="card section">
+                <h2>Кредиты</h2>
 
-            <h2> Депозиты: </h2>
-		    <div id="obligationDeposits">
-            </div>
+                <div id="obligationLoans" class="obligationList">
+                </div>
+            </section>
+
+            <section class="card section">
+                <h2>Депозиты</h2>
+
+                <div id="obligationDeposits" class="obligationList">
+                </div>
+            </section>
         </div>
+
         <div id="messenger" class="submenu">
             <div id="chatSelector">
             </div>
@@ -134,47 +144,146 @@
             </div>
         </div>
         <div id="finances" class="submenu">
-            <h2>Выдать кредит</h2>
-            <div id="loanGiver" class="buttonRow section">
-                <label>Счет отправки
-                    <select name="счета" id="borrowerBalances">
-                    </select>
-                </label>
-                <label>Сумма
-                    <input type="number" id="loanSum" autocomplete="off"/></label>
-                <label>Ставка
-                    <input type="number" id="loanInterest" autocomplete="off"/>
-                </label>
-                <label>Дедлайн</label>
-                    <input type="number" id="loanTimeMin" min="0" max="59" value="0" autocomplete="off"/>
-                    <input type="number" id="loanTimeSec" min="0" max="59" value="0" autocomplete="off"/>
-            </div>
-            <button type="button" onClick="giveLoan()" >Выдать долг</button>
-            <h2>Зарегистрировать депозит</h2>
-            <div id="deposit_giver" class="section buttonRow">
-                <label>Счет отправки
-                    <select name="счета" id="depositBalances">
-                    </select>
-                </label>
-                <label for="depositSum">Сумма
-                    <input type="number" id="depositSum" autocomplete="off"/></label>
-                <label for="depositInterest">Ставка
-                    <input type="number" id="depositInterest" autocomplete="off"/></label>
-                <label>Дедлайн</label>
-                    <input type="number" id="depositTimeMin" min="0" max="59" value="0" autocomplete="off"/>
-                    <input type="number" id="depositTimeSec" min="0" max="59" value="0" autocomplete="off"/>
-            </div>
-            <button type="button" onClick="giveDeposit()">Регистрация депозита</button>
-            <h2>
-                Кредиты:
-            </h2>
-	    <section id="financeLoans">
-	    </section>
-            <h2>
-                Депозиты:
-            </h2>
-	    <section id="financeDeposits">
-	    </section>
+            <section id="loanControl" class="card section">
+                <div class="cardTitle">КРЕДИТЫ</div>
+
+                <div id="loanGiver">
+                    <label class="loanField">
+                        <span>Счет отправки</span>
+                        <select name="счета" id="borrowerBalances"></select>
+                    </label>
+
+                    <div class="loanTwoColumns">
+                        <label class="loanField">
+                            <span>Сумма</span>
+                            <input type="number" id="loanSum" autocomplete="off"/>
+                        </label>
+
+                        <label class="loanField">
+                            <span>Ставка, %</span>
+                            <input type="number" id="loanInterest" autocomplete="off"/>
+                        </label>
+                    </div>
+
+                    <div class="loanField">
+                        <span>Дедлайн</span>
+
+                        <div class="loanDeadlineSelects">
+                            <label>
+                                <select id="loanTimeMin">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                    <option value="59">59</option>
+                                </select>
+                                <span>мин</span>
+                            </label>
+
+                            <span class="loanDeadlineSeparator">:</span>
+
+                            <label>
+                                <select id="loanTimeSec">
+                                    <option value="0">0</option>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                    <option value="59">59</option>
+                                </select>
+                                <span>сек</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="button" onClick="giveLoan()">Выдать долг</button>
+                </div>
+
+                <div class="loanListBlock">
+                    <div class="loanListTitle">Выданные кредиты</div>
+
+                    <section id="financeLoans"></section>
+                </div>
+            </section>
+            <section id="depositControl" class="card section">
+                <div class="cardTitle">ДЕПОЗИТЫ</div>
+
+                <div id="deposit_giver">
+                    <label class="depositField">
+                        <span>Счет отправки</span>
+                        <select name="счета" id="depositBalances"></select>
+                    </label>
+
+                    <div class="depositTwoColumns">
+                        <label class="depositField">
+                            <span>Сумма</span>
+                            <input type="number" id="depositSum" autocomplete="off"/>
+                        </label>
+
+                        <label class="depositField">
+                            <span>Ставка, %</span>
+                            <input type="number" id="depositInterest" autocomplete="off"/>
+                        </label>
+                    </div>
+
+                    <div class="depositField">
+                        <span>Дедлайн</span>
+
+                        <div class="depositDeadlineSelects">
+                            <label>
+                                <select id="depositTimeMin">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                    <option value="59">59</option>
+                                </select>
+                                <span>мин</span>
+                            </label>
+
+                            <span class="depositDeadlineSeparator">:</span>
+
+                            <label>
+                                <select id="depositTimeSec">
+                                    <option value="0">0</option>
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                    <option value="59">59</option>
+                                </select>
+                                <span>сек</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="button" onClick="giveDeposit()">Регистрация депозита</button>
+                </div>
+
+                <div class="depositListBlock">
+                    <div class="depositListTitle">Зарегистрированные депозиты</div>
+
+                    <section id="financeDeposits"></section>
+                </div>
+            </section>
         </div>
         <div id="managment" class="submenu">
             <div id="questionController" class="section card questionCard">

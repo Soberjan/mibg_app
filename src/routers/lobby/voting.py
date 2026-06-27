@@ -38,6 +38,19 @@ async def start_voting(
         cur.execute(change_role, (lobby_id, 'banker'))
         cur.execute(change_role, (lobby_id, 'politician'))
 
+        freeze_deposit = """
+            UPDATE deposit
+            SET state = 'frozen', frozen_at=NOW()
+            WHERE lobby_id=%s AND state = 'active'
+        """
+        freeze_credit = """
+            UPDATE loan
+            SET state = 'frozen', frozen_at=NOW()
+            WHERE lobby_id=%s AND state = 'active'
+        """
+        cur.execute(freeze_deposit, (lobby_id,))
+        cur.execute(freeze_credit, (lobby_id,))
+
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
@@ -271,6 +284,6 @@ async def has_voted(
     finally:
         hostess.database.pool.putconn(conn)
 
-    has_voted = voted_id is None
+    has_voted = voted_id is not None
 
     return {'status': 'ok', 'has_voted': has_voted, 'voting_round': voting_round}

@@ -104,9 +104,11 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    gap: 8px;
 
+    min-width: 11ch; /* запас под 1085:03:18 */
     width: 100%;
     line-height: 1.1;
     text-align: right;
@@ -115,6 +117,9 @@
 #timers .timerLabel,
 #timers .timerValue {
     line-height: 1.1;
+    text-align: right;
+
+    font-variant-numeric: tabular-nums;
 }
 
 #gameTimer,

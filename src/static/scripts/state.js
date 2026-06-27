@@ -14,7 +14,6 @@ export const state = {
     luxuries: {},
     players: {},
     balances: {},
-    intervals: {},
     credits: {},
     timers: {},
     properties: {},

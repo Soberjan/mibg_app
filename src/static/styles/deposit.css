@@ -1,0 +1,190 @@
+#depositControl {
+    display: grid;
+    gap: 16px;
+}
+
+#deposit_giver {
+    display: grid;
+    gap: 12px;
+}
+
+.depositField {
+    display: grid;
+    gap: 6px;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.depositField input,
+.depositField select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    padding: 9px 10px;
+    border-radius: 10px;
+
+    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.08);
+    color: inherit;
+
+    font: inherit;
+}
+
+.depositTwoColumns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.depositDeadlineSelects {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.depositDeadlineSelects label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.depositDeadlineSelects select {
+    height: 39px;
+}
+
+.depositDeadlineSelects label span {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 39px;
+    opacity: 0.9;
+    white-space: nowrap;
+}
+
+.depositDeadlineSeparator {
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 39px;
+    opacity: 0.7;
+}
+
+#deposit_giver > button {
+    width: 100%;
+    min-height: 40px;
+
+    padding: 10px 14px;
+    border: none;
+    border-radius: 10px;
+
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.depositListBlock {
+    display: grid;
+    gap: 10px;
+
+    padding-top: 12px;
+    border-top: 1px solid var(--card-border);
+}
+
+.depositListTitle {
+    font-size: 18px;
+    font-weight: 800;
+    opacity: 0.85;
+}
+
+#financeDeposits {
+    display: grid;
+    gap: 10px;
+}
+
+/* Один депозит. Потом JS будет создавать такие элементы */
+.financeDeposit {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas:
+        "info timer button";
+    gap: 10px;
+    align-items: center;
+
+    padding: 12px;
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+}
+
+.financeDepositInfo {
+    grid-area: info;
+
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+}
+
+.financeDepositPlayer {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.financeDepositMeta {
+    font-size: 18px;
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+.financeDepositTimer {
+    grid-area: timer;
+    justify-self: end;
+
+    width: fit-content;
+    max-width: 150px;
+
+    padding: 5px 9px;
+    border-radius: 999px;
+
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.financeDepositButton {
+    grid-area: button;
+    justify-self: end;
+
+    padding: 6px 9px;
+    border: none;
+    border-radius: 9px;
+
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+    .depositTwoColumns {
+        grid-template-columns: 1fr;
+    }
+
+    .financeDeposit {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "info info"
+            "timer button";
+    }
+
+    .financeDepositTimer {
+        justify-self: start;
+    }
+
+    .financeDepositButton {
+        justify-self: end;
+    }
+}

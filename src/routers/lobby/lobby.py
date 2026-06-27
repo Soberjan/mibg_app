@@ -300,6 +300,35 @@ async def start_game(
         """
         cur.execute(update_status_query, (lobby_id, player_id))
         res_id = cur.fetchone()
+
+        unfreeze_normies_deposit = """
+            UPDATE deposit
+            SET state='active',
+                ends_at=ends_at + (NOW() - frozen_at)
+            WHERE state='frozen'
+                AND balance_id IN (
+                    SELECT balance_id
+                    FROM player_balance
+                    JOIN player ON player_balance.player_id=player.id
+                    WHERE player.role != 'politician' AND player.role != 'banker'
+                )
+            RETURNING *
+        """
+        unfreeze_normies_loan = """
+            UPDATE loan
+            SET state='active',
+                ends_at=ends_at + (NOW() - frozen_at)
+            WHERE state='frozen'
+                AND balance_id IN (
+                    SELECT balance_id
+                    FROM player_balance
+                    JOIN player ON player_balance.player_id=player.id
+                    WHERE player.role != 'politician' AND player.role != 'banker'
+                )
+            RETURNING *
+        """
+        cur.execute(unfreeze_normies_deposit)
+        cur.execute(unfreeze_normies_loan)
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")

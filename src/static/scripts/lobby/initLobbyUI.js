@@ -8,9 +8,8 @@ import { loadGamePage } from "./loadGamePage.js";
 import { startVoteText } from "../voting/startVoteText.js";
 import { roleDict, accountDict } from "../dicts.js";
 import { chooseBankerUI } from "../voting/chooseBankerUI.js";
-import { createObligationLoan, createFinanceLoan } from "../finances/loanElements.js";
-import { createObligationDeposit, createFinanceDeposit } from "../finances/depositElements.js";
 import { startGameTimer } from "../timer/gameTimer.js";
+import { fillObligationPage, fillFinancePage } from "../finances/finance.js";
 import { startCountdown } from "../timer/countDownTimer.js";
 import { pauseGame, pauseGameSocket } from "./pauseGame.js";
 import { initLuxuryUI } from "../luxuries/luxuryUI.js";
@@ -40,9 +39,11 @@ function initLocalPlayerUI(playerLuxuries) {
 
     startGameTimer("gameTimer");
 
-    state.timers["politicianTimer"] = {}
-    state.timers["politicianTimer"].endsAt = Date.parse(state.termEndsAt);
-    startCountdown("politicianTimer");
+    if (state.termEndsAt) {
+        state.timers["politicianTimer"] = {}
+        state.timers["politicianTimer"].endsAt = Date.parse(state.termEndsAt);
+        startCountdown("politicianTimer");
+    }
 
     const nameSpan = document.getElementById("localName");
     const roleSpan = document.getElementById("localRole");
@@ -174,36 +175,7 @@ function initChoosingBankerUI() {
 }
 
 export async function initFinancePage() {
-    console.log("initing finance page");
-    const borrowerBalances = document.getElementById("borrowerBalances");
-    for (const balance of Object.values(state.balances)) {
-		console.log("adding balance");
-        const option = document.createElement("option");
-        option.id = `loan${balance.id}Option`;
-        option.value = `${balance.id}`;
-        option.textContent = `${accountDict[balance.type]} ${state.players[balance.ownerId].name}`;
-		borrowerBalances.appendChild(option);
-    }
-    const depositBalances = document.getElementById("depositBalances");
-    for (const balance of Object.values(state.balances)) {
-        console.log("adding balance");
-        const option = document.createElement("option");
-        option.id = `loan${balance.id}Option`;
-        option.value = `${balance.id}`;
-        option.textContent = `${accountDict[balance.type]} ${state.players[balance.ownerId].name}`;
-        depositBalances.appendChild(option);
-    }
-
-    const result = await fetch(`/lobby/${state.lobbyId}/finance/get_loans_and_deposits`);
-	const res = await result.json();
-	console.log("initfinancepage");
-	console.log(result);
-	for (const loan of Object.values(res.loans)) {
-		createFinanceLoan(loan.id, loan.balance_id, loan.sum, loan.interest, loan.ends_at);
-	}
-	for (const deposit of Object.values(res.deposits)) {
-		createFinanceDeposit(deposit.id, deposit.balance_id, deposit.sum, deposit.interest, deposit.ends_at);
-	}
+    await fillFinancePage();
 }
 
 export function initManagmentPage() {
@@ -214,20 +186,7 @@ export function initManagmentPage() {
 }
 
 export async function initObligationPage() {
-    const result = await fetch(`/lobby/${state.lobbyId}/finance/get_loans_and_deposits`);
-	const res = await result.json();
-	console.log("initing obligations");
-    console.log(res);
-	for (var loan of Object.values(res.loans)) {
-		const loanOwnerId = state.balances[loan.balance_id].ownerId;
-		if (loanOwnerId === state.localPlayerId)
-			createObligationLoan(loan.id, loan.sum, loan.interest, loan.ends_at);
-	}
-	for (var deposit of Object.values(res.deposits)) {
-		const depositOwnerId = state.balances[deposit.balance_id].ownerId;
-		if (depositOwnerId === state.localPlayerId)
-			createObligationDeposit(deposit.id, deposit.sum, deposit.interest, deposit.ends_at);
-	}
+    await fillObligationPage();
 }
 
 export async function initLobbyUI(playerLuxuries) {

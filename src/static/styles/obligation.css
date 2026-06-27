@@ -1,0 +1,67 @@
+.obligationCard {
+    display: grid;
+    gap: 14px;
+}
+
+.obligationCard h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.obligationList {
+    display: grid;
+    gap: 10px;
+}
+
+/* Одна строка кредита / депозита */
+.obligationList > section {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 14px;
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Текст кредита / депозита */
+.obligationList > section > section:first-child {
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+/* Таймер */
+.obligationList > section > section:last-child {
+    min-width: 54px;
+
+    padding: 6px 10px;
+    border-radius: 999px;
+
+    text-align: center;
+    font-size: 13px;
+    font-weight: 800;
+
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+/* Когда список пустой */
+.obligationList:empty::before {
+    content: "Пока ничего нет";
+
+    padding: 12px 14px;
+    border-radius: 14px;
+
+    font-size: 14px;
+    opacity: 0.65;
+
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px dashed rgba(255, 255, 255, 0.14);
+}

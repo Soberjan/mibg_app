@@ -31,3 +31,26 @@ export function addBalanceToUpperMenu(balance) {
 
     localBalance.appendChild(row);
 }
+
+export function addBalanceToOtherPlayer(balance, playerId) {
+    const balancesBlock = document.getElementById(`player${playerId}BalancesBlock`);
+
+    const balanceRow = document.createElement("div");
+    balanceRow.id = `balance${balance.id}`;
+    balanceRow.classList.add("playerBalance");
+
+    const balanceType = document.createElement("span");
+
+    balanceType.classList.add("balanceType");
+    balanceType.textContent = accountDict[balance.type] ?? balance.type;
+
+    const balanceValue = document.createElement("span");
+    balanceValue.id = `balance${balance.id}Value`;
+    balanceValue.classList.add("balanceValue");
+    balanceValue.textContent = balance.money.toLocaleString("ru-RU");
+
+    balanceRow.appendChild(balanceType);
+    balanceRow.appendChild(balanceValue);
+
+    balancesBlock.appendChild(balanceRow);
+}

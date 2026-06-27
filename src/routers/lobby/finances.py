@@ -170,7 +170,7 @@ async def get_loans(
         get_loans_query = """
             SELECT *
             FROM loan 
-            WHERE state = 'active' AND lobby_id=%s
+            WHERE (state = 'active' or state='frozen') AND lobby_id=%s
         """
         cur.execute(get_loans_query, (lobby_id,))
         loans_res = cur.fetchall()
@@ -178,7 +178,7 @@ async def get_loans(
         get_deposits_query = """
             SELECT *
             FROM deposit
-            WHERE state = 'active' AND lobby_id=%s
+            WHERE (state = 'active' or state='frozen') AND lobby_id=%s
         """
         cur.execute(get_deposits_query, (lobby_id,))
         deposits_res = cur.fetchall()
