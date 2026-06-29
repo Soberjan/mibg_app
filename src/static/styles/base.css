@@ -163,6 +163,11 @@ button:disabled {
         max-width: 520px;
         min-width: 380px;
     }
+
+    .popup .popuptext {
+        max-width: 520px;
+        min-width: 380px;
+    }
 }
 
 @media (max-width: 600px) {

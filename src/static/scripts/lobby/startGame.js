@@ -10,7 +10,7 @@ export function startGame() {
     }
     loadGamePage();
 
-    const chatSelector = document.getElementById("chatSelector");
+    const chatSelector = document.getElementById("chatSelect");
     if (chatSelector.children.length === 0)
         initMessenger();
 

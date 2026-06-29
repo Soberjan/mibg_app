@@ -1,31 +1,46 @@
+.page {
+    position: relative;
+}
+
 .popup {
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: 1000;
+
     pointer-events: none;
 
     display: flex;
     justify-content: center;
     align-items: flex-start;
+
     padding: 0;
 }
 
 .popup .popuptext {
     pointer-events: auto;
-    margin: 0;
-    overflow-y: auto;
+
     width: 100%;
-    max-width: 420px;
-    min-height: 100vh;
+    height: 100%;
+
+    padding-top: 5dvh;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+
+    overflow-y: auto;
+
+    background: rgba(159, 159, 159, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.popup .popuptext::-webkit-scrollbar {
+    display: none;
 }
 
 .popup .popuptext.hidden {
     display: none;
-}
-
-@media (max-width: 600px) {
-    .popup .popuptext {
-        max-width: 100%;
-        min-height: 100vh;
-    }
 }
