@@ -430,3 +430,42 @@ async def resume(
 
     hostess.lobbies[lobby_id].unpause()
     return {'status': 'ok'}
+
+@router.post('/lobby/{lobby_id}/change_role')
+async def change_role(
+        lobby_id: int,
+        changer_id: int,
+        player_id: int,
+        new_role: str,
+        hostess: Hostess = Depends(get_hostess)
+        ):
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        get_owner_id = """
+            SELECT owner_id
+            FROM lobby
+            WHERE id=%s
+        """
+        cur.execute(get_owner_id, (lobby_id,))
+        owner_id = cur.fetchone()['owner_id']
+        if changer_id != owner_id:
+            return {'status': 'not ok', 'detail': 'you are not the owner'}
+
+        change_role = """
+            UPDATE player
+            SET role=%s
+            WHERE id=%s
+        """
+        cur.execute(change_role, (new_role, player_id))
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
+
+    for socket in hostess.sockets[lobby_id].values():
+        msg = {'type': 'role_changed', 'player_id': player_id, 'role': new_role}
+        await socket.send_json(msg)
+
+    return {'status': 'ok'}

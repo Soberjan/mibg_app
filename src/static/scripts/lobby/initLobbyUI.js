@@ -20,6 +20,7 @@ import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../que
 import { initChatSelector, openChat, addMessageCount } from "../messenger/messageUI.js";
 import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
 import { addBalanceToUpperMenu } from "../transactions/balance.js";
+import { initRoleControllerUI } from "../role/roleUI.js";
 
 export function addPauseButton() {
     const timers = document.getElementById("bigGameTimer");
@@ -184,6 +185,7 @@ export function initManagmentPage() {
     initEventUI();
     setupCompanyRegister();
     initXManagmentUI();
+    initRoleControllerUI();
 }
 
 export async function initObligationPage() {

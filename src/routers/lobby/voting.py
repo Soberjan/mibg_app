@@ -32,11 +32,28 @@ async def start_voting(
 
         change_role = """
             UPDATE player
-            SET role='jobless'
+            SET role=old_role
             WHERE lobby_id = %s AND role=%s
+            RETURNING id, role
         """
         cur.execute(change_role, (lobby_id, 'banker'))
+
+        res = cur.fetchone()
+        if res:
+            banker_id = res['id']
+            banker_old_role = res['role']
+        else:
+            banker_id = None
+            banker_old_role = None
+
         cur.execute(change_role, (lobby_id, 'politician'))
+        res = cur.fetchone()
+        if res:
+            politician_id = res['id']
+            politician_old_role = res['role']
+        else:
+            politician_id = None
+            politician_old_role = None
 
         freeze_deposit = """
             UPDATE deposit
@@ -59,7 +76,11 @@ async def start_voting(
     msg = {
         'type': 'start_voting_round',
         'voting_round': '1',
-        'lobby_id': lobby_id
+        'lobby_id': lobby_id,
+        'banker_id': banker_id,
+        'banker_old_role': banker_old_role,
+        'politician_id': politician_id,
+        'politician_old_role': politician_old_role
     }
     for socket in hostess.sockets[lobby_id].values():
         await socket.send_json(msg)
@@ -136,7 +157,8 @@ async def vote(
             else:
                 update_role_query = """
                     UPDATE player
-                    SET role='politician'
+                    SET old_role=role,
+                        role='politician'
                     WHERE id=%s
                 """
                 cur.execute(update_role_query, (voting_sorted[0][0],))
@@ -175,7 +197,7 @@ async def vote(
                 cur.execute(change_gov_owner_query, (lobby_id, voting_sorted[0][0]))
 
                 lobby = hostess.lobbies[lobby_id]
-                end_term_timer = Timer(end_term, [hostess.sockets[lobby_id].values()], dt.datetime.now(), dt.timedelta(minutes=10))
+                end_term_timer = Timer(end_term, [hostess.sockets[lobby_id].values()], dt.datetime.now(), dt.timedelta(minutes=1))
                 lobby.timers.append(end_term_timer)
 
                 print('appending timers to lobby')
@@ -223,7 +245,8 @@ async def choose_banker(
                 WHERE id=%s AND role='politician'
             )
             UPDATE player
-            SET role='banker'
+            SET old_role=role,
+                role='banker'
             WHERE id=%s AND (SELECT * FROM pol_id) IS NOT NULL
         """
         cur.execute(choose_banker_query, (voter_id, elected_id))

@@ -12,6 +12,7 @@ export function loadGamePage() {
     const messagesMenu = document.getElementById("messenger");
     const financesMenu = document.getElementById("finances");
     const managmentMenu = document.getElementById("managment");
+    assetsMenu.classList.remove("hidden");
     obligationsMenu.classList.add("hidden");
     messagesMenu.classList.add("hidden");
     financesMenu.classList.add("hidden");

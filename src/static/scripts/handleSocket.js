@@ -14,6 +14,7 @@ import { startVotingRoundSocket, endVotingSocket, bankerChosenSocket } from "./v
 import { moneyChangedSocket } from "./transactions/transactionSockets.js";
 import { messageSentSocket } from "./messenger/messageSocket.js";
 import { branchOwnerChangedSocket } from "./xCompany/xCompanySocket.js";
+import { roleChangedSocket } from "./role/role.js";
 
 export async function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -107,6 +108,10 @@ export async function handleSocket(event) {
 
         case "branch_owner_changed":
             branchOwnerChangedSocket(res);
+            break;
+
+        case "role_changed":
+            roleChangedSocket(res);
             break;
 
         case "error":

@@ -3,15 +3,27 @@ import { addOtherPlayer } from "../lobby/addOtherPlayer.js";
 import { chooseBankerUI } from "../voting/chooseBankerUI.js";
 import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
 import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
-import { accountDict } from "../dicts.js";
+import { accountDict, roleDict } from "../dicts.js";
 import { initFinancePage, initManagmentPage, addPauseButton } from "../lobby/initLobbyUI.js";
 import { startCountdown } from "../timer/countDownTimer.js";
 import { addBalanceToUpperMenu, addBalanceToOtherPlayer } from "../transactions/balance.js";
+import { initRoleControllerUI } from "../role/roleUI.js";
 
 export function startVotingRoundSocket(res) {
     console.log("starting voting round");
     console.log(res);
     if (res.voting_round === "1") {
+        const assetsMenu = document.getElementById("assets");
+        const obligationsMenu = document.getElementById("obligations");
+        const messagesMenu = document.getElementById("messenger");
+        const financesMenu = document.getElementById("finances");
+        const managmentMenu = document.getElementById("managment");
+        assetsMenu.classList.add("hidden");
+        obligationsMenu.classList.add("hidden");
+        messagesMenu.classList.add("hidden");
+        financesMenu.classList.add("hidden");
+        managmentMenu.classList.add("hidden");
+
         console.log("entered first voting round");
         const pauseButton = document.getElementById("pauseButton");
         console.log("shit1");
@@ -41,6 +53,18 @@ export function startVotingRoundSocket(res) {
             obligationLoans?.replaceChildren();
             const obligationDeposits = document.getElementById("obligationDeposits");
             obligationDeposits?.replaceChildren();
+        }
+
+        if (res.banker_id) {
+            const bankerRoleSpan = document.getElementById(`player${res.banker_id}Role`);
+            bankerRoleSpan.textContent = roleDict[res.banker_old_role];
+            state.players[res.banker_id].role = res.banker_old_role;
+        }
+
+        if (res.politician_id) {
+            const politicianRoleSpan = document.getElementById(`player${res.politician_id}Role`);
+            politicianRoleSpan.textContent = roleDict[res.politician_old_role];
+            state.players[res.politician_id].role = res.politician_old_role;
         }
     }
 
@@ -118,6 +142,9 @@ export async function bankerChosenSocket(res) {
         playerRoleText.innerHTML = "банкир";
     if (res.banker_id === state.localPlayerId)
         await initFinancePage();
+
+    if (state.lobbyOwner)
+        initRoleControllerUI();
 }
 
 function changeBalanceOwner(balanceType, newOwnerId) {

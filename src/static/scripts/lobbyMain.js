@@ -16,6 +16,8 @@ import { hideQuestion } from "./questions/questionUI.js";
 import { answerQuestion } from "./questions/question.js";
 import { startVoting } from "./voting/startVoting.js";
 import { sendMessage } from "./messenger/message.js";
+import { changeRole } from "./role/role.js";
+import { updateRoleControllerRoleSelector } from "./role/roleUI.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -40,6 +42,8 @@ window.hideQuestion = hideQuestion;
 window.answerQuestion = answerQuestion;
 window.startVoting = startVoting;
 window.sendMessage = sendMessage;
+window.updateRoleControllerRoleSelector = updateRoleControllerRoleSelector;
+window.changeRole = changeRole;
 
 export async function initPage() {
     document.getElementById("lobbyIdBadge").textContent = `id лобби: ${state.lobbyId}`;

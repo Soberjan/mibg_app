@@ -1,0 +1,1 @@
+ALTER TABLE player ADD COLUMN old_role VARCHAR;

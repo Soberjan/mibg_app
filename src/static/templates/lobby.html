@@ -379,6 +379,20 @@
             <div id="xCompanyManagment" class="card">
                 <div> Компания Х </div>
             </div>
+
+            <div id="roleController" class="section card eventCard">
+                <div class="cardTitle">РОЛИ</div>
+
+                <span>Игрок</span>
+                <select id="roleControllerPlayerSelector" onchange="updateRoleControllerRoleSelector()">
+                </select>
+
+                <span>Новая роль</span>
+                <select id="roleControllerRoleSelector">
+                </select>
+
+                <button type="button" onClick="changeRole()">Событие игрока</button>
+            </div>
         </div>
         <div class="popup" id="popups">
             <div class="popuptext hidden" id="eventOverlay">
