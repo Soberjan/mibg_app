@@ -16,6 +16,18 @@ async def send_money(
     conn = hostess.database.pool.getconn()
     try:
         cur = conn.cursor()
+        get_politician_personal = """
+            SELECT b.id
+            FROM player_balance pb
+                JOIN player p ON p.id = pb.player_id
+                JOIN balance b ON b.id = pb.balance_id
+            WHERE p.lobby_id = %s AND p.role = 'politician' AND b.type = 'personal'
+        """
+        cur.execute(get_politician_personal, (lobby_id,))
+        politician_personal = cur.fetchone()['id']
+        if politician_personal == sender_id or politician_personal == receiver_id:
+            return 'politicians balance is frozen'
+
         get_money_query = """
             SELECT money
             FROM balance

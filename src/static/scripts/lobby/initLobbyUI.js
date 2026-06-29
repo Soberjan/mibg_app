@@ -1,6 +1,5 @@
 import { state } from "../state.js";
-import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
-import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
+import { addBalanceToSender, addBalanceToReceiver } from "../transactions/transactionUI.js";
 import { addOtherPlayer } from "./addOtherPlayer.js";
 import { addVotingOption } from "../voting/addVotingOption.js";
 import { startVoting } from "../voting/startVoting.js";
@@ -21,6 +20,7 @@ import { initChatSelector, openChat, addMessageCount } from "../messenger/messag
 import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
 import { addBalanceToUpperMenu } from "../transactions/balance.js";
 import { initRoleControllerUI } from "../role/roleUI.js";
+import { initTransactions } from "../transactions/transactionUI.js";
 
 export function addPauseButton() {
     const timers = document.getElementById("bigGameTimer");
@@ -85,7 +85,7 @@ function initOtherPlayersUI() {
             continue;
         addOtherPlayer(player);
         for (const balanceId of state.players[player.id].balanceIds)
-            addBalanceToSelector(state.balances[balanceId]);
+            addBalanceToReceiver(state.balances[balanceId]);
     }
 }
 
@@ -240,6 +240,8 @@ export async function initLobbyUI(playerLuxuries) {
     }
 
     loadGamePage();
+    if (state.lobbyStatus === "game")
+        initTransactions();
 
     if (state.players[state.localPlayerId].role === "banker")
         await initFinancePage();

@@ -28,6 +28,16 @@ export function pauseGameSocket() {
 
         pausePopup.appendChild(resumeButton);
     }
+    const assetsMenu = document.getElementById("assets");
+    const obligationsMenu = document.getElementById("obligations");
+    const messagesMenu = document.getElementById("messenger");
+    const financesMenu = document.getElementById("finances");
+    const managmentMenu = document.getElementById("managment");
+    assetsMenu.classList.add("hidden");
+    obligationsMenu.classList.add("hidden");
+    messagesMenu.classList.add("hidden");
+    financesMenu.classList.add("hidden");
+    managmentMenu.classList.add("hidden");
 }
 
 export async function resumeGame() {
@@ -50,4 +60,7 @@ export function resumeGameSocket(msg) {
     const pausePopup = document.getElementById("pauseOverlay");
 
     pausePopup.classList.add("hidden");
+
+    const assetsMenu = document.getElementById("assets");
+    assetsMenu.classList.remove("hidden");
 }

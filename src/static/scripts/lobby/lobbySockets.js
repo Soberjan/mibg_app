@@ -1,13 +1,13 @@
 import { state } from "../state.js"
 import { addVotingOption } from "../voting/addVotingOption.js";
 import { startVoteText } from "../voting/startVoteText.js";
-import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
+import { addBalanceToReceiver } from "../transactions/transactionUI.js";
 import { addOtherPlayer } from "../lobby/addOtherPlayer.js";
 
 export function otherPlayerJoinedSocket(res) {
     state.players[res.player.id] = res.player;
     state.balances[res.balance.id] = res.balance;
-    addBalanceToSelector(res.balance);
+    addBalanceToReceiver(res.balance);
     addOtherPlayer(res.player);
 
     const totalPlayersSpan = document.getElementById("totalPlayers");

@@ -2,6 +2,7 @@ import { state } from "../state.js";
 import { loadGamePage } from "./loadGamePage.js";
 import { initMessenger } from "./initLobbyUI.js";
 import { fillFinancePage, fillObligationPage } from "../finances/finance.js";
+import { initTransactions } from "../transactions/transactionUI.js";
 
 export function startGame() {
     const chooseBankerOverlay = document.getElementById("chooseBankerOverlay");
@@ -21,4 +22,6 @@ export function startGame() {
     if (state.players[state.localPlayerId].role != "banker" && state.players[state.localPlayerId].role != "politician") {
         fillObligationPage();
     }
+
+    initTransactions();
 }

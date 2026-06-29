@@ -1,8 +1,7 @@
 import { state } from "../state.js";
 import { addOtherPlayer } from "../lobby/addOtherPlayer.js";
 import { chooseBankerUI } from "../voting/chooseBankerUI.js";
-import { addBalanceToSelector } from "../transactions/addBalanceToSelector.js";
-import { addBalanceToSender } from "../transactions/addBalanceToSender.js";
+import { addBalanceToSender, addBalanceToReceiver } from "../transactions/transactionUI.js";
 import { accountDict, roleDict } from "../dicts.js";
 import { initFinancePage, initManagmentPage, addPauseButton } from "../lobby/initLobbyUI.js";
 import { startCountdown } from "../timer/countDownTimer.js";
@@ -163,7 +162,7 @@ function changeBalanceOwner(balanceType, newOwnerId) {
             govSenderBalanceOption.remove()
 
         if (!balanceOption)
-            addBalanceToSelector(balance);
+            addBalanceToReceiver(balance);
     }
     else if (state.localPlayerId === newOwnerId) {
         if (!govSenderBalanceOption)
@@ -181,4 +180,6 @@ function changeBalanceOwner(balanceType, newOwnerId) {
         addBalanceToUpperMenu(balance);
     else
         addBalanceToOtherPlayer(balance, newOwnerId);
+
+    state.balances[balance.id].ownerId = newOwnerId;
 }
