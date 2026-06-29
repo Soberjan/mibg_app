@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/static/styles/credit.css">
     <link rel="stylesheet" href="/static/styles/deposit.css">
     <link rel="stylesheet" href="/static/styles/obligation.css">
+    <link rel="stylesheet" href="/static/styles/messenger.css">
 </head>
 <body>
     <div class="page">
@@ -132,17 +133,37 @@
 
         <div id="messenger" class="submenu">
             <div id="chatSelector">
+                <select id="chatSelect">
+                </select>
             </div>
 
             <div id="chatCanvas" class="chat">
+                <div class="message messageOutgoing">
+                </div>
+
+                <div class="message messageIncoming">
+                </div>
             </div>
 
             <div id="messageSender">
-                <input type="text" id="messageInput" autocomplete="off"/>
+                <div class="messageInputBox">
+                    <input
+                        type="text"
+                        id="messageInput"
+                        maxlength="100"
+                        autocomplete="off"
+                        placeholder="Введите сообщение..."
+                    >
 
-                <button type="button" onclick="sendMessage()">Отправить</button>
+                    <span id="messageCounter">0/100</span>
+                </div>
+
+                <button type="button" id="sendMessageButton" onclick="sendMessage()">
+                    Отправить
+                </button>
             </div>
         </div>
+
         <div id="finances" class="submenu">
             <section id="loanControl" class="card section">
                 <div class="cardTitle">КРЕДИТЫ</div>

@@ -1,7 +1,7 @@
 import { state } from "../state.js";
 
 export function initChatSelector() {
-    const chatSelector = document.getElementById("chatSelector");
+    const chatSelect = document.getElementById("chatSelect");
 
     //  state.messages[0] = {to: -1, from: -2, text: 'some text', sentAt: new Date('2026-06-19T10:00:00')};
     // state.messages[1] = {to: -1, from: -2, text: 'some text', sentAt: new Date('2026-06-19T10:01:00')};
@@ -15,25 +15,35 @@ export function initChatSelector() {
     for (const player of Object.values(state.players)) {
         if (player.id === state.localPlayerId)
             continue;
+        const option = document.createElement("option");
+        option.id = `player${player.id}ChatOption`;
+        option.value = player.id;
+        option.textContent = player.name;
 
-        const chatSelectorButton = document.createElement("button");
-        chatSelectorButton.id = `player${player.id}ChatSelector`;
-        chatSelectorButton.textContent = `${player.name}`;
-        chatSelectorButton.onclick = () => openChat(player.id);;
-        chatSelector.appendChild(chatSelectorButton);
+        chatSelect.appendChild(option);
     }
+
+    chatSelect.addEventListener("change", () => {
+        const playerId = Number(chatSelect.value);
+
+        openChat(playerId);
+    });
 }
 
 export function openChat(playerId) {
+    console.log("opened chat niger");
     state.chatterId = playerId;
+    console.log(playerId);
     const chatCanvas = document.getElementById("chatCanvas");
     chatCanvas.replaceChildren();
-     const messages = Object.values(state.messages)
+    console.log(state.messages);
+    const messages = Object.values(state.messages)
         .filter(msg =>
             (msg.sentTo === playerId && msg.sentFrom === state.localPlayerId) ||
             (msg.sentFrom === playerId && msg.sentTo === state.localPlayerId)
         )
         .sort((a, b) => a.sentAt - b.sentAt);
+    console.log(messages);
 
     for (const msg of messages)
         addMessage(msg);
@@ -41,32 +51,50 @@ export function openChat(playerId) {
 
 export function addMessage(msg) {
     const chatCanvas = document.getElementById("chatCanvas");
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add("message");
+
+    const message = document.createElement("div");
+    message.classList.add("message");
 
     if (msg.sentFrom === state.localPlayerId) {
-        msgDiv.classList.add('messageOutgoing'); // наше сообщение
+        message.classList.add("messageOutgoing"); // наше сообщение
     } else {
-        msgDiv.classList.add('messageIncoming'); // сообщение собеседника
+        message.classList.add("messageIncoming"); // сообщение собеседника
     }
 
-    const textDiv = document.createElement('div');
-    textDiv.classList.add('messageText');
-    textDiv.textContent = msg.text;
+    const messageText = document.createElement("div");
+    messageText.classList.add("messageText");
+    messageText.textContent = msg.text;
 
-    const timeDiv = document.createElement('div');
-    timeDiv.classList.add('messageTime');
+    const messageTime = document.createElement("div");
+    messageTime.classList.add("messageTime");
 
     const sentAt = new Date(msg.sentAt);
 
-    timeDiv.textContent =
-        sentAt.getHours().toString().padStart(2, '0') +
-        ':' +
-        sentAt.getMinutes().toString().padStart(2, '0');
+    messageTime.textContent =
+        sentAt.getHours().toString().padStart(2, "0") +
+        ":" +
+        sentAt.getMinutes().toString().padStart(2, "0");
 
-    msgDiv.appendChild(textDiv);
-    msgDiv.appendChild(timeDiv);
+    message.appendChild(messageText);
+    message.appendChild(messageTime);
 
-    chatCanvas.appendChild(msgDiv);
+    chatCanvas.appendChild(message);
     chatCanvas.scrollTop = chatCanvas.scrollHeight;
+}
+
+export function updateMessageCounter() {
+    const currentLength = messageInput.value.length;
+    const maxLength = messageInput.maxLength;
+
+    messageCounter.textContent = `${currentLength}/${maxLength}`;
+}
+
+export function addMessageCount() {
+    const messageInput = document.getElementById("messageInput");
+    const messageCounter = document.getElementById("messageCounter");
+
+
+    messageInput.addEventListener("input", updateMessageCounter);
+
+    updateMessageCounter();
 }

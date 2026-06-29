@@ -17,7 +17,7 @@ import { updateInfluence } from "../influence/updateInfluence.js";
 import { initEventUI } from "../events/events.js";
 import { setupCompanyRegister, addPropertyToAssets } from "../property/propertyUI.js";
 import { showQuestionOverlay, showApprovalOverlay, initQuestionUI } from "../questions/questionUI.js";
-import { initChatSelector, openChat } from "../messenger/messageUI.js";
+import { initChatSelector, openChat, addMessageCount } from "../messenger/messageUI.js";
 import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
 import { addBalanceToUpperMenu } from "../transactions/balance.js";
 
@@ -95,6 +95,7 @@ export function initMessenger() {
             openChat(player.id);
             break;
         }
+    addMessageCount();
 }
 
 function initRegistrationUI() {

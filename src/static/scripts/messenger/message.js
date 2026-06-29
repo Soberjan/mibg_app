@@ -1,9 +1,13 @@
 import { state } from "../state.js";
+import { updateMessageCounter } from "../messenger/messageUI.js";
 
 export async function sendMessage() {
     const messageInput = document.getElementById("messageInput");
     const text = messageInput.value;
+
     messageInput.value = "";
+    updateMessageCounter();
+
     if (text.length > 100) {
         console.log("слишком длинное сообщение");
         return;
@@ -15,5 +19,6 @@ export async function sendMessage() {
             method: "POST"
         }
     );
+
     var res = await response.json();
 }
