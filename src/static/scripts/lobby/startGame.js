@@ -9,6 +9,9 @@ export function startGame() {
     if (!chooseBankerOverlay.classList.contains("hidden")) {
         chooseBankerOverlay.classList.add("hidden");
     }
+
+    state.lobbyStatus = "game";
+
     loadGamePage();
 
     const chatSelector = document.getElementById("chatSelect");

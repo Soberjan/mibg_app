@@ -12,7 +12,13 @@ export function loadGamePage() {
     const messagesMenu = document.getElementById("messenger");
     const financesMenu = document.getElementById("finances");
     const managmentMenu = document.getElementById("managment");
-    assetsMenu.classList.remove("hidden");
+
+    console.log("loadGamePage");
+    console.log(state.lobbyStatus);
+    if (state.lobbyStatus != "game")
+        assetsMenu.classList.add("hidden");
+    else
+        assetsMenu.classList.remove("hidden");
     obligationsMenu.classList.add("hidden");
     messagesMenu.classList.add("hidden");
     financesMenu.classList.add("hidden");
@@ -56,4 +62,7 @@ export function loadGamePage() {
     managmentButton.onclick = function () {
         open_menu(managmentMenu);
     };
+
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.classList.add("hidden");
 }

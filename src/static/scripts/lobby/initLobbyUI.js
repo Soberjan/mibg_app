@@ -266,4 +266,7 @@ export async function initLobbyUI(playerLuxuries) {
         console.log(q.question);
         showApprovalOverlay(q.question);
     }
+
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.classList.add("hidden");
 }
