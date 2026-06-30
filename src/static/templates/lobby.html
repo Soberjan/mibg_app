@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/static/styles/deposit.css">
     <link rel="stylesheet" href="/static/styles/obligation.css">
     <link rel="stylesheet" href="/static/styles/messenger.css">
+    <link rel="stylesheet" href="/static/styles/gameEnded.css">
 </head>
 <body>
     <div class="page">
@@ -391,8 +392,10 @@
                 <select id="roleControllerRoleSelector">
                 </select>
 
-                <button type="button" onClick="changeRole()">Событие игрока</button>
+                <button type="button" onClick="changeRole()">Изменить роль</button>
             </div>
+
+            <button type="button" onClick="endGame()">Завершить игру!</button>
         </div>
         <div class="popup" id="popups">
             <div class="popuptext hidden" id="eventOverlay">
@@ -464,6 +467,11 @@
             <div class="popuptext" id="loadingOverlay">
                 <h1>
                     Загрузка
+                </h1>
+            </div>
+            <div class="popuptext hidden" id="gameEndedOverlay">
+                <h1>
+                    Игра окончена! Итоговые очки:
                 </h1>
             </div>
         </div>

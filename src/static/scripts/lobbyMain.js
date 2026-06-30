@@ -17,6 +17,7 @@ import { answerQuestion } from "./questions/question.js";
 import { startVoting } from "./voting/startVoting.js";
 import { sendMessage } from "./messenger/message.js";
 import { changeRole } from "./role/role.js";
+import { endGame } from "./gameEnded/gameEnded.js";
 import { updateRoleControllerRoleSelector } from "./role/roleUI.js";
 
 state.lobbyId = window.lobbyId;
@@ -44,6 +45,7 @@ window.startVoting = startVoting;
 window.sendMessage = sendMessage;
 window.updateRoleControllerRoleSelector = updateRoleControllerRoleSelector;
 window.changeRole = changeRole;
+window.endGame = endGame;
 
 export async function initPage() {
     document.getElementById("lobbyIdBadge").textContent = `id лобби: ${state.lobbyId}`;
@@ -51,9 +53,11 @@ export async function initPage() {
     let response = await fetch(`/lobby/${state.lobbyId}/get_status`, {method:"post"});
     let result = await response.json();
     const errorOverlay = document.getElementById("errorOverlay");;
+    const loadingOverlay = document.getElementById("loadingOverlay");
     // улучшить обработку ошибок
     if (result.status != "ok") {
         errorOverlay.classList.remove("hidden");
+        loadingOverlay.classList.add("hidden");
         return;
     }
 
@@ -133,6 +137,8 @@ console.log(state.lobbyId);
 if (state.lobbyId === "-1") {
     const testServerOverlay = document.getElementById("testServerOverlay");
     testServerOverlay.classList.remove("hidden");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    loadingOverlay.classList.add("hidden");
 }
 else
     await initPage();

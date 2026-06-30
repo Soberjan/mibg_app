@@ -15,6 +15,8 @@ import { moneyChangedSocket } from "./transactions/transactionSockets.js";
 import { messageSentSocket } from "./messenger/messageSocket.js";
 import { branchOwnerChangedSocket } from "./xCompany/xCompanySocket.js";
 import { roleChangedSocket } from "./role/role.js";
+import { gameEndedSocket } from "./gameEnded/gameEnded.js";
+import { updateInfluenceSocket } from "./influence/updateInfluence.js";
 
 export async function handleSocket(event) {
     const res = JSON.parse(event.data);
@@ -112,6 +114,14 @@ export async function handleSocket(event) {
 
         case "role_changed":
             roleChangedSocket(res);
+            break;
+
+        case "influence_updated":
+            updateInfluenceSocket(res);
+            break;
+
+        case "game_ended":
+            gameEndedSocket(res);
             break;
 
         case "error":

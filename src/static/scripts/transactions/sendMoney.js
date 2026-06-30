@@ -2,7 +2,7 @@ import { state } from "../state.js";
 import { accountDict } from "../dicts.js";
 
 export async function sendMoney() {
-    const balanceSelector = document.getElementById("balances");
+    const balanceSelector = document.getElementById("receiverBalances");
     const senderSelector = document.getElementById("senderBalances");
     const moneyAmount_field = document.getElementById("moneyAmount");
 

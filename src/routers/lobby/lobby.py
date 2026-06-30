@@ -64,6 +64,8 @@ async def get_status(
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
     finally:
         hostess.database.pool.putconn(conn)
+    if lobby_status == 'game_ended':
+        lobby_status = 'gameEnded'
 
     return {'status': 'ok', 'lobby_status': lobby_status, 'player_status': player_status}
 
@@ -233,6 +235,9 @@ async def get_state(
         raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
     finally:
         hostess.database.pool.putconn(conn)
+
+    if lobby['status'] == 'game_ended':
+        lobby['status'] = 'gameEnded'
 
     state = {
         "lobbyOwner": lobby_owner,
@@ -466,6 +471,45 @@ async def change_role(
 
     for socket in hostess.sockets[lobby_id].values():
         msg = {'type': 'role_changed', 'player_id': player_id, 'role': new_role}
+        await socket.send_json(msg)
+
+    return {'status': 'ok'}
+
+@router.post('/lobby/{lobby_id}/end_game')
+async def end_game(
+        lobby_id: int,
+        player_id: int,
+        hostess: Hostess = Depends(get_hostess)
+        ):
+    conn = hostess.database.pool.getconn()
+    try:
+        cur = conn.cursor()
+        get_owner_id = """
+            SELECT owner_id
+            FROM lobby
+            WHERE id=%s
+        """
+        cur.execute(get_owner_id, (lobby_id,))
+        owner_id = cur.fetchone()['owner_id']
+        if player_id != owner_id:
+            return {'status': 'not ok', 'detail': 'you are not the owner'}
+
+        end_game = """
+            UPDATE lobby
+            SET status='game_ended'
+            WHERE id=%s
+        """
+        cur.execute(end_game, (lobby_id, ))
+        conn.commit()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
+    finally:
+        hostess.database.pool.putconn(conn)
+
+    hostess.lobbies[lobby_id].timers.clear()
+
+    for socket in hostess.sockets[lobby_id].values():
+        msg = {'type': 'game_ended'}
         await socket.send_json(msg)
 
     return {'status': 'ok'}

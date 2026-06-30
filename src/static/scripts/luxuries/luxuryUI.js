@@ -9,6 +9,8 @@ export function addLuxuryAsset(luxuryId) {
     luxurySpan.textContent = `${luxury.name}, ${luxury.influence} о.в.`;
 
     luxuryList.appendChild(luxurySpan);
+
+    state.ownedLuxuries.push(luxuryId);
 }
 
 export function initLuxuryUI(playerLuxuryIds) {

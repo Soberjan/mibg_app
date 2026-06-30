@@ -21,6 +21,7 @@ import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
 import { addBalanceToUpperMenu } from "../transactions/balance.js";
 import { initRoleControllerUI } from "../role/roleUI.js";
 import { initTransactions } from "../transactions/transactionUI.js";
+import { showGameEndedUI } from "../gameEnded/gameEndedUI.js";
 
 export function addPauseButton() {
     const timers = document.getElementById("bigGameTimer");
@@ -193,6 +194,12 @@ export async function initObligationPage() {
 }
 
 export async function initLobbyUI(playerLuxuries) {
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    if (state.lobbyStatus === "gameEnded") {
+        loadingOverlay.classList.add("hidden");
+        showGameEndedUI();
+        return;
+    }
     initLocalPlayerUI(playerLuxuries);
     initOtherPlayersUI();
 
@@ -267,6 +274,5 @@ export async function initLobbyUI(playerLuxuries) {
         showApprovalOverlay(q.question);
     }
 
-    const loadingOverlay = document.getElementById("loadingOverlay");
     loadingOverlay.classList.add("hidden");
 }

@@ -18,5 +18,6 @@ export const state = {
     timers: {},
     properties: {},
     messages: {},
-    branches: {}
+    branches: {},
+    ownedLuxuries: []
 };

@@ -80,6 +80,9 @@ async def buy_luxury(
         for socket in hostess.sockets[lobby_id].values():
             await socket.send_json({'type': 'money_changed', 'result': msg})
 
+        for socket in hostess.sockets[lobby_id].values():
+            await socket.send_json({'type': 'influence_updated', 'player_id': player_id, 'influence': influence})
+
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
