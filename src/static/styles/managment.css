@@ -31,7 +31,7 @@
     border: 1px solid rgba(255, 255, 255, 0.16);
     outline: none;
 
-    font-size: 15px;
+    font-size: 18px;
     cursor: pointer;
 }
 
@@ -57,7 +57,7 @@
     background: rgba(255, 255, 255, 0.12);
     color: inherit;
 
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
 
     cursor: pointer;
@@ -97,7 +97,7 @@
 }
 
 .companyControlLabel {
-    font-size: 13px;
+    font-size: 18px;
     opacity: 0.72;
 }
 
@@ -115,7 +115,7 @@
     border: 1px solid rgba(255, 255, 255, 0.16);
     outline: none;
 
-    font-size: 15px;
+    font-size: 18px;
     cursor: pointer;
 }
 
@@ -175,7 +175,7 @@
     background: rgba(255, 255, 255, 0.12);
     color: inherit;
 
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
 
     cursor: pointer;

@@ -33,7 +33,7 @@
 
 /* Текст кредита / депозита */
 .obligationList > section > section:first-child {
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1.35;
 }
 
@@ -45,7 +45,7 @@
     border-radius: 999px;
 
     text-align: center;
-    font-size: 13px;
+    font-size: 18px;
     font-weight: 800;
 
     background: rgba(255, 255, 255, 0.1);
@@ -59,7 +59,7 @@
     padding: 12px 14px;
     border-radius: 14px;
 
-    font-size: 14px;
+    font-size: 18px;
     opacity: 0.65;
 
     background: rgba(255, 255, 255, 0.035);

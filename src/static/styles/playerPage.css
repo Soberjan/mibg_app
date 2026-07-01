@@ -125,7 +125,7 @@
     padding: 4px 10px;
     border-radius: 999px;
 
-    font-size: 14px;
+    font-size: 18px;
     opacity: 0.85;
 
     background: rgba(255, 255, 255, 0.10);
@@ -153,12 +153,12 @@
 }
 
 .balanceType {
-    font-size: 15px;
+    font-size: 18px;
     opacity: 0.8;
 }
 
 .balanceValue {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -257,10 +257,7 @@
     border: 1px solid rgba(0, 0, 0, 0.28);
     border-radius: 10px;
 
-    background: rgba(255, 255, 255, 0.72);
-    color: #111;
-
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
 
     cursor: pointer;
@@ -268,10 +265,6 @@
     transition:
         background 0.12s ease,
         transform 0.12s ease;
-}
-
-.moneySendButton:hover {
-    background: rgba(255, 255, 255, 0.86);
 }
 
 .moneySendButton:active {
@@ -319,7 +312,7 @@
     background: rgba(255, 255, 255, 0.82);
     color: #111;
 
-    font-size: 15px;
+    font-size: 18px;
     outline: none;
 }
 
@@ -336,10 +329,7 @@
     border: 1px solid rgba(0, 0, 0, 0.28);
     border-radius: 10px;
 
-    background: rgba(255, 255, 255, 0.72);
-    color: #111;
-
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
 
     cursor: pointer;
@@ -347,10 +337,6 @@
     transition:
         background 0.12s ease,
         transform 0.12s ease;
-}
-
-#luxuryBuyer button:hover {
-    background: rgba(255, 255, 255, 0.86);
 }
 
 #luxuryBuyer button:active {
@@ -365,7 +351,7 @@
     padding-top: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
 
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-main);
 }
@@ -382,7 +368,7 @@
     background: var(--card-inner-bg);
     border: 1px solid var(--card-inner-border);
 
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
 }
 
