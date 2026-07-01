@@ -197,7 +197,7 @@ async def vote(
                 cur.execute(change_gov_owner_query, (lobby_id, voting_sorted[0][0]))
 
                 lobby = hostess.lobbies[lobby_id]
-                end_term_timer = Timer(end_term, [hostess.sockets[lobby_id].values()], dt.datetime.now(), dt.timedelta(minutes=1))
+                end_term_timer = Timer(end_term, [hostess.sockets[lobby_id].values()], dt.datetime.now(), dt.timedelta(minutes=10))
                 lobby.timers.append(end_term_timer)
 
                 print('appending timers to lobby')
