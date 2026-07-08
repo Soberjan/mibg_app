@@ -24,6 +24,10 @@ async def player_socket(
             hostess.sockets[lobby_id].pop(player_id, None)
             break
 
+        if data['type'] == "ping":
+            await websocket.send_json({"type": "pong"})
+            continue
+
         if data['type'] == 'player_joined':
             conn = hostess.database.pool.getconn()
             try:

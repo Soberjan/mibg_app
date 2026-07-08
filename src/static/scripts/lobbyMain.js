@@ -19,6 +19,7 @@ import { sendMessage } from "./messenger/message.js";
 import { changeRole } from "./role/role.js";
 import { endGame } from "./gameEnded/gameEnded.js";
 import { updateRoleControllerRoleSelector } from "./role/roleUI.js";
+import { startSocketWatcher } from "./socketWatcher/socketWatcher.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -113,12 +114,7 @@ export async function initPage() {
     await initLobbyUI(result.state.playerLuxuries);
     console.log("inititalized lobby UI");
 
-    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    state.ws = new WebSocket(
-        `${wsProtocol}//${window.location.host}/lobby?lobby_id=${state.lobbyId}&player_id=${state.localPlayerId}`
-    );
-
-    state.ws.onmessage = handleSocket;
+    startSocketWatcher(handleSocket);
 
     if (playerStatus === "new") {
         state.ws.onopen = () => {
