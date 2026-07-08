@@ -1,11 +1,6 @@
 import inspect
-
 import asyncio
 import datetime as dt
-
-async def end_term(sockets):
-    for socket in sockets:
-        await socket.send_json({'type': 'term_ended'})
 
 class Timer:
     def __init__(self, f, f_params, starts_at, duration):

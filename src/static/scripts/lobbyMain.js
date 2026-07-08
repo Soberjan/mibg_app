@@ -113,8 +113,9 @@ export async function initPage() {
     await initLobbyUI(result.state.playerLuxuries);
     console.log("inititalized lobby UI");
 
+    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     state.ws = new WebSocket(
-        `ws://${window.location.host}/lobby?lobby_id=${state.lobbyId}&player_id=${state.localPlayerId}`
+        `${wsProtocol}//${window.location.host}/lobby?lobby_id=${state.lobbyId}&player_id=${state.localPlayerId}`
     );
 
     state.ws.onmessage = handleSocket;

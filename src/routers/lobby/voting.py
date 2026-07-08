@@ -4,16 +4,11 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from ...dependencies import get_hostess
 from ...core.hostess import Hostess
-from ...core.lobby import Timer, end_term
+from ...core.lobby import Timer
 
 router = APIRouter(tags=["Lobby"])
 
-@router.post('/lobby/{lobby_id}/start_voting')
-async def start_voting(
-        lobby_id: int,
-        player_id: int,
-        hostess: Hostess = Depends(get_hostess),
-        ):
+async def start_voting(lobby_id, hostess):
     conn = hostess.database.pool.getconn()
     try:
         cur = conn.cursor()
@@ -84,6 +79,14 @@ async def start_voting(
     }
     for socket in hostess.sockets[lobby_id].values():
         await socket.send_json(msg)
+
+@router.post('/lobby/{lobby_id}/start_voting')
+async def start_voting_endpoint(
+        lobby_id: int,
+        player_id: int,
+        hostess: Hostess = Depends(get_hostess),
+    ):
+    await start_voting(lobby_id, hostess)
 
 @router.post('/lobby/{lobby_id}/vote')
 async def vote(
@@ -197,7 +200,12 @@ async def vote(
                 cur.execute(change_gov_owner_query, (lobby_id, voting_sorted[0][0]))
 
                 lobby = hostess.lobbies[lobby_id]
-                end_term_timer = Timer(end_term, [hostess.sockets[lobby_id].values()], dt.datetime.now(), dt.timedelta(minutes=10))
+                end_term_timer = Timer(
+                    start_voting,
+                    [lobby_id, hostess],
+                    dt.datetime.now(),
+                    dt.timedelta(minutes=1)
+                )
                 lobby.timers.append(end_term_timer)
 
                 print('appending timers to lobby')

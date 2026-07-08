@@ -43,11 +43,6 @@ export async function handleSocket(event) {
             endVotingSocket(res);
             break;
 
-        case "term_ended":
-            startVoting();
-            console.log("politician term ended!");
-            break;
-
         case "banker_chosen":
             await bankerChosenSocket(res);
             break;
