@@ -12,6 +12,8 @@ export async function registerPlayer() {
         registerPlayerButton.disabled = true;
         if (!state.lobbyOwner)
             registerPlayerText.textContent = "Вы зарегистрировались в системе, дождитесь начала голосования";
+        if (state.lobbyOwner)
+            registerPlayerText.textContent = "Вы зарегистрировались ёптыть";
     }
     else
         registerPlayerText.textContent = "Не удалось зарегистрироваться в системе";
