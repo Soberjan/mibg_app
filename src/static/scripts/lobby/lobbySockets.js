@@ -30,7 +30,7 @@ export function otherPlayerJoinedSocket(res) {
 
 export function playerRegisteredSocket(res) {
     const registerPlayerText = document.getElementById("registerPlayerText");
-    registerPlayerText.textContent = "вы словили сокет что кто-то зарегался ептыть");
+    registerPlayerText.textContent = "вы словили сокет что кто-то зарегался ептыть";
     console.log(res);
     console.log(state);
     state.players[res.player_id].status = "registered";
