@@ -60,7 +60,7 @@ export function playerRegisteredSocket(res) {
     if (!state.lobbyOwner)
         return;
 
-    registeredPlayers = 0;
+    let registeredPlayers = 0;
     for (const p of Object.values(state.players))
         if (p.status === "registered")
             registeredPlayers += 1;
