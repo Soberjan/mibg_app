@@ -162,6 +162,8 @@ async function initVotingUI() {
     const voteButton = document.getElementById("voteButton");
     const result = await fetch(`/lobby/${state.lobbyId}/has_voted?player_id=${state.localPlayerId}`);
     const res = await result.json();
+    console.log("HAS VOTED OR NOT???");
+    console.log(res);
 
     const roundNumberText = document.getElementById("roundNumberText");
     roundNumberText.innerHTML = res.voting_round;

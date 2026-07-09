@@ -16,7 +16,7 @@ class Lobby():
         self.paused = False
         self.sleep_time = 0.5
         pass
-    
+
     async def update(self):
         while True:
             now = dt.datetime.now()

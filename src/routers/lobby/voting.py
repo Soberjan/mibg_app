@@ -286,19 +286,19 @@ async def has_voted(
         lobby_id: int,
         player_id: int,
         hostess: Hostess = Depends(get_hostess),
-        ):
+    ):
     conn = hostess.database.pool.getconn()
     try:
         cur = conn.cursor()
         choose_banker_query = """
             WITH el_id AS (
-                SELECT id
+                SELECT id, round
                 FROM election
                 WHERE lobby_id=%s AND status='voting'
             )
             SELECT id
             FROM vote
-            WHERE election_id=(SELECT id FROM el_id) AND voted_id=%s
+            WHERE election_id=(SELECT id FROM el_id) AND voted_id=%s AND round=(SELECT round FROM el_id)
         """
         cur.execute(choose_banker_query, (lobby_id, player_id))
         voted_id = cur.fetchone()
@@ -314,6 +314,8 @@ async def has_voted(
         raise HTTPException(status_code=500, detail=f"Couldn't get status because {e}")
     finally:
         hostess.database.pool.putconn(conn)
+    print("HAS VOTED")
+    print(voted_id)
 
     has_voted = voted_id is not None
 

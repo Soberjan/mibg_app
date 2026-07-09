@@ -35,7 +35,7 @@ class Database():
             options=f"-c search_path={search_path}"
         )
     
-    def insert_entry(self, table: str, columns: List[str], values: List[str]):
+    def insert_entry(self, table: str, columns: List[str], values: List[str | None]):
         """
         Вставить запись в таблицу
 

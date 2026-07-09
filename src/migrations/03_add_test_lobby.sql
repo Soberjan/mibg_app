@@ -1,5 +1,6 @@
-INSERT INTO lobby (id, status, owner_id) VALUES (-1, 'game', -1);
-INSERT INTO player (id, role, "name", lobby_id) VALUES (-1, 'politician', 'sasha', -1);
+INSERT INTO lobby (id, status, owner_id) VALUES (-1, 'game', NULL);
+INSERT INTO player (id, role, "name", lobby_id, influence) VALUES (-1, 'politician', 'sasha', -1, 0);
+UPDATE lobby SET owner_id = -1 WHERE id = -1;
 INSERT INTO player (id, role, "name", lobby_id) VALUES (-2, 'banker', 'petya', -1);
 INSERT INTO player (id, role, "name", lobby_id) VALUES (-3, 'jobless', 'vasya', -1);
 INSERT INTO balance (id, lobby_id, money, "type") VALUES (-1, -1, 1700, 'personal');

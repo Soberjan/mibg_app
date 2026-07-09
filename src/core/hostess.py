@@ -80,7 +80,7 @@ class Hostess:
             'player_balance', 
             ['balance_id', 'player_id'],
             # как пометить, что владельца нет?
-            [balance_id, '1']
+            [balance_id, None]
         )
 
         balance_id = self.database.insert_entry(
@@ -94,7 +94,7 @@ class Hostess:
             'player_balance',
             ['balance_id', 'player_id'],
             # как пометить, что владельца нет?
-            [balance_id, '1']
+            [balance_id, None]
         )
         return lobby_id
 
