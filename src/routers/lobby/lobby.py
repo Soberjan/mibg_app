@@ -410,6 +410,16 @@ async def resume(
             WHERE id=%s AND owner_id=%s
         """
         cur.execute(update_started_at_query, (started_at, lobby_id, player_id))
+
+        update_term_ends_at = """
+            UPDATE lobby
+            SET term_ends_at = term_ends_at + %s
+            WHERE id=%s AND owner_id=%s
+            RETURNING term_ends_at
+        """
+        cur.execute(update_term_ends_at, (pause_duration, lobby_id, player_id))
+        term_ends_at = cur.fetchone()['term_ends_at']
+
         update_loan_timers = """
             UPDATE loan
             SET ends_at = ends_at + %s
@@ -430,7 +440,7 @@ async def resume(
         hostess.database.pool.putconn(conn)
 
     for socket in hostess.sockets[lobby_id].values():
-        msg = {'type': 'game_resumed', 'started_at': started_at.isoformat(), 'loans': loans}
+        msg = {'type': 'game_resumed', 'started_at': started_at.isoformat(), 'term_ends_at': term_ends_at.isoformat(), 'loans': loans}
         await socket.send_json(msg)
 
     hostess.lobbies[lobby_id].unpause()

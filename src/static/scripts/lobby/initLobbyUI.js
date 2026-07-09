@@ -24,8 +24,12 @@ import { initTransactions } from "../transactions/transactionUI.js";
 import { showGameEndedUI } from "../gameEnded/gameEndedUI.js";
 
 export function addPauseButton() {
+    let pauseButton = document.getElementById("pauseButton");
+    if (pauseButton)
+        return;
+
     const timers = document.getElementById("bigGameTimer");
-    const pauseButton = document.createElement("Button");
+    pauseButton = document.createElement("Button");
     pauseButton.id = `pauseButton`;
     pauseButton.textContent = `Пауза`;
     pauseButton.onclick = pauseGame;

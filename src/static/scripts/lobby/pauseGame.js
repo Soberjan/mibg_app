@@ -51,6 +51,9 @@ export async function resumeGame() {
 }
 
 export function resumeGameSocket(msg) {
+    state.termEndsAt = msg.term_ends_at;
+    state.timers["politicianTimer"].endsAt = Date.parse(state.termEndsAt);
+
     state.lobbyStatus = "game";
     state.startedAt = msg.started_at;
     for (const loan of Object.values(msg.loans)) {
