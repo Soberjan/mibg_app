@@ -124,14 +124,7 @@ export async function initPage() {
     startSocketWatcher(handleSocket);
 
     if (playerStatus === "new") {
-        state.ws.onopen = () => {
-            var msg = JSON.stringify({
-                type: "player_joined",
-                player_id: state.localPlayerId
-            });
-
-            state.ws.send(msg);
-        }
+        response = await fetch(`/hostess/confirm_join?lobby_id=${state.lobbyId}&player_id=${state.localPlayerId}`, {method:"post"});
     }
     console.log("opened socket");
 }
