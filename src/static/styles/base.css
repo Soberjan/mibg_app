@@ -130,8 +130,7 @@ input, select, button {
 }
 
 input, select {
-    background: rgba(255, 255, 255, 0.95);
-    color: #111827;
+    background: rgba(216, 216, 216, 0.8);
 }
 
 button {

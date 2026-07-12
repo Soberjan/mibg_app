@@ -204,7 +204,7 @@ async def vote(
                     start_voting,
                     [lobby_id, hostess],
                     dt.datetime.now(),
-                    dt.timedelta(minutes=1)
+                    dt.timedelta(minutes=10)
                 )
                 lobby.timers.append(end_term_timer)
 
