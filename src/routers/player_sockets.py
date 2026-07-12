@@ -25,7 +25,7 @@ async def player_socket(
             break
 
         if data['type'] == "ping":
-            await websocket.send_json({"type": "pong"})
+            await websocket.send_json({"type": "pong", "sentAt": data.get("sentAt")})
             continue
 
         if data['type'] == 'player_joined':

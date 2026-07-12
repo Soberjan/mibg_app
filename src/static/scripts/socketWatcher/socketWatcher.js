@@ -1,79 +1,112 @@
 import { state } from "../state.js";
-import { initPage } from "../lobbyMain.js";
 
 const SOCKET_CHECK_MS = 5000;
-const SOCKET_MAX_SILENCE_MS = 15000;
+const SOCKET_PONG_TIMEOUT_MS = 20000;
 const SOCKET_RECONNECT_DELAY_MS = 1000;
 
 let socketIntervalId = null;
 let reconnectTimeoutId = null;
-let lastServerMessageAt = 0;
 let socketMessageHandler = null;
 
-function getSocketUrl() {
-    const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+let waitingForPong = false;
+let lastPingAt = 0;
 
-    return `${wsProtocol}//${window.location.host}/lobby?lobby_id=${encodeURIComponent(state.lobbyId)}&player_id=${encodeURIComponent(state.localPlayerId)}`;
+function getSocketUrl() {
+    const wsProtocol =
+        window.location.protocol === "https:" ? "wss:" : "ws:";
+
+    return (
+        `${wsProtocol}//${window.location.host}/lobby` +
+        `?lobby_id=${encodeURIComponent(state.lobbyId)}` +
+        `&player_id=${encodeURIComponent(state.localPlayerId)}`
+    );
+}
+
+function socketIsBusy(ws) {
+    return ws && (
+        ws.readyState === WebSocket.OPEN ||
+        ws.readyState === WebSocket.CONNECTING ||
+        ws.readyState === WebSocket.CLOSING
+    );
 }
 
 function sendSocketPing(ws) {
-    if (ws.readyState !== WebSocket.OPEN) return;
+    if (ws.readyState !== WebSocket.OPEN) {
+        return;
+    }
+
+    waitingForPong = true;
+    lastPingAt = Date.now();
 
     ws.send(JSON.stringify({
         type: "ping",
-        sentAt: Date.now(),
+        sentAt: lastPingAt,
     }));
 }
 
 function scheduleReconnect() {
-    if (reconnectTimeoutId !== null) return;
+    if (reconnectTimeoutId !== null) {
+        return;
+    }
 
-    reconnectTimeoutId = setTimeout(() => {
+    // Пока старый сокет открыт, подключается или закрывается,
+    // новый сокет не создаём.
+    if (socketIsBusy(state.ws)) {
+        return;
+    }
+
+    reconnectTimeoutId = window.setTimeout(() => {
         reconnectTimeoutId = null;
         reconnectSocket();
     }, SOCKET_RECONNECT_DELAY_MS);
 }
 
-export function connectSocket(onMessage) {
+export function connectSocket(onMessage = socketMessageHandler) {
     socketMessageHandler = onMessage;
 
-    if (
-        state.ws &&
-        (
-            state.ws.readyState === WebSocket.OPEN ||
-            state.ws.readyState === WebSocket.CONNECTING
-        )
-    ) {
+    if (socketIsBusy(state.ws)) {
         return state.ws;
     }
 
     const ws = new WebSocket(getSocketUrl());
+
     state.ws = ws;
-    lastServerMessageAt = Date.now();
+    waitingForPong = false;
+    lastPingAt = 0;
+
+    console.log("Creating WebSocket");
 
     ws.onopen = () => {
-        console.log("WebSocket connected");
-        lastServerMessageAt = Date.now();
-
-        try {
-            sendSocketPing(ws);
-        } catch (err) {
-            console.warn("WebSocket ping failed after open", err);
+        // Этот сокет уже мог быть заменён другим.
+        if (state.ws !== ws) {
+            ws.close();
+            return;
         }
+
+        console.log("WebSocket connected");
+
+        waitingForPong = false;
+        sendSocketPing(ws);
     };
 
-    ws.onmessage = async (event) => {
-        lastServerMessageAt = Date.now();
+    ws.onmessage = async event => {
+        // Не обрабатываем сообщения от старого сокета.
+        if (state.ws !== ws) {
+            return;
+        }
+
+        // Любое сообщение от сервера означает,
+        // что соединение живо.
+        waitingForPong = false;
 
         try {
-            const res = JSON.parse(event.data);
+            const response = JSON.parse(event.data);
 
-            if (res.type === "pong") {
+            if (response.type === "pong") {
                 return;
             }
         } catch {
-            // Если вдруг прилетело не JSON-сообщение,
-            // отдаем его обычному обработчику.
+            // Не JSON — передаём обычному обработчику.
         }
 
         if (typeof socketMessageHandler === "function") {
@@ -81,28 +114,41 @@ export function connectSocket(onMessage) {
         }
     };
 
-    ws.onerror = (event) => {
+    ws.onerror = event => {
+        if (state.ws !== ws) {
+            return;
+        }
+
         console.warn("WebSocket error", event);
 
-        if (state.ws === ws) {
-            try {
-                ws.close();
-            } catch {
-                scheduleReconnect();
-            }
+        // Здесь переподключение не запускаем.
+        // Ждём onclose.
+        if (
+            ws.readyState !== WebSocket.CLOSING &&
+            ws.readyState !== WebSocket.CLOSED
+        ) {
+            ws.close();
         }
     };
 
-    ws.onclose = (event) => {
+    ws.onclose = event => {
         console.warn("WebSocket closed", {
             code: event.code,
             reason: event.reason,
             wasClean: event.wasClean,
         });
 
-        if (state.ws === ws) {
-            scheduleReconnect();
+        // Закрылся старый сокет, который уже был заменён новым.
+        if (state.ws !== ws) {
+            return;
         }
+
+        state.ws = null;
+        waitingForPong = false;
+        lastPingAt = 0;
+
+        // Переподключаемся только после фактического onclose.
+        scheduleReconnect();
     };
 
     return ws;
@@ -111,14 +157,13 @@ export function connectSocket(onMessage) {
 export function reconnectSocket() {
     const ws = state.ws;
 
-    if (
-        ws &&
-        (
-            ws.readyState === WebSocket.OPEN ||
-            ws.readyState === WebSocket.CONNECTING
-        )
-    ) {
+    // Включая CLOSING: ждём onclose старого сокета.
+    if (socketIsBusy(ws)) {
         return;
+    }
+
+    if (ws?.readyState === WebSocket.CLOSED) {
+        state.ws = null;
     }
 
     connectSocket(socketMessageHandler);
@@ -127,67 +172,85 @@ export function reconnectSocket() {
 export function startSocketWatcher(onMessage) {
     socketMessageHandler = onMessage;
 
+    // Не запускаем второй watcher и второй набор событий.
+    if (socketIntervalId !== null) {
+        return;
+    }
+
     connectSocket(onMessage);
 
-    if (socketIntervalId !== null) return;
-
-    socketIntervalId = setInterval(() => {
+    socketIntervalId = window.setInterval(() => {
         const ws = state.ws;
 
-        if (!ws) {
-            scheduleReconnect();
-            return;
-        }
+        if (!ws || ws.readyState === WebSocket.CLOSED) {
+            if (ws?.readyState === WebSocket.CLOSED) {
+                state.ws = null;
+            }
 
-        if (ws.readyState === WebSocket.CONNECTING) {
+            scheduleReconnect();
             return;
         }
 
         if (
-            ws.readyState === WebSocket.CLOSING ||
-            ws.readyState === WebSocket.CLOSED
+            ws.readyState === WebSocket.CONNECTING ||
+            ws.readyState === WebSocket.CLOSING
         ) {
-            scheduleReconnect();
             return;
         }
 
-        if (ws.readyState === WebSocket.OPEN) {
-            const silenceMs = Date.now() - lastServerMessageAt;
-
-            if (silenceMs > SOCKET_MAX_SILENCE_MS) {
-                console.warn("WebSocket looks dead, reconnecting");
-
-                try {
-                    ws.close();
-                } catch {
-                    // если close тоже упал, просто переподключаемся ниже
-                }
-
-                scheduleReconnect();
-                return;
-            }
-
-            try {
-                sendSocketPing(ws);
-            } catch (err) {
-                console.warn("WebSocket ping failed", err);
-
-                try {
-                    ws.close();
-                } catch {
-                    // игнор
-                }
-
-                scheduleReconnect();
-            }
+        if (ws.readyState !== WebSocket.OPEN) {
+            return;
         }
+
+        if (waitingForPong) {
+            const pongWaitingTime = Date.now() - lastPingAt;
+
+            if (pongWaitingTime > SOCKET_PONG_TIMEOUT_MS) {
+                console.warn("WebSocket pong timeout");
+
+                // Новый сокет будет создан только после onclose.
+                ws.close(4001, "Pong timeout");
+            }
+
+            return;
+        }
+
+        sendSocketPing(ws);
     }, SOCKET_CHECK_MS);
 
-    window.addEventListener("online", scheduleReconnect);
+    window.addEventListener("online", () => {
+        reconnectSocket();
+    });
 
     document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
-            scheduleReconnect();
+            reconnectSocket();
         }
     });
+}
+
+export function stopSocketWatcher() {
+    if (socketIntervalId !== null) {
+        clearInterval(socketIntervalId);
+        socketIntervalId = null;
+    }
+
+    if (reconnectTimeoutId !== null) {
+        clearTimeout(reconnectTimeoutId);
+        reconnectTimeoutId = null;
+    }
+
+    const ws = state.ws;
+    state.ws = null;
+
+    waitingForPong = false;
+    lastPingAt = 0;
+
+    if (
+        ws &&
+        ws.readyState !== WebSocket.CLOSED &&
+        ws.readyState !== WebSocket.CLOSING
+    ) {
+        ws.close(1000, "Socket watcher stopped");
+    }
 }

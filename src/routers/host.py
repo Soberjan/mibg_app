@@ -52,9 +52,11 @@ async def join_lobby(
         )
         player_id = cur.fetchone()
         if player_id is not None:
+            hostess.database.pool.putconn(conn)
             return {
                 'status': 'ok'
             }
+
 
         # if lobby['status'] != 'registration':
         #     raise HTTPException(

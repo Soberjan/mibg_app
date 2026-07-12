@@ -100,6 +100,8 @@ export async function initPage() {
         console.log("failed to get lobby state");
         return;
     }
+
+
     state.lobbyStatus = result.state.lobbyStatus;
     state.termEndsAt = result.state.termEndsAt;
     state.startedAt = result.state.startedAt;
@@ -119,14 +121,14 @@ export async function initPage() {
     console.log(result.state.transactionHistory);
 
     await initLobbyUI(result.state.playerLuxuries, result.state.transactionHistory);
-    console.log("inititalized lobby UI");
-
-    startSocketWatcher(handleSocket);
-
     if (playerStatus === "new") {
         response = await fetch(`/hostess/confirm_join?lobby_id=${state.lobbyId}&player_id=${state.localPlayerId}`, {method:"post"});
     }
     console.log("opened socket");
+    console.log("inititalized lobby UI");
+
+    startSocketWatcher(handleSocket);
+
 }
 
 console.log(state.lobbyId);
