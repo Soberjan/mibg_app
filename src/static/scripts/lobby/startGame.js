@@ -2,9 +2,9 @@ import { state } from "../state.js";
 import { loadGamePage } from "./loadGamePage.js";
 import { initMessenger } from "./initLobbyUI.js";
 import { fillFinancePage, fillObligationPage } from "../finances/finance.js";
-import { initTransactions } from "../transactions/transactionUI.js";
+import { initTransactions, initTransactionHistory } from "../transactions/transactionUI.js";
 
-export function startGame() {
+export function startGame(res) {
     const chooseBankerOverlay = document.getElementById("chooseBankerOverlay");
     if (!chooseBankerOverlay.classList.contains("hidden")) {
         chooseBankerOverlay.classList.add("hidden");
@@ -27,4 +27,5 @@ export function startGame() {
     }
 
     initTransactions();
+    initTransactionHistory(res.transaction_history);
 }

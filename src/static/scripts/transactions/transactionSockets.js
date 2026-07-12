@@ -1,5 +1,6 @@
 import { state } from "../state.js";
 import { accountDict } from "../dicts.js";
+import { addTransactionToHistory } from "./transactionUI.js";
 
 export function moneyChangedSocket(res) {
     const data = res.result;
@@ -12,4 +13,11 @@ export function moneyChangedSocket(res) {
 
     state.balances[data.sender_id].money = data.sender_money;
     state.balances[data.receiver_id].money = data.receiver_money;
+
+    res.result.sent_from = String(data.sender_id);
+    res.result.sent_to = String(data.receiver_id);
+
+    addTransactionToHistory(res);
 }
+
+

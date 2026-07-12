@@ -21,6 +21,7 @@ import { endGame } from "./gameEnded/gameEnded.js";
 import { updateRoleControllerRoleSelector } from "./role/roleUI.js";
 import { startSocketWatcher } from "./socketWatcher/socketWatcher.js";
 import { showOtherPlayers, hideOtherPlayers } from "./lobby/showOtherPlayers.js";
+import { hideTransactionHistory, showTransactionHistory } from "./transactions/transactionUI.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -50,6 +51,8 @@ window.changeRole = changeRole;
 window.endGame = endGame;
 window.hideOtherPlayers = hideOtherPlayers;
 window.showOtherPlayers = showOtherPlayers;
+window.hideTransactionHistory = hideTransactionHistory;
+window.showTransactionHistory = showTransactionHistory;
 
 export async function initPage() {
     document.getElementById("lobbyIdBadge").textContent = `id лобби: ${state.lobbyId}`;
@@ -113,8 +116,9 @@ export async function initPage() {
     state.branches = result.state.branches;
     console.log("initialized game state");
     console.log(state);
+    console.log(result.state.transactionHistory);
 
-    await initLobbyUI(result.state.playerLuxuries);
+    await initLobbyUI(result.state.playerLuxuries, result.state.transactionHistory);
     console.log("inititalized lobby UI");
 
     startSocketWatcher(handleSocket);

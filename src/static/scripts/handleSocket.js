@@ -72,7 +72,7 @@ export async function handleSocket(event) {
             break;
 
         case "start_game":
-            startGame();
+            startGame(res);
             break;
 
         case "start_event":

@@ -6,6 +6,8 @@ export function balanceOwnerName(balance) {
         ownerName = "Государство";
     else if (balance.type === "personal")
         ownerName = state.players[balance.ownerId].name;
+    else if (balance.type === "bank")
+        ownerName = "Банк";
     return ownerName;
 }
 

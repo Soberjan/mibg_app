@@ -194,6 +194,18 @@ async def get_state(
             b_dict.pop('owner_id')
             branches[b['id']] = b_dict
 
+        get_transaction_history = """
+            SELECT *
+            FROM transaction_history
+            WHERE lobby_id=%s
+        """
+        cur.execute(get_transaction_history, (lobby_id,))
+        res = cur.fetchall()
+        transaction_history = {}
+        for t in res:
+            t_dict = dict(t)
+            transaction_history[t['id']] = t_dict
+
         get_luxuries_query = """
             SELECT *
             FROM luxury
@@ -254,7 +266,8 @@ async def get_state(
         "messages": messages,
         "branches": branches,
         "playerLuxuries": luxury_ids,
-        "properties": properties
+        "properties": properties,
+        "transactionHistory": transaction_history
     }
 
     return {'status': 'ok', 'state': state}
@@ -334,6 +347,20 @@ async def start_game(
         """
         cur.execute(unfreeze_normies_deposit)
         cur.execute(unfreeze_normies_loan)
+
+        get_transaction_history = """
+            SELECT *
+            FROM transaction_history
+            WHERE lobby_id=%s
+        """
+        cur.execute(get_transaction_history, (lobby_id,))
+        res = cur.fetchall()
+        transaction_history = {}
+        for t in res:
+            t_dict = dict(t)
+            t_dict['sent_at'] = t_dict['sent_at'].isoformat()
+            transaction_history[t['id']] = t_dict
+
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't get state because {e}")
@@ -344,7 +371,7 @@ async def start_game(
         return {'status': 'bad', 'info': 'you are not allowed to start game or whatever'}
 
     for socket in hostess.sockets[lobby_id].values():
-        msg = {'type': 'start_game'}
+        msg = {'type': 'start_game', 'transaction_history': transaction_history}
         await socket.send_json(msg)
 
     return {'status': 'ok'}

@@ -3,6 +3,8 @@
     src: url("/static/fonts/WallaceGromit-Regular rus.otf") format("opentype");
     font-weight: normal;
     font-style: normal;
+
+    unicode-range: U+0000-0024, U+0026-10FFFF;
 }
 
 * {

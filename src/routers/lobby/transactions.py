@@ -3,6 +3,8 @@ from fastapi import APIRouter, Cookie, HTTPException, Request, Query, Depends, R
 from ...dependencies import get_hostess
 from ...core.hostess import Hostess
 
+import datetime as dt
+
 router = APIRouter(tags=["Lobby"])
 
 @router.put('/lobby/{lobby_id}/send_money')
@@ -51,6 +53,12 @@ async def send_money(
         cur.execute(update_money_query, (sender_money, sender_id,))
         cur.execute(update_money_query, (receiver_money, receiver_id,))
 
+        add_transaction_history = """
+            INSERT INTO transaction_history(lobby_id, sent_from, sent_to, sent_at, money)
+            VALUES (%s, %s, %s, NOW(), %s)
+        """
+        cur.execute(add_transaction_history, (lobby_id, sender_id, receiver_id, amount))
+
         conn.commit()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Couldn't send money because {e}")
@@ -61,7 +69,9 @@ async def send_money(
         'sender_id': sender_id,
         'sender_money': sender_money,
         'receiver_id': receiver_id,
-        'receiver_money': receiver_money
+        'receiver_money': receiver_money,
+        'money': amount,
+        'sent_at': dt.datetime.now().isoformat()
     }
 
     for socket in hostess.sockets[lobby_id].values():

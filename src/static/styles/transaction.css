@@ -1,0 +1,120 @@
+#transactionHistoryOverlay {
+    padding: 20px;
+}
+
+.transactionHistoryHeader {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 34px;
+    margin-bottom: 14px;
+    padding-right: 80px;
+    padding-left: 80px;
+}
+
+.transactionHistoryHeader h2 {
+    margin: 0;
+
+    font-size: 22px;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.transactionHistoryHeader .closeButtonClass {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#transactionHistory {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    max-height: 720px;
+    overflow-y: auto;
+    padding-top: 30px;
+
+    padding-right: 4px;
+}
+
+.transactionHistoryItem {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.transactionHistoryTime {
+    grid-column: 1 / -1;
+
+    font-size: 22px;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.transactionHistoryRoute {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.transactionHistoryBalance {
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.transactionHistoryArrow {
+    flex: 0 0 auto;
+
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.transactionHistoryAmount {
+    align-self: center;
+
+    font-size: 22px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#transactionHistory:empty::after {
+    content: "Переводов пока не было";
+
+    display: block;
+
+    padding: 28px 16px;
+
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+#transactionHistory::-webkit-scrollbar {
+    width: 6px;
+}
+
+#transactionHistory::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+#transactionHistory::-webkit-scrollbar-track {
+    background: transparent;
+}

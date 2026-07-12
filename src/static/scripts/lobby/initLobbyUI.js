@@ -20,7 +20,7 @@ import { initChatSelector, openChat, addMessageCount } from "../messenger/messag
 import { initXManagmentUI, initXAssetsUI } from "../xCompany/xCompanyUI.js";
 import { addBalanceToUpperMenu } from "../transactions/balance.js";
 import { initRoleControllerUI } from "../role/roleUI.js";
-import { initTransactions } from "../transactions/transactionUI.js";
+import { initTransactions, initTransactionHistory } from "../transactions/transactionUI.js";
 import { showGameEndedUI } from "../gameEnded/gameEndedUI.js";
 
 export function addPauseButton() {
@@ -199,7 +199,7 @@ export async function initObligationPage() {
     await fillObligationPage();
 }
 
-export async function initLobbyUI(playerLuxuries) {
+export async function initLobbyUI(playerLuxuries, transactionHistory) {
     const loadingOverlay = document.getElementById("loadingOverlay");
     if (state.lobbyStatus === "gameEnded") {
         loadingOverlay.classList.add("hidden");
@@ -253,8 +253,10 @@ export async function initLobbyUI(playerLuxuries) {
     }
 
     loadGamePage();
-    if (state.lobbyStatus === "game")
+    if (state.lobbyStatus === "game") {
         initTransactions();
+        initTransactionHistory(transactionHistory);
+    }
 
     if (state.players[state.localPlayerId].role === "banker")
         await initFinancePage();
