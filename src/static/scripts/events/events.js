@@ -1,4 +1,5 @@
 import { state } from "../state.js";
+import { hideMenu } from "../lobby/hideMenu.js";
 
 export async function startPersonalEvent() {
     console.log("начинаем ивент");
@@ -33,11 +34,15 @@ export async function startEventSocket(msg) {
     eventDescription.textContent = msg.description;
     const eventEffect = document.getElementById("eventEffect");
     eventEffect.textContent = msg.effect;
+    hideMenu();
 }
 
 export function hideEvent() {
     const eventOverlay = document.getElementById("eventOverlay");
     eventOverlay.classList.add("hidden");
+
+    const assetsMenu = document.getElementById("assets");
+    assetsMenu.classList.remove("hidden");
 }
 
 export function initEventUI() {

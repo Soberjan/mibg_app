@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/static/styles/messenger.css">
     <link rel="stylesheet" href="/static/styles/gameEnded.css">
     <link rel="stylesheet" href="/static/styles/question.css">
+    <link rel="stylesheet" href="/static/styles/event.css">
 </head>
 <body>
     <div class="page">
@@ -60,7 +61,10 @@
                 <button type="button" id="obligationsButton" class="hidden">Обязательства</button>
                 <button type="button" id="financesButton" class="hidden">Финансы</button>
                 <button type="button" id="managmentButton" class="hidden">Управление</button>
-                <button type="button" id="messagesButton">Сообщения</button>
+                <button type="button" id="messagesButton">
+                    Сообщения
+                    <div id="messagesNotification" class="messageNotification hidden">!</div>
+                </button>
             </div>
         </div>
 
@@ -399,11 +403,11 @@
         </div>
         <div class="popup" id="popups">
             <div class="popuptext hidden" id="eventOverlay">
+                <button type="button" onclick="hideEvent()" class="closeButtonClass">Закрыть</button>
                 <div id="eventDescription">
                 </div>
                 <div id="eventEffect">
                 </div>
-                <button type="button" onclick="hideEvent()">Ок</button>
             </div>
 
             <div class="popuptext hidden" id="questionOverlay">

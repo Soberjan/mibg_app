@@ -1,4 +1,5 @@
 import { state } from "../state.js";
+import { markChatAsRead } from "../messenger/notification.js";
 
 export function loadGamePage() {
     const assetsButton = document.getElementById("assetsButton");
@@ -55,6 +56,9 @@ export function loadGamePage() {
 
     messagesButton.onclick = function () {
         open_menu(messagesMenu);
+
+        if (state.chatterId !== null && state.chatterId !== undefined)
+            markChatAsRead(state.chatterId);
     };
     financesButton.onclick = function () {
         open_menu(financesMenu);

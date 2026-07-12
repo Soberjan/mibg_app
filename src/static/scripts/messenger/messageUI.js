@@ -1,4 +1,5 @@
 import { state } from "../state.js";
+import { markChatAsRead } from "./notification.js";
 
 export function initChatSelector() {
     const chatSelect = document.getElementById("chatSelect");
@@ -47,6 +48,8 @@ export function openChat(playerId) {
 
     for (const msg of messages)
         addMessage(msg);
+
+    markChatAsRead(playerId);
 }
 
 export function addMessage(msg) {
