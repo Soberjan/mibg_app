@@ -94,5 +94,6 @@ export function addPropertyToAssets(property) {
     const propertySpan = document.createElement("span");
     propertySpan.id = `property${property.id}Assets`;
     propertySpan.textContent = `Владение ${property.tileNumber} · Уровень ${property.level} · Доходность ${property.income}`;
+    propertySpan.classList.add("propertyAssetCard");
     propertyDiv.appendChild(propertySpan);
 }

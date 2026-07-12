@@ -31,22 +31,22 @@ class Hostess:
         self.database.insert_entry(
             'branch',
             ['lobby_id', 'owner_id', 'name'],
-            [str(lobby_id), str(balance_id), "Экономический филиал"]
+            [str(lobby_id), str(balance_id), "25% - экономический проспект"]
         )
         self.database.insert_entry(
             'branch',
             ['lobby_id', 'owner_id', 'name'],
-            [str(lobby_id), str(balance_id), "Филиал влияния"]
+            [str(lobby_id), str(balance_id), "25% - улица влияния"]
         )
         self.database.insert_entry(
             'branch',
             ['lobby_id', 'owner_id', 'name'],
-            [str(lobby_id), str(balance_id), "Филиал возможностей"]
+            [str(lobby_id), str(balance_id), "25% - шоссе возможностей"]
         )
         self.database.insert_entry(
             'branch',
             ['lobby_id', 'owner_id', 'name'],
-            [str(lobby_id), str(balance_id), "Деловой филиал"]
+            [str(lobby_id), str(balance_id), "25% - деловая аллея"]
         )
 
         for i in range(1, 166):

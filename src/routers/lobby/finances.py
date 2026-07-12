@@ -48,6 +48,12 @@ async def give_loan(
     finally:
         hostess.database.pool.putconn(conn)
 
+    msg = {
+        "res": "ok",
+    }
+    return msg
+
+
 @router.post('/lobby/{lobby_id}/close_loan')
 async def close_loan(
         lobby_id: int,

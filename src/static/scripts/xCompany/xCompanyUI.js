@@ -61,6 +61,7 @@ export function addXCompanyBranchToAssets(branch) {
 
     const branchDiv = document.createElement('div');
     branchDiv.id = `branch${branch.id}Assets`;
+    branchDiv.classList.add("propertyAssetCard");
     const branchName = document.createElement('div');
     branchName.textContent = branch.name;
 

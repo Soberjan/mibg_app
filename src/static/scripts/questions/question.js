@@ -36,9 +36,12 @@ export async function answerQuestion() {
             }
         );
         answerResult.textContent = `Вы правильно ответили на вопрос! Ваша награда ${res.reward} у.е.`;
+        answerResult.style.color = "green";
     }
-    else
+    else {
         answerResult.textContent = `Вы неправильно ответили на вопрос!`;
+        answerResult.style.color = "red";
+    }
 
     const answerButton = document.getElementById("answerQuestionButton");
     answerButton.disabled = true;
@@ -94,6 +97,8 @@ export async function approvedSocket(msg) {
         else
             answerResult.textContent = `Политик одобрил ваш ответ! Ваша награда ${msg.question.reward} очков влияния`;
 
+        answerResult.style.color = "green";
+
         if (msg.question.reward_type === "influence") {
             updateInfluence(msg.question.reward);
         }
@@ -113,6 +118,7 @@ export function disapprovedSocket(msg) {
     else if (state.localPlayerId === msg.player_id) {
         const answerResult = document.getElementById("answerResult");
         answerResult.textContent = `Политик не одобрил ваш ответ!`;
+        answerResult.style.color = "red";
 
         if (msg.question.reward_type === "influence") {
             updateInfluence(-1 * msg.question.reward);

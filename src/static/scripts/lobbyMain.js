@@ -20,6 +20,7 @@ import { changeRole } from "./role/role.js";
 import { endGame } from "./gameEnded/gameEnded.js";
 import { updateRoleControllerRoleSelector } from "./role/roleUI.js";
 import { startSocketWatcher } from "./socketWatcher/socketWatcher.js";
+import { showOtherPlayers, hideOtherPlayers } from "./lobby/showOtherPlayers.js";
 
 state.lobbyId = window.lobbyId;
 
@@ -47,6 +48,8 @@ window.sendMessage = sendMessage;
 window.updateRoleControllerRoleSelector = updateRoleControllerRoleSelector;
 window.changeRole = changeRole;
 window.endGame = endGame;
+window.hideOtherPlayers = hideOtherPlayers;
+window.showOtherPlayers = showOtherPlayers;
 
 export async function initPage() {
     document.getElementById("lobbyIdBadge").textContent = `id лобби: ${state.lobbyId}`;

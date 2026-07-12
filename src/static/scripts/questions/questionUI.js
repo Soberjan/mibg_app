@@ -1,4 +1,5 @@
 import { state } from "../state.js";
+import { hideMenu } from "../lobby/hideMenu.js";
 
 export function showQuestionOverlay(question) {
     const questionOverlay = document.getElementById("questionOverlay");
@@ -26,12 +27,17 @@ export function showQuestionOverlay(question) {
 
     answerResult.textContent = "";
     questionText.textContent = question.text;
+
+    hideMenu();
 }
 
 export function hideQuestion(question) {
     const questionOverlay = document.getElementById("questionOverlay");
     if (!questionOverlay.classList.contains("hidden"))
         questionOverlay.classList.add("hidden");
+
+    const assetsMenu = document.getElementById("assets");
+    assetsMenu.classList.remove("hidden");
 }
 
 export function showApprovalOverlay(question) {
@@ -44,6 +50,8 @@ export function showApprovalOverlay(question) {
 
     questionText.textContent = question.text;
     questionAnswer.textContent = question.answer;
+
+    hideMenu();
 }
 
 export function initQuestionUI() {

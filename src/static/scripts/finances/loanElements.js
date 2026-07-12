@@ -101,7 +101,7 @@ export function createFinanceLoan(id, balanceId, loanSum, interest, endsAt, loan
         loanButton.id = `loan${id}Button`;
         loanButton.classList.add("financeLoanButton");
         loanButton.textContent = `Закрыть`;
-        loanButton.addEventListener('click', () => closeloan(id));
+        loanButton.addEventListener('click', () => closeLoan(id));
         loan.appendChild(loanButton);
     }
 

@@ -35,7 +35,7 @@ export function addBalanceToReceiver(balance) {
     console.log("adding balance");
     console.log(balance);
     console.log(balance.type);
-    if (balanceOwner != null && balanceOwner.id === state.localPlayerId)
+    if (balanceOwner != null && balanceOwner.id === state.localPlayerId && balance.type != "bank")
         return;
     if (balanceOwner != null && balanceOwner.role === "politician" && balance.type === "personal")
         return;

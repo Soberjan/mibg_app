@@ -3,7 +3,7 @@
 :root {
     --card-width: 480px;
 
-    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-bg: rgba(255, 255, 255, 0.3);
     --card-border: rgba(255, 255, 255, 0.14);
     --card-inner-bg: rgba(255, 255, 255, 0.07);
     --card-inner-border: rgba(255, 255, 255, 0.10);
@@ -213,8 +213,7 @@
     border: 1px solid rgba(0, 0, 0, 0.22);
     border-radius: 10px;
 
-    background: rgba(255, 255, 255, 0.82);
-    color: #111;
+    background: rgba(216, 216, 216, 0.8);
 
     font-size: 15px;
     outline: none;
@@ -309,8 +308,7 @@
     border-radius: 10px;
     border: 1px solid rgba(0, 0, 0, 0.22);
 
-    background: rgba(255, 255, 255, 0.82);
-    color: #111;
+    background: rgba(216, 216, 216, 0.8);
 
     font-size: 18px;
     outline: none;
@@ -365,8 +363,8 @@
     padding: 10px 12px;
     border-radius: var(--radius-inner);
 
-    background: var(--card-inner-bg);
     border: 1px solid var(--card-inner-border);
+    background: rgba(216, 216, 216, 0.8);
 
     font-size: 18px;
     font-weight: 600;
@@ -376,4 +374,21 @@
 #luxuryList > div::before {
     content: "💎";
     flex-shrink: 0;
+}
+
+.propertyAssetCard {
+    display: block;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    margin-top: 10px;
+    padding: 10px 12px;
+
+    background: rgba(216, 216, 216, 0.8);
+    border: 1px solid #c3c3c3;
+    border-radius: 10px;
+
+    color: #111;
+    line-height: 1.4;
 }
