@@ -6,7 +6,6 @@ import { chooseBankerAndStartGame } from "./voting/chooseBankerAndStartGame.js";
 import { initLobbyUI } from "./lobby/initLobbyUI.js";
 import { registerPlayer } from "./lobby/registerPlayer.js";
 import { roleDict } from "./dicts.js";
-import { chooseJobless, choosePolitician, chooseBanker } from "./testLobby/chooseRole.js";
 import { giveLoan } from "./finances/giveLoan.js";
 import { giveDeposit } from "./finances/giveDeposit.js";
 import { buyLuxury } from "./luxuries/buyLuxury.js";
@@ -24,6 +23,36 @@ import { showOtherPlayers, hideOtherPlayers } from "./lobby/showOtherPlayers.js"
 import { hideTransactionHistory, showTransactionHistory } from "./transactions/transactionUI.js";
 
 state.lobbyId = window.lobbyId;
+
+
+async function chooseRole(role) {
+    let response = await fetch(`/lobby/-1/is_free?role=${role}`, {method:"get"});
+    let result = await response.json();
+
+    if (!result.free) {
+        console.log("Роль занята");
+        return;
+    }
+
+    response = await fetch(`/lobby/-1/assign_client_key?role=${role}`, {method:"post"});
+    result = await response.json();
+    if (result.status != "ok")
+        return;
+
+    const testServerOverlay = document.getElementById("testServerOverlay");
+    testServerOverlay.classList.add("hidden");
+    await initPage();
+}
+
+export function chooseJobless() {
+    chooseRole("jobless");
+}
+export function choosePolitician() {
+    chooseRole("politician");
+}
+export function chooseBanker() {
+    chooseRole("banker");
+}
 
 window.registerPlayer = registerPlayer;
 window.state = state;
@@ -141,3 +170,4 @@ if (state.lobbyId === "-1") {
 }
 else
     await initPage();
+
